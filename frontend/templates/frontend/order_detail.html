@@ -1,5 +1,5 @@
-<!-- frontend/templates/frontend/order_detail.html -->
 {% extends 'frontend/base.html' %}
+{% load frontend_extras %}
 
 {% block title %}Order #{{ order.id }} - AgroConnect{% endblock %}
 
@@ -31,6 +31,32 @@
                         <p class="mb-1"><strong>Contact Phone:</strong> {{ order.contact_phone }}</p>
                     </div>
                 </div>
+                
+                <!-- Payment section - Place it here, right after the order details -->
+               <!-- Replace the problematic section in order_detail.html -->
+               {% if not order.is_paid %}
+               <div class="alert alert-warning">
+                   <h5 class="alert-heading">Payment Required</h5>
+                   <p>This order has not been paid yet.</p>
+                   
+                   {% if order.buyer == user %}
+                   <a href="{% url 'frontend:payment' order.id %}" class="btn btn-success">
+                       Complete Payment
+                   </a>
+                   {% elif user.is_farmer and has_farmer_products %}
+                   <form action="{% url 'frontend:confirm_payment' order.id %}" method="post" class="mt-2">
+                       {% csrf_token %}
+                       <button type="submit" class="btn btn-success">
+                           Confirm Payment Received
+                       </button>
+                       <div class="form-text mt-2">
+                           Only click this button if you have confirmed receipt of payment from the buyer.
+                       </div>
+                   </form>
+                   {% endif %}
+               </div>
+               {% endif %}
+                <!-- End of payment section -->
                 
                 {% if user.is_farmer %}
                 <div class="row mb-4">

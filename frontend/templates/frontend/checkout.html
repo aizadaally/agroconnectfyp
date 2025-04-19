@@ -1,7 +1,7 @@
-<!-- frontend/templates/frontend/checkout.html -->
 {% extends 'frontend/base.html' %}
+{% load frontend_extras %}
 
-{% block title %}Checkout - AgroConnect{% endblock %}
+{% block title %}Order Confirmation - AgroConnect{% endblock %}
 
 {% block content %}
 <h1 class="mb-4">Checkout</h1>
@@ -56,7 +56,7 @@
                                 </p>
                             </div>
                             <p class="mb-0">
-                                ${{ item.product_price|floatformat:2|mul:item.quantity }}
+                                ${{ item.product_price|mul:item.quantity|floatformat:2 }}
                             </p>
                         </div>
                     </div>

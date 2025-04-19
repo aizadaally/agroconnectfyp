@@ -2,6 +2,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
+
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}AgroConnect{% endblock %}</title>
@@ -9,9 +12,26 @@
     {% load static %}
     <link rel="stylesheet" href="{% static 'frontend/css/style.css' %}">
     {% block extra_css %}{% endblock %}
+
+
+
+    <style>
+        /* Sticky header styles */
+        .sticky-header {
+            position: sticky;
+            top: 0;
+            z-index: 1000; /* Ensures header stays above other content */
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Optional: adds a subtle shadow */
+        }
+        
+        /* Add padding to body to prevent content from being hidden under the fixed header */
+        body {
+            padding-top: 0; /* Adjust if needed based on your header height */
+        }
+    </style>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-success">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-success sticky-header">
         <div class="container">
             <a class="navbar-brand" href="{% url 'frontend:home' %}">AgroConnect</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">

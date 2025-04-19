@@ -28,6 +28,19 @@ class Order(models.Model):
         self.total_amount = total
         self.save()
 
+    def mark_as_paid(self):
+        self.is_paid = True
+        self.save()
+        
+        # Update product quantities
+        for item in self.items.all():
+            if item.product:
+                product = item.product
+                product.quantity_available -= item.quantity
+                if product.quantity_available <= 0:
+                    product.is_available = False
+                product.save()
+
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='items')
     product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True, related_name='order_items')

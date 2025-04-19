@@ -8,8 +8,15 @@ from django.http import JsonResponse
 from products.models import Category, Product
 from orders.models import Order, OrderItem
 from users.models import User
+from django.contrib.auth.decorators import login_required
+from django.http import HttpResponse
 import requests
 import json
+import base64
+import qrcode
+from io import BytesIO
+
+
 
 def home_view(request):
     categories = Category.objects.all()[:4]  # Limit to 4 categories
@@ -174,23 +181,27 @@ def checkout_view(request):
     if request.method == 'POST':
         delivery_address = request.POST.get('delivery_address')
         contact_phone = request.POST.get('contact_phone')
+
+        
         
         if not delivery_address or not contact_phone:
             messages.error(request, 'Delivery address and contact phone are required.')
             return render(request, 'frontend/checkout.html', {'cart': cart})
         
-        # Update cart and change status to ORDERED
+        
+        
+      # Update cart and change status to ORDERED
         cart.delivery_address = delivery_address
         cart.contact_phone = contact_phone
         cart.status = Order.OrderStatus.ORDERED
         cart.save()
         
         # For simplicity, mark the order as paid immediately
-        cart.is_paid = True
-        cart.save()
+        # cart.is_paid = True
+        # cart.save()
         
-        messages.success(request, 'Your order has been placed successfully!')
-        return redirect('frontend:order_confirmation', order_id=cart.id)
+        messages.success(request, 'Your order has been placed! Please complete the payment.')
+        return redirect('frontend:payment', order_id=cart.id)
     
     context = {
         'cart': cart
@@ -229,17 +240,21 @@ def orders_view(request):
     }
     return render(request, 'frontend/orders.html', context)
 
+# In your order_detail_view function in views.py
 @login_required
 def order_detail_view(request, order_id):
     if request.user.is_farmer():
         # Farmers can see orders that contain their products
         order = get_object_or_404(Order, id=order_id, items__product__farmer=request.user)
+        has_farmer_products = True  # Since we filtered by this in the query
     else:
         # Buyers can see their own orders
         order = get_object_or_404(Order, id=order_id, buyer=request.user)
+        has_farmer_products = False
     
     context = {
-        'order': order
+        'order': order,
+        'has_farmer_products': has_farmer_products
     }
     return render(request, 'frontend/order_detail.html', context)
 
@@ -257,12 +272,18 @@ def profile_view(request):
         if user.is_farmer():
             user.farm_name = request.POST.get('farm_name')
             user.farm_location = request.POST.get('farm_location')
+            request.user.bank_name = request.POST.get('bank_name', '')
+            request.user.bank_account = request.POST.get('bank_account', '')
         
         # Handle profile image if uploaded
         if 'profile_image' in request.FILES:
             user.profile_image = request.FILES['profile_image']
+
+        # Handle bank QR code upload
+        if 'bank_qr_code' in request.FILES:
+                request.user.bank_qr_code = request.FILES['bank_qr_code']
         
-        user.save()
+        request.user.save()
         messages.success(request, 'Profile updated successfully!')
         return redirect('frontend:profile')
     
@@ -380,3 +401,88 @@ def delete_product_view(request, product_id):
         'product': product
     }
     return render(request, 'frontend/delete_product.html', context)
+
+
+@login_required
+def payment_page(request, order_id):
+    order = get_object_or_404(Order, id=order_id, buyer=request.user)
+    
+    if order.is_paid:
+        messages.info(request, "This order has already been paid.")
+        return redirect('frontend:order_confirmation', order_id=order.id)
+    
+    # Find the farmer(s) for this order
+    farmers = {}
+    for item in order.items.all():
+        if item.product and item.product.farmer:
+            farmer = item.product.farmer
+            if farmer.id not in farmers:
+                farmers[farmer.id] = {
+                    'name': farmer.get_full_name() or farmer.username,
+                    'bank_name': getattr(farmer, 'bank_name', ''),
+                    'bank_account': getattr(farmer, 'bank_account', ''),
+                    'qr_code': farmer.bank_qr_code.url if hasattr(farmer, 'bank_qr_code') and farmer.bank_qr_code else None,
+                    'amount': 0,
+                    'items': []
+                }
+            
+            # Calculate amount for this farmer
+            item_total = item.product_price * item.quantity
+            farmers[farmer.id]['amount'] += item_total
+            farmers[farmer.id]['items'].append({
+                'name': item.product_name,
+                'quantity': item.quantity,
+                'price': item.product_price,
+                'total': item_total
+            })
+    
+    # Generate a confirmation code
+    import random
+    import string
+    confirmation_code = ''.join(random.choices(string.ascii_uppercase + string.digits, k=8))
+    
+    context = {
+        'order': order,
+        'farmers': farmers.values(),
+        'confirmation_code': confirmation_code,
+    }
+    
+    return render(request, 'frontend/payment.html', context)
+
+@login_required
+def verify_payment(request, order_id):
+    order = get_object_or_404(Order, id=order_id, buyer=request.user)
+    
+    if request.method == 'POST':
+        confirmation_code = request.POST.get('confirmation_code')
+        
+        # For simplicity, we're accepting any confirmation code
+        # In a real application, you'd verify this against a stored code or API
+        if confirmation_code:
+            # Mark the order as paid
+            order.mark_as_paid()
+            
+            messages.success(request, "Payment verified successfully!")
+            return redirect('frontend:order_confirmation', order_id=order.id)
+        else:
+            messages.error(request, "Invalid confirmation code. Please try again.")
+    
+    return redirect('frontend:payment', order_id=order.id)
+
+@login_required
+def manual_payment_confirmation(request, order_id):
+    """For farmers to manually confirm they received payment"""
+    # Only farmers with products in this order can confirm
+    order = get_object_or_404(Order, id=order_id)
+    
+    # Check if this farmer has products in the order
+    if not order.items.filter(product__farmer=request.user).exists():
+        messages.error(request, "You don't have any products in this order.")
+        return redirect('frontend:farmer_dashboard')
+    
+    if request.method == 'POST' and not order.is_paid:
+        # Mark the order as paid
+        order.mark_as_paid()
+        messages.success(request, "Payment confirmed successfully!")
+    
+    return redirect('frontend:order_detail', order_id=order.id)

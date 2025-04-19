@@ -21,6 +21,11 @@ class User(AbstractUser):
     # For farmers
     farm_name = models.CharField(max_length=255, blank=True, null=True)
     farm_location = models.CharField(max_length=255, blank=True, null=True)
+
+    # Payment information
+    bank_name = models.CharField(max_length=50, blank=True, null=True)  # e.g., MBank, Optima
+    bank_account = models.CharField(max_length=50, blank=True, null=True)  # Account number
+    bank_qr_code = models.ImageField(upload_to='payment_qr_codes/', blank=True, null=True)  # Uploaded QR code
     
     def is_farmer(self):
         return self.user_type == self.UserType.FARMER

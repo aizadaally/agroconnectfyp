@@ -1,0 +1,106 @@
+{% extends 'frontend/base.html' %}
+{% load frontend_extras %}
+
+{% block title %}Payment - AgroConnect{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <h1 class="mb-4">Complete Your Payment</h1>
+    
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card mb-4">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">Payment Instructions</h5>
+                </div>
+                <div class="card-body">
+                    <p>Please complete your payment to the following farmer(s) for your order #{{ order.id }}:</p>
+                    
+                    {% for farmer in farmers %}
+                    <div class="farmer-payment mb-4 p-3 border rounded">
+                        <h5>Payment to: {{ farmer.name }}</h5>
+                        <p><strong>Amount:</strong> ${{ farmer.amount|floatformat:2 }}</p>
+                        
+                        {% if farmer.bank_name %}
+                        <p><strong>Bank:</strong> {{ farmer.bank_name }}</p>
+                        <p><strong>Account Number:</strong> {{ farmer.bank_account }}</p>
+                        {% endif %}
+                        
+                        {% if farmer.qr_code %}
+                        <div class="qr-code-container text-center my-3">
+                            <p>Scan the QR code below with your banking app:</p>
+                            <img src="{{ farmer.qr_code }}" alt="Payment QR Code" class="img-fluid" style="max-width: 200px;">
+                        </div>
+                        {% else %}
+                        <div class="alert alert-info">
+                            This farmer has not yet provided a QR code for payments.
+                            Please contact them directly or use the account information above.
+                        </div>
+                        {% endif %}
+                        
+                        <h6 class="mt-3">Items from this farmer:</h6>
+                        <ul class="list-group">
+                            {% for item in farmer.items %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                {{ item.name }} ({{ item.quantity }} x ${{ item.price|floatformat:2 }})
+                                <span>${{ item.total|floatformat:2 }}</span>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endfor %}
+                    
+                    <div class="alert alert-warning">
+                        <p><strong>Important:</strong> After making your payment, please enter the confirmation code below:</p>
+                    </div>
+                    
+                    <form action="{% url 'frontend:verify_payment' order.id %}" method="post" class="mt-3">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="confirmation_code" class="form-label">Confirmation Code</label>
+                            <input type="text" name="confirmation_code" id="confirmation_code" class="form-control" placeholder="Enter the confirmation code" required>
+                            <div class="form-text">
+                                Enter the confirmation code: {{ confirmation_code }}
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-success">Verify Payment</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">Order Summary</h5>
+                </div>
+                <div class="card-body">
+                    <p class="mb-3">Order #{{ order.id }}</p>
+                    
+                    {% for item in order.items.all %}
+                    <div class="mb-3 pb-3 border-bottom">
+                        <p class="mb-1 fw-semibold">{{ item.product_name }}</p>
+                        <div class="d-flex justify-content-between text-muted small">
+                            <span>{{ item.quantity }} × ${{ item.product_price|floatformat:2 }}</span>
+                            <span>${{ item.product_price|floatformat:2|mul:item.quantity }}</span>
+                        </div>
+                    </div>
+                    {% endfor %}
+                    
+                    <div class="d-flex justify-content-between mt-4">
+                        <strong>Total:</strong>
+                        <strong>${{ order.total_amount|floatformat:2 }}</strong>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="d-grid gap-2 mt-3">
+                <a href="{% url 'frontend:order_detail' order.id %}" class="btn btn-outline-secondary">
+                    Back to Order Details
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

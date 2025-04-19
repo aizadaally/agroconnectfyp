@@ -31,4 +31,10 @@ urlpatterns = [
     path('farmer/products/add/', views.product_form_view, name='add_product'),
     path('farmer/products/<int:product_id>/edit/', views.product_form_view, name='edit_product'),
     path('farmer/products/<int:product_id>/delete/', views.delete_product_view, name='delete_product'),
+
+    # Payment URLs
+    path('orders/<int:order_id>/payment/', views.payment_page, name='payment'),
+    path('orders/<int:order_id>/verify-payment/', views.verify_payment, name='verify_payment'),
+    path('orders/<int:order_id>/confirm-payment/', views.manual_payment_confirmation, name='confirm_payment'),
+
 ]

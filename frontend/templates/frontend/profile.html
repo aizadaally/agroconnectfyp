@@ -1,0 +1,94 @@
+<!-- frontend/templates/frontend/profile.html -->
+{% extends 'frontend/base.html' %}
+
+{% block title %}My Profile - AgroConnect{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">My Profile</h1>
+
+<div class="row">
+    <div class="col-md-4 mb-4">
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0">Account Information</h5>
+            </div>
+            <div class="card-body text-center">
+                {% if user.profile_image %}
+                <img src="{{ user.profile_image.url }}" alt="{{ user.username }}" class="rounded-circle mb-3" style="width: 120px; height: 120px; object-fit: cover;">
+                {% else %}
+                <div class="bg-light rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3" style="width: 120px; height: 120px;">
+                    <span class="display-4 text-muted">{{ user.username|first|upper }}</span>
+                </div>
+                {% endif %}
+                <h4 class="mb-1">{{ user.get_full_name|default:user.username }}</h4>
+                <p class="text-muted mb-3">{{ user.email }}</p>
+                <span class="badge bg-success mb-3">{{ user.get_user_type_display }}</span>
+                <p class="mb-1"><strong>Member since:</strong> {{ user.date_joined|date:"F j, Y" }}</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0">Edit Profile</h5>
+            </div>
+            <div class="card-body">
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="first_name" class="form-label">First Name</label>
+                            <input type="text" name="first_name" id="first_name" class="form-control" value="{{ user.first_name }}">
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="last_name" class="form-label">Last Name</label>
+                            <input type="text" name="last_name" id="last_name" class="form-control" value="{{ user.last_name }}">
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" name="email" id="email" class="form-control" value="{{ user.email }}">
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="phone_number" class="form-label">Phone Number</label>
+                            <input type="tel" name="phone_number" id="phone_number" class="form-control" value="{{ user.phone_number }}">
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="address" class="form-label">Address</label>
+                        <textarea name="address" id="address" rows="3" class="form-control">{{ user.address }}</textarea>
+                    </div>
+                    
+                    {% if user.is_farmer %}
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="farm_name" class="form-label">Farm Name</label>
+                            <input type="text" name="farm_name" id="farm_name" class="form-control" value="{{ user.farm_name }}">
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="farm_location" class="form-label">Farm Location</label>
+                            <input type="text" name="farm_location" id="farm_location" class="form-control" value="{{ user.farm_location }}">
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="mb-3">
+                        <label for="profile_image" class="form-label">Profile Image</label>
+                        <input type="file" name="profile_image" id="profile_image" class="form-control" accept="image/*">
+                        <div class="form-text">Leave empty to keep current image</div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-success">Save Changes</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

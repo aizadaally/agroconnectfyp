@@ -1,0 +1,113 @@
+<!-- frontend/templates/frontend/register.html -->
+{% extends 'frontend/base.html' %}
+
+{% block title %}Sign Up - AgroConnect{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-body p-4">
+                <h2 class="text-center mb-4">Sign Up for AgroConnect</h2>
+                
+                {% if error %}
+                <div class="alert alert-danger">{{ error }}</div>
+                {% endif %}
+                
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="user_type" class="form-label">I am a:</label>
+                            <select name="user_type" id="user_type" class="form-select" onchange="toggleFarmerFields()">
+                                <option value="BUYER" {% if user_type == 'BUYER' %}selected{% endif %}>Buyer</option>
+                                <option value="FARMER" {% if user_type == 'FARMER' %}selected{% endif %}>Farmer</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="username" class="form-label required-field">Username</label>
+                            <input type="text" name="username" id="username" class="form-control" required>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="email" class="form-label required-field">Email</label>
+                            <input type="email" name="email" id="email" class="form-control" required>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="first_name" class="form-label required-field">First Name</label>
+                            <input type="text" name="first_name" id="first_name" class="form-control" required>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="last_name" class="form-label required-field">Last Name</label>
+                            <input type="text" name="last_name" id="last_name" class="form-control" required>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="password" class="form-label required-field">Password</label>
+                            <input type="password" name="password" id="password" class="form-control" required>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="phone_number" class="form-label required-field">Phone Number</label>
+                            <input type="tel" name="phone_number" id="phone_number" class="form-control" required>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="address" class="form-label required-field">Address</label>
+                        <textarea name="address" id="address" rows="2" class="form-control" required></textarea>
+                    </div>
+                    
+                    <div id="farmer_fields" style="display: {% if user_type == 'FARMER' %}block{% else %}none{% endif %};">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="farm_name" class="form-label required-field">Farm Name</label>
+                                <input type="text" name="farm_name" id="farm_name" class="form-control">
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="farm_location" class="form-label required-field">Farm Location</label>
+                                <input type="text" name="farm_location" id="farm_location" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-success w-100 mt-3">Sign Up</button>
+                </form>
+                
+                <div class="text-center mt-3">
+                    <p class="mb-0">
+                        Already have an account? <a href="{% url 'frontend:login' %}" class="text-success">Login</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function toggleFarmerFields() {
+        const userType = document.getElementById('user_type').value;
+        const farmerFields = document.getElementById('farmer_fields');
+        
+        if (userType === 'FARMER') {
+            farmerFields.style.display = 'block';
+            document.getElementById('farm_name').required = true;
+            document.getElementById('farm_location').required = true;
+        } else {
+            farmerFields.style.display = 'none';
+            document.getElementById('farm_name').required = false;
+            document.getElementById('farm_location').required = false;
+        }
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,47 @@
+<!-- frontend/templates/frontend/login.html -->
+{% extends 'frontend/base.html' %}
+
+{% block title %}Login - AgroConnect{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body p-4">
+                <h2 class="text-center mb-4">Login to AgroConnect</h2>
+                
+                {% if error %}
+                <div class="alert alert-danger">{{ error }}</div>
+                {% endif %}
+                
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="username" class="form-label required-field">Username</label>
+                        <input type="text" name="username" id="username" class="form-control" required>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label for="password" class="form-label required-field">Password</label>
+                        <input type="password" name="password" id="password" class="form-control" required>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-success w-100">Login</button>
+                </form>
+                
+                <div class="text-center mt-3">
+                    <p class="mb-0">
+                        Don't have an account? <a href="{% url 'frontend:register' %}" class="text-success">Sign up</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="mt-4 text-center">
+            <p class="mb-0">Test Accounts:</p>
+            <p class="small text-muted">Farmer: farmer1 / farmerpass123</p>
+            <p class="small text-muted">Buyer: buyer1 / buyerpass123</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

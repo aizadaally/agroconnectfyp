@@ -1,0 +1,74 @@
+<!-- frontend/templates/frontend/checkout.html -->
+{% extends 'frontend/base.html' %}
+
+{% block title %}Checkout - AgroConnect{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Checkout</h1>
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card mb-4">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0">Delivery Information</h5>
+            </div>
+            <div class="card-body">
+                <form method="post" id="checkout-form">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="delivery_address" class="form-label required-field">Delivery Address</label>
+                        <textarea name="delivery_address" id="delivery_address" rows="3" class="form-control" required>{{ user.address }}</textarea>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="contact_phone" class="form-label required-field">Contact Phone</label>
+                        <input type="tel" name="contact_phone" id="contact_phone" class="form-control" value="{{ user.phone_number }}" required>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between mt-4">
+                        <a href="{% url 'frontend:cart' %}" class="btn btn-outline-secondary">
+                            Back to Cart
+                        </a>
+                        
+                        <button type="submit" class="btn btn-success">
+                            Place Order
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-4">
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0">Order Summary</h5>
+            </div>
+            <div class="card-body">
+                <div class="list-group list-group-flush mb-3">
+                    {% for item in cart.items.all %}
+                    <div class="list-group-item px-0 py-2 border-bottom">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <p class="mb-0 fw-semibold">{{ item.product_name }}</p>
+                                <p class="text-muted small mb-0">
+                                    {{ item.quantity }} × ${{ item.product_price|floatformat:2 }}
+                                </p>
+                            </div>
+                            <p class="mb-0">
+                                ${{ item.product_price|floatformat:2|mul:item.quantity }}
+                            </p>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                
+                <div class="d-flex justify-content-between mb-3">
+                    <h5 class="mb-0">Total:</h5>
+                    <h5 class="mb-0">${{ cart.total_amount|floatformat:2 }}</h5>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

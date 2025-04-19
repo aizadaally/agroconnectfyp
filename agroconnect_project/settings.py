@@ -33,6 +33,7 @@ INSTALLED_APPS = [
     'products',
     'orders',
     'api',
+    'frontend',
 ]
 
 MIDDLEWARE = [
@@ -51,7 +52,7 @@ ROOT_URLCONF = 'agroconnect_project.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'frontend/templates')],  # Add this
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

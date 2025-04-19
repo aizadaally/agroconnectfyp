@@ -1,0 +1,85 @@
+<!-- frontend/templates/frontend/products.html -->
+{% extends 'frontend/base.html' %}
+{% load frontend_extras %}
+
+{% block title %}Products - AgroConnect{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-3 mb-4">
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0">Categories</h5>
+            </div>
+            <div class="list-group list-group-flush">
+                <a href="{% url 'frontend:products' %}" class="list-group-item list-group-item-action {% if not selected_category %}active{% endif %}">
+                    All Products
+                </a>
+                {% for category in categories %}
+                <a href="{% url 'frontend:products' %}?category={{ category.id }}" class="list-group-item list-group-item-action {% if selected_category == category.id %}active{% endif %}">
+                    {{ category.name }}
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-9">
+        <div class="card mb-4">
+            <div class="card-body">
+                <form action="{% url 'frontend:products' %}" method="get" class="d-flex">
+                    {% if selected_category %}
+                    <input type="hidden" name="category" value="{{ selected_category }}">
+                    {% endif %}
+                    <input type="text" name="search" class="form-control me-2" placeholder="Search products..." value="{{ search_query }}">
+                    <button type="submit" class="btn btn-success">Search</button>
+                </form>
+            </div>
+        </div>
+        
+        <h2 class="mb-4">
+            {% if selected_category %}
+                {{ selected_category_name }} Products
+            {% elif search_query %}
+                Search Results for "{{ search_query }}"
+            {% else %}
+                All Products
+            {% endif %}
+        </h2>
+        
+        <div class="row">
+            {% for product in products %}
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    {% if product.image %}
+                    <img src="{{ product.image.url }}" class="card-img-top product-image" alt="{{ product.name }}">
+                    {% else %}
+                    <img src="https://via.placeholder.com/300x200?text=No+Image" class="card-img-top product-image" alt="No Image Available">
+                    {% endif %}
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">{{ product.name }}</h5>
+                        <p class="card-text text-muted small">{{ product.category.name }}</p>
+                        <p class="card-text">{{ product.description|truncatechars:80 }}</p>
+                        <div class="mt-auto">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h6 class="mb-0">${{ product.price }} per {{ product.unit }}</h6>
+                                <div>
+                                    <a href="{% url 'frontend:product_detail' product.id %}" class="btn btn-sm btn-outline-success me-1">Details</a>
+                                    {% if user.is_authenticated and user.is_buyer %}
+                                    <button onclick="addToCart({{ product.id }})" class="btn btn-sm btn-success">Add to Cart</button>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12 text-center">
+                <p>No products found matching your criteria.</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

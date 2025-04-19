@@ -1,0 +1,134 @@
+<!-- frontend/templates/frontend/product_detail.html -->
+ 
+{% extends 'frontend/base.html' %}
+
+
+{% block title %}{{ product.name }} - AgroConnect{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            {% if product.image %}
+            <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}" style="max-height: 400px; object-fit: contain;">
+            {% else %}
+            <img src="https://via.placeholder.com/400x400?text=No+Image" class="card-img-top" alt="No Image Available">
+            {% endif %}
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <h1 class="mb-3">{{ product.name }}</h1>
+        
+        <p class="text-muted mb-2">
+            Category: <a href="{% url 'frontend:products' %}?category={{ product.category.id }}">{{ product.category.name }}</a>
+        </p>
+        
+        <p class="text-muted mb-3">
+            Sold by: {{ product.farmer.farm_name|default:product.farmer.username }}
+        </p>
+        
+        <h4 class="mb-3">${{ product.price }} per {{ product.unit }}</h4>
+        
+        <p class="mb-4">
+            Available: {{ product.quantity_available }} {{ product.unit }}
+        </p>
+        
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="mb-3">Description</h5>
+                <p class="mb-0">{{ product.description|linebreaks|default:"No description available." }}</p>
+            </div>
+        </div>
+        
+        {% if user.is_authenticated %}
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="mb-3">Seller Contact</h5>
+                <p class="mb-2">
+                    <strong>Name:</strong> {{ product.farmer.get_full_name|default:product.farmer.username }}
+                </p>
+                <p class="mb-2">
+                    <strong>Phone:</strong> {{ product.farmer.phone_number|default:"Not available" }}
+                </p>
+                {% if product.farmer.phone_number %}
+                <div class="d-flex gap-2">
+                    <a href="https://wa.me/{{ product.farmer.phone_number|cut:'+' }}" target="_blank" class="btn btn-sm btn-success">
+                        <i class="bi bi-whatsapp me-1"></i> WhatsApp
+                    </a>
+                    <a href="tel:{{ product.farmer.phone_number }}" class="btn btn-sm btn-outline-success">
+                        <i class="bi bi-telephone me-1"></i> Call
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+        
+        {% if user.is_authenticated and user.is_buyer %}
+        <div class="d-flex align-items-center mb-3">
+            <label for="quantity" class="form-label me-2 mb-0">Quantity:</label>
+            <input type="number" id="quantity" class="form-control me-2" style="width: 80px;" min="1" max="{{ product.quantity_available }}" value="1">
+            <span class="me-2">{{ product.unit }}</span>
+        </div>
+        
+        <button onclick="addToCartWithQuantity({{ product.id }})" class="btn btn-success btn-lg w-100" {% if not product.is_available or product.quantity_available <= 0 %}disabled{% endif %}>
+            Add to Cart
+        </button>
+        
+        {% if not product.is_available or product.quantity_available <= 0 %}
+        <div class="text-danger mt-2">
+            This product is currently unavailable.
+        </div>
+        {% endif %}
+        {% endif %}
+        
+        {% if user.is_authenticated and user.is_farmer and product.farmer == user %}
+        <a href="{% url 'frontend:edit_product' product.id %}" class="btn btn-outline-success btn-lg w-100">
+            Edit Product
+        </a>
+        {% endif %}
+        
+        {% if not user.is_authenticated %}
+        <div class="alert alert-info">
+            Please <a href="{% url 'frontend:login' %}" class="alert-link">login</a> to purchase this product and view seller contact information.
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+{% if related_products %}
+<h3 class="mt-5 mb-4">Related Products</h3>
+<div class="row">
+    {% for related in related_products %}
+    <div class="col-md-4 mb-4">
+        <div class="card h-100">
+            {% if related.image %}
+            <img src="{{ related.image.url }}" class="card-img-top product-image" alt="{{ related.name }}">
+            {% else %}
+            <img src="https://via.placeholder.com/300x200?text=No+Image" class="card-img-top product-image" alt="No Image Available">
+            {% endif %}
+            <div class="card-body d-flex flex-column">
+                <h5 class="card-title">{{ related.name }}</h5>
+                <p class="card-text text-muted small">{{ related.category.name }}</p>
+                <p class="card-text">{{ related.description|truncatechars:80 }}</p>
+                <div class="mt-auto">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h6 class="mb-0">${{ related.price }} per {{ related.unit }}</h6>
+                        <a href="{% url 'frontend:product_detail' related.id %}" class="btn btn-sm btn-outline-success">View</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<script>
+    function addToCartWithQuantity(productId) {
+        const quantity = parseInt(document.getElementById('quantity').value) || 1;
+        addToCart(productId, quantity);
+    }
+</script>
+{% endblock %}

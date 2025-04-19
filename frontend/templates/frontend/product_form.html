@@ -1,0 +1,113 @@
+<!-- frontend/templates/frontend/product_form.html -->
+{% extends 'frontend/base.html' %}
+
+{% block title %}{% if product %}Edit{% else %}Add New{% endif %} Product - AgroConnect{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">{% if product %}Edit{% else %}Add New{% endif %} Product</h1>
+
+{% if error %}
+<div class="alert alert-danger mb-4">
+    {{ error }}
+</div>
+{% endif %}
+
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card mb-4">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">Product Information</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label for="name" class="form-label required-field">Product Name</label>
+                        <input type="text" name="name" id="name" class="form-control" value="{{ product.name }}" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="category" class="form-label required-field">Category</label>
+                        <select name="category" id="category" class="form-select" required>
+                            <option value="">Select a category</option>
+                            {% for category in categories %}
+                            <option value="{{ category.id }}" {% if product.category_id == category.id %}selected{% endif %}>
+                                {{ category.name }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Description</label>
+                        <textarea name="description" id="description" rows="4" class="form-control">{{ product.description }}</textarea>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label for="price" class="form-label required-field">Price</label>
+                            <div class="input-group">
+                                <span class="input-group-text">$</span>
+                                <input type="number" name="price" id="price" class="form-control" step="0.01" min="0" value="{{ product.price }}" required>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4 mb-3">
+                            <label for="quantity_available" class="form-label required-field">Quantity</label>
+                            <input type="number" name="quantity_available" id="quantity_available" class="form-control" min="0" value="{{ product.quantity_available }}" required>
+                        </div>
+                        
+                        <div class="col-md-4 mb-3">
+                            <label for="unit" class="form-label required-field">Unit</label>
+                            <select name="unit" id="unit" class="form-select" required>
+                                <option value="kg" {% if product.unit == 'kg' %}selected{% endif %}>Kilogram (kg)</option>
+                                <option value="g" {% if product.unit == 'g' %}selected{% endif %}>Gram (g)</option>
+                                <option value="piece" {% if product.unit == 'piece' %}selected{% endif %}>Piece</option>
+                                <option value="bundle" {% if product.unit == 'bundle' %}selected{% endif %}>Bundle</option>
+                                <option value="box" {% if product.unit == 'box' %}selected{% endif %}>Box</option>
+                                <option value="dozen" {% if product.unit == 'dozen' %}selected{% endif %}>Dozen</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" name="is_available" id="is_available" class="form-check-input" {% if product.is_available %}checked{% endif %}>
+                        <label for="is_available" class="form-check-label">Product is available for sale</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">Product Image</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <input type="file" name="image" id="image" class="form-control" accept="image/*">
+                        <div class="form-text">Upload a clear image of your product. Max size: 5MB.</div>
+                    </div>
+                    
+                    {% if product.image %}
+                    <div class="mb-3">
+                        <p class="mb-2">Current Image:</p>
+                        <img src="{{ product.image.url }}" alt="{{ product.name }}" class="img-thumbnail" style="max-height: 200px;">
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="d-flex justify-content-between mt-4">
+        <a href="{% url 'frontend:farmer_dashboard' %}" class="btn btn-outline-secondary">
+            Cancel
+        </a>
+        
+        <button type="submit" class="btn btn-success">
+            {% if product %}Update{% else %}Create{% endif %} Product
+        </button>
+    </div>
+</form>
+{% endblock %}

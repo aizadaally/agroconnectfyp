@@ -118,6 +118,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CORS_ALLOW_ALL_ORIGINS = DEBUG  # In production, specify exact origins
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:8000",
+    
 ]
 
 # REST Framework settings

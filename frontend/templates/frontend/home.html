@@ -1,28 +1,41 @@
 <!-- frontend/templates/frontend/home.html -->
 {% extends 'frontend/base.html' %}
+{% load i18n %}
 
-{% block title %}AgroConnect - Farm to Table Marketplace{% endblock %}
+{% block title %}{% trans "AgroConnect - Farm to Table Marketplace" %}{% endblock %}
 
 {% block content %}
 <div class="hero-section text-center mb-5">
     <div class="container">
-        <h1 class="display-4 mb-4">Fresh From Farm to Table</h1>
-        <p class="lead mb-4">AgroConnect brings you the freshest produce directly from local farmers to your table.</p>
-        <a href="{% url 'frontend:products' %}" class="btn btn-light btn-lg me-2">Browse Products</a>
+        <h1 class="display-4 mb-4">{% trans "Fresh From Farm to Table" %}</h1>
+        <p class="lead mb-4">{% trans "AgroConnect brings you the freshest produce directly from local farmers to your table." %}</p>
+        <a href="{% url 'frontend:products' %}" class="btn btn-light btn-lg me-2">{% trans "Browse Products" %}</a>
         {% if not user.is_authenticated %}
-        <a href="{% url 'frontend:register' %}" class="btn btn-outline-light btn-lg">Join Us</a>
+        <a href="{% url 'frontend:register' %}" class="btn btn-outline-light btn-lg">{% trans "Join Us" %}</a>
         {% endif %}
     </div>
 </div>
 
 <div class="container">
-    <h2 class="text-center mb-5">Featured Categories</h2>
+    <h2 class="text-center mb-5">{% trans "Featured Categories" %}</h2>
     <div class="row">
         {% for category in categories %}
         <div class="col-md-3 mb-4">
             <div class="card text-center h-100">
                 <div class="card-body">
-                    <h3 class="card-title h5">{{ category.name }}</h3>
+                    <h3 class="card-title h5">
+                        {% if category.name == 'Vegetables' %}
+                            {% trans "Vegetables" %}
+                        {% elif category.name == 'Fruits' %}
+                            {% trans "Fruits" %}
+                        {% elif category.name == 'Dairy' %}
+                            {% trans "Dairy" %}
+                        {% elif category.name == 'Grains' %}
+                            {% trans "Grains" %}
+                        {% else %}
+                            {{ category.get_translated_name }}
+                        {% endif %}
+                    </h3>
                     <a href="{% url 'frontend:products' %}?category={{ category.id }}" class="stretched-link"></a>
                 </div>
             </div>
@@ -30,26 +43,68 @@
         {% endfor %}
     </div>
 
-    <h2 class="text-center mb-5 mt-5">Featured Products</h2>
+    <h2 class="text-center mb-5 mt-5">{% trans "Featured Products" %}</h2>
     <div class="row">
         {% for product in products %}
         <div class="col-md-4 mb-4">
             <div class="card h-100">
                 {% if product.image %}
-                <img src="{{ product.image.url }}" class="card-img-top product-image" alt="{{ product.name }}">
+                <img src="{{ product.image.url }}" class="card-img-top product-image" alt="{{ product.get_translated_name }}">
                 {% else %}
-                <img src="https://via.placeholder.com/300x200?text=No+Image" class="card-img-top product-image" alt="No Image Available">
+                <img src="https://via.placeholder.com/300x200?text=No+Image" class="card-img-top product-image" alt="{% trans 'No Image Available' %}">
                 {% endif %}
                 <div class="card-body">
-                    <h5 class="card-title">{{ product.name }}</h5>
-                    <p class="card-text text-muted">{{ product.category.name }}</p>
-                    <p class="card-text">{{ product.description|truncatechars:100 }}</p>
+                    <h5 class="card-title">
+                        {% if product.name == "Apple" or product.name == "apple" %}
+                            {% trans "Apple" %}
+                        {% elif product.name == "Potato" %}
+                            {% trans "Potato" %}
+                        {% elif product.name == "Tomato" %}
+                            {% trans "Tomato" %}
+                        {% elif product.name == "Cabbage" %}
+                            {% trans "Cabbage" %}
+                        {% else %}
+                            {{ product.get_translated_name }}
+                        {% endif %}
+                    </h5>
+                    <p class="card-text text-muted">
+                        {% if product.category.name == "Vegetables" %}
+                            {% trans "Vegetables" %}
+                        {% elif product.category.name == "Fruits" %}
+                            {% trans "Fruits" %}
+                        {% elif product.category.name == "Dairy" %}
+                            {% trans "Dairy" %}
+                        {% elif product.category.name == "Grains" %}
+                            {% trans "Grains" %}
+                        {% else %}
+                            {{ product.category.get_translated_name }}
+                        {% endif %}
+                    </p>
+                    <p class="card-text">
+                        {% if product.description == "Fresh, organic tomatoes" %}
+                            {% trans "Fresh, organic tomatoes" %}
+                        {% elif product.description == "High-quality potatoes" %}
+                            {% trans "High-quality potatoes" %}
+                        {% elif product.description == "Large, fresh cabbages" %}
+                            {% trans "Large, fresh cabbages" %}
+                        {% else %}
+                            {{ product.get_translated_description|truncatechars:100 }}
+                        {% endif %}
+                    </p>
                     <div class="d-flex justify-content-between align-items-center">
-                        <h6 class="mb-0">${{ product.price }} per {{ product.unit }}</h6>
+                        <h6 class="mb-0">${{ product.price }} 
+                            {% if product.unit == "kg" %}
+                                {% trans "ap" %} {% trans "kg" %}
+                            {% elif product.unit == "piece" %}
+                                {% trans "ap" %} {% trans "piece" %}
+                            {% else %}
+                                {% trans "ap" %} {{ product.unit }}
+                            {% endif %}
+                        </h6>
                         <div>
-                            <a href="{% url 'frontend:product_detail' product.id %}" class="btn btn-sm btn-outline-success me-1">Details</a>
+                            <a href="{% url 'frontend:product_detail' product.id %}" class="btn btn-sm btn-outline-success me-1">{% trans "Details" %}</a>
                             {% if user.is_authenticated and user.is_buyer %}
-                            <button onclick="addToCart({{ product.id }})" class="btn btn-sm btn-success">Add to Cart</button>
+                            <button onclick="addToCart({{ product.id }})" class="btn btn-sm btn-success">{% trans "Add to Cart" %}</button>
                             {% endif %}
                         </div>
                     </div>
@@ -58,7 +113,7 @@
         </div>
         {% empty %}
         <div class="col-12 text-center">
-            <p>No products available at the moment.</p>
+            <p>{% trans "No products available at the moment." %}</p>
         </div>
         {% endfor %}
     </div>
@@ -68,14 +123,14 @@
     <div class="container">
         <div class="row align-items-center">
             <div class="col-lg-6">
-                <h2 class="mb-4 text-success">Why Join as a Farmer?</h2>
+                <h2 class="mb-4 text-success">{% trans "Why Join as a Farmer?" %}</h2>
                 <div class="d-flex mb-4">
                     <div class="me-3">
                         <span class="bg-success text-white d-inline-flex justify-content-center align-items-center rounded-circle" style="width: 50px; height: 50px; font-size: 1.5rem;">1</span>
                     </div>
                     <div>
-                        <h5>Direct Sales</h5>
-                        <p>Sell directly to customers without middlemen and increase your profits.</p>
+                        <h5>{% trans "Direct Sales" %}</h5>
+                        <p>{% trans "Sell directly to customers without middlemen and increase your profits." %}</p>
                     </div>
                 </div>
                 <div class="d-flex mb-4">
@@ -83,14 +138,14 @@
                         <span class="bg-success text-white d-inline-flex justify-content-center align-items-center rounded-circle" style="width: 50px; height: 50px; font-size: 1.5rem;">2</span>
                     </div>
                     <div>
-                        <h5>Grow Your Customer Base</h5>
-                        <p>Reach more customers through our platform.</p>
+                        <h5>{% trans "Grow Your Customer Base" %}</h5>
+                        <p>{% trans "Reach more customers through our platform." %}</p>
                     </div>
                 </div>
-                <a href="{% url 'frontend:register' %}?user_type=FARMER" class="btn btn-success mt-2">Register as Farmer</a>
+                <a href="{% url 'frontend:register' %}?user_type=FARMER" class="btn btn-success mt-2">{% trans "Register as Farmer" %}</a>
             </div>
             <div class="col-lg-6 mt-4 mt-lg-0">
-                <img src="https://images.unsplash.com/photo-1500937386664-56d1dfef3854" alt="Farmer" class="img-fluid rounded shadow">
+                <img src="https://images.unsplash.com/photo-1500937386664-56d1dfef3854" alt="{% trans 'Farmer' %}" class="img-fluid rounded shadow">
             </div>
         </div>
     </div>

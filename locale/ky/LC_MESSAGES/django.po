@@ -1,0 +1,322 @@
+# Kyrgyz translations for AgroConnect
+msgid ""
+msgstr ""
+"Project-Id-Version: AgroConnect\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-04-19 10:00+0000\n"
+"PO-Revision-Date: 2025-04-19 10:00+0000\n"
+"Last-Translator: Your Name\n"
+"Language-Team: Kyrgyz\n"
+"Language: ky\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+msgid "Home"
+msgstr "Башкы бет"
+
+msgid "Products"
+msgstr "Продуктулар"
+
+msgid "Farmer Dashboard"
+msgstr "Фермердин башкаруу панели"
+
+msgid "Login"
+msgstr "Кирүү"
+
+msgid "Register"
+msgstr "Катталуу"
+
+msgid "Profile"
+msgstr "Профиль"
+
+msgid "My Orders"
+msgstr "Менин буйрутмаларым"
+
+msgid "Logout"
+msgstr "Чыгуу"
+
+msgid "Cart"
+msgstr "Корзина"
+
+msgid "Search"
+msgstr "Издөө"
+
+msgid "Categories"
+msgstr "Категориялар"
+
+msgid "All Products"
+msgstr "Бардык продуктулар"
+
+msgid "Fruits"
+msgstr "Жемиштер"
+
+msgid "Vegetables"
+msgstr "Жашылчалар"
+
+msgid "Dairy"
+msgstr "Сүт азыктары"
+
+msgid "Grains"
+msgstr "Дан азыктары"
+
+msgid "No products found matching your criteria."
+msgstr "Сиздин критерийлерге туура келген продуктулар табылган жок."
+
+msgid "Quick Links"
+msgstr "Тез шилтемелер"
+
+msgid "Contact Us"
+msgstr "Байланышуу"
+
+msgid "Email:"
+msgstr "Электрондук почта:"
+
+msgid "Phone:"
+msgstr "Телефон:"
+
+msgid "All rights reserved."
+msgstr "Бардык укуктар корголгон."
+
+msgid "Connecting farmers directly with consumers."
+msgstr "Фермерлерди керектөөчүлөр менен түз байланыштыруу."
+
+msgid "About Us"
+msgstr "Биз жөнүндө"
+
+msgid "Contact"
+msgstr "Байланыш"
+
+msgid "Search products..."
+msgstr "Продуктуларды издөө..."
+
+msgid "Find"
+msgstr "Табуу"
+# Add these to your Kyrgyz translation file (locale/ky/LC_MESSAGES/django.po)
+
+msgid "Fresh From Farm to Table"
+msgstr "Фермадан түз столго жаңы азыктар"
+
+msgid "AgroConnect brings you the freshest produce directly from local farmers to your table."
+msgstr "AgroConnect жергиликтүү фермерлерден эң жаңы азыктарды түз сиздин столуңузга жеткирет."
+
+msgid "Featured Categories"
+msgstr "Негизги категориялар"
+
+msgid "Vegetables"
+msgstr "Жашылчалар"
+
+msgid "Fruits"
+msgstr "Жемиштер"
+
+msgid "Dairy"
+msgstr "Сүт азыктары"
+
+msgid "Grains"
+msgstr "Дан азыктары"
+
+msgid "Featured Products"
+msgstr "Сунушталган продуктулар"
+
+msgid "per"
+msgstr "ар"
+
+msgid "Details"
+msgstr "Маалымат"
+
+msgid "Add to Cart"
+msgstr "Корзинага кошуу"
+
+msgid "No products available at the moment."
+msgstr "Учурда жеткиликтүү продуктулар жок."
+
+msgid "Why Join as a Farmer?"
+msgstr "Эмне үчүн фермер катары катышуу керек?"
+
+msgid "Direct Sales"
+msgstr "Түз сатуулар"
+
+msgid "Sell directly to customers without middlemen and increase your profits."
+msgstr "Ортомчуларсыз түз керектөөчүлөргө сатып, кирешеңизди көбөйтүңүз."
+
+msgid "Grow Your Customer Base"
+msgstr "Кардарлар базаңызды кеңейтиңиз"
+
+msgid "Reach more customers through our platform."
+msgstr "Биздин платформа аркылуу көбүрөөк кардарларга жетиңиз."
+
+msgid "Register as Farmer"
+msgstr "Фермер катары катталуу"
+
+msgid "Farmer"
+msgstr "Фермер"
+
+msgid "Browse Products"
+msgstr "Продуктуларды көрүү"
+
+msgid "AgroConnect - Farm to Table Marketplace"
+msgstr "AgroConnect - Фермадан столго азык-түлүк базары"
+
+msgid "Join Us"
+msgstr "Бизге кошулуңуз"
+
+
+# Add these to your Kyrgyz translation file (locale/ky/LC_MESSAGES/django.po)
+
+msgid "Apple"
+msgstr "Алма"
+
+msgid "Potato"
+msgstr "Картошка"
+
+msgid "Tomato"
+msgstr "Помидор"
+
+msgid "Cabbage"
+msgstr "Капуста"
+
+msgid "Fresh, organic tomatoes"
+msgstr "Жаңы, органикалык помидорлор"
+
+msgid "High-quality potatoes"
+msgstr "Жогорку сапаттагы картошка"
+
+msgid "Large, fresh cabbages"
+msgstr "Чоң, жаңы капусталар"
+
+msgid "kg"
+msgstr "кг"
+
+msgid "piece"
+msgstr "даана"
+
+msgid "No Image Available"
+msgstr "Сүрөт жок"
+
+msgid "ap"
+msgstr "ар"
+
+
+
+# Add these to your Kyrgyz translation file (locale/ky/LC_MESSAGES/django.po)
+
+msgid "Shopping Cart"
+msgstr "Сатып алуу корзинасы"
+
+msgid "Your Items"
+msgstr "Сиздин буюмдар"
+
+msgid "Your cart is empty"
+msgstr "Сиздин корзина бош"
+
+msgid "Looks like you haven't added any products to your cart yet."
+msgstr "Сиз али корзинаңызга эч нерсе кошо элексиз."
+
+msgid "Order Summary"
+msgstr "Буйрутма жыйынтыгы"
+
+msgid "Items"
+msgstr "Буюмдар"
+
+msgid "Total:"
+msgstr "Жалпы:"
+
+msgid "Proceed to Checkout"
+msgstr "Буйрутманы тапшыруу"
+
+msgid "Continue Shopping"
+msgstr "Сатып алууну улантуу"
+
+msgid "Error updating item quantity"
+msgstr "Товардын санын жаңыртууда ката"
+
+msgid "Error removing item from cart"
+msgstr "Товарды корзинадан алып салууда ката"
+
+msgid "Are you sure you want to remove this item from your cart?"
+msgstr "Сиз бул нерсени корзинадан чын эле алып салгыңыз келеби?"
+
+msgid "Order"
+msgstr "Буйрутма"
+
+msgid "Order Details"
+msgstr "Буйрутма тууралуу маалымат"
+
+msgid "Date:"
+msgstr "Күнү:"
+
+msgid "Status:"
+msgstr "Статусу:"
+
+msgid "Payment Status:"
+msgstr "Төлөө статусу:"
+
+msgid "Paid"
+msgstr "Төлөнгөн"
+
+msgid "Pending"
+msgstr "Төлөө күтүлүүдө"
+
+msgid "Total Amount:"
+msgstr "Жалпы суммасы:"
+
+msgid "Delivery Address:"
+msgstr "Жеткирүү дареги:"
+
+msgid "Contact Phone:"
+msgstr "Байланыш телефону:"
+
+msgid "Payment Required"
+msgstr "Төлөө керек"
+
+msgid "This order has not been paid yet."
+msgstr "Бул буйрутма али төлөнө элек."
+
+msgid "Complete Payment"
+msgstr "Төлөөнү аяктоо"
+
+msgid "Confirm Payment Received"
+msgstr "Төлөмдү алганын тастыктоо"
+
+msgid "Only click this button if you have confirmed receipt of payment from the buyer."
+msgstr "Бул баскычты сатып алуучудан төлөмдү алганыңызды тастыктаганда гана басыңыз."
+
+msgid "Buyer Contact Information"
+msgstr "Сатып алуучунун байланыш маалыматтары"
+
+msgid "Buyer Contact:"
+msgstr "Сатып алуучу байланышы:"
+
+msgid "Name:"
+msgstr "Аты:"
+
+msgid "Phone:"
+msgstr "Телефон:"
+
+msgid "Not available"
+msgstr "Жеткиликтүү эмес"
+
+msgid "Call"
+msgstr "Чалуу"
+
+msgid "Order Items"
+msgstr "Буйрутма буюмдары"
+
+msgid "Price:"
+msgstr "Баасы:"
+
+msgid "per unit"
+msgstr "бирдиги үчүн"
+
+msgid "Qty:"
+msgstr "Саны:"
+
+msgid "Seller Contact:"
+msgstr "Сатуучу байланышы:"
+
+msgid "Delivery Information"
+msgstr "Жеткирүү жөнүндө маалымат"
+
+msgid "Address:"
+msgstr "Дарек:"

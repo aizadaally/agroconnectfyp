@@ -1,0 +1,321 @@
+# Russian translations for AgroConnect
+msgid ""
+msgstr ""
+"Project-Id-Version: AgroConnect\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-04-19 10:00+0000\n"
+"PO-Revision-Date: 2025-04-19 10:00+0000\n"
+"Last-Translator: Your Name\n"
+"Language-Team: Russian\n"
+"Language: ru\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14)? 2 : 3);\n"
+
+msgid "Home"
+msgstr "Главная"
+
+msgid "Products"
+msgstr "Продукты"
+
+msgid "Farmer Dashboard"
+msgstr "Панель фермера"
+
+msgid "Login"
+msgstr "Войти"
+
+msgid "Register"
+msgstr "Регистрация"
+
+msgid "Profile"
+msgstr "Профиль"
+
+msgid "My Orders"
+msgstr "Мои заказы"
+
+msgid "Logout"
+msgstr "Выйти"
+
+msgid "Cart"
+msgstr "Корзина"
+
+msgid "Search"
+msgstr "Поиск"
+
+msgid "Categories"
+msgstr "Категории"
+
+msgid "All Products"
+msgstr "Все продукты"
+
+msgid "Fruits"
+msgstr "Фрукты"
+
+msgid "Vegetables"
+msgstr "Овощи"
+
+msgid "Dairy"
+msgstr "Молочные продукты"
+
+msgid "Grains"
+msgstr "Зерновые"
+
+msgid "No products found matching your criteria."
+msgstr "Не найдено продуктов, соответствующих вашим критериям."
+
+msgid "Quick Links"
+msgstr "Быстрые ссылки"
+
+msgid "Contact Us"
+msgstr "Связаться с нами"
+
+msgid "Email:"
+msgstr "Электронная почта:"
+
+msgid "Phone:"
+msgstr "Телефон:"
+
+msgid "All rights reserved."
+msgstr "Все права защищены."
+
+msgid "Connecting farmers directly with consumers."
+msgstr "Соединяем фермеров напрямую с потребителями."
+
+msgid "About Us"
+msgstr "О нас"
+
+msgid "Contact"
+msgstr "Контакты"
+
+msgid "Search products..."
+msgstr "Поиск продуктов..."
+
+msgid "Find"
+msgstr "Найти"
+# Add these to your Russian translation file (locale/ru/LC_MESSAGES/django.po)
+
+msgid "Fresh From Farm to Table"
+msgstr "Свежие продукты с фермы к столу"
+
+msgid "AgroConnect brings you the freshest produce directly from local farmers to your table."
+msgstr "AgroConnect предлагает вам самые свежие продукты напрямую от местных фермеров к вашему столу."
+
+msgid "Featured Categories"
+msgstr "Популярные категории"
+
+msgid "Vegetables"
+msgstr "Овощи"
+
+msgid "Fruits"
+msgstr "Фрукты"
+
+msgid "Dairy"
+msgstr "Молочные продукты"
+
+msgid "Grains"
+msgstr "Зерновые"
+
+msgid "Featured Products"
+msgstr "Рекомендуемые продукты"
+
+msgid "per"
+msgstr "за"
+
+msgid "Details"
+msgstr "Подробнее"
+
+msgid "Add to Cart"
+msgstr "В корзину"
+
+msgid "No products available at the moment."
+msgstr "В данный момент нет доступных продуктов."
+
+msgid "Why Join as a Farmer?"
+msgstr "Почему стоит присоединиться как фермер?"
+
+msgid "Direct Sales"
+msgstr "Прямые продажи"
+
+msgid "Sell directly to customers without middlemen and increase your profits."
+msgstr "Продавайте напрямую клиентам без посредников и увеличивайте свою прибыль."
+
+msgid "Grow Your Customer Base"
+msgstr "Расширьте свою клиентскую базу"
+
+msgid "Reach more customers through our platform."
+msgstr "Привлекайте больше клиентов с помощью нашей платформы."
+
+msgid "Register as Farmer"
+msgstr "Регистрация в качестве фермера"
+
+msgid "Farmer"
+msgstr "Фермер"
+
+msgid "Browse Products"
+msgstr "Просмотр продуктов"
+
+msgid "AgroConnect - Farm to Table Marketplace"
+msgstr "AgroConnect - Маркетплейс от фермера к столу"
+
+msgid "Join Us"
+msgstr "Присоединяйтесь к нам"
+
+
+# Add these to your Russian translation file (locale/ru/LC_MESSAGES/django.po)
+
+msgid "Apple"
+msgstr "Яблоко"
+
+msgid "Potato"
+msgstr "Картофель"
+
+msgid "Tomato"
+msgstr "Помидор"
+
+msgid "Cabbage"
+msgstr "Капуста"
+
+msgid "Fresh, organic tomatoes"
+msgstr "Свежие органические помидоры"
+
+msgid "High-quality potatoes"
+msgstr "Высококачественный картофель"
+
+msgid "Large, fresh cabbages"
+msgstr "Большие свежие кочаны капусты"
+
+msgid "kg"
+msgstr "кг"
+
+msgid "piece"
+msgstr "штука"
+
+msgid "No Image Available"
+msgstr "Изображение отсутствует"
+
+msgid "ap"
+msgstr "за"
+
+
+# Add these to your Russian translation file (locale/ru/LC_MESSAGES/django.po)
+
+msgid "Shopping Cart"
+msgstr "Корзина покупок"
+
+msgid "Your Items"
+msgstr "Ваши товары"
+
+msgid "Your cart is empty"
+msgstr "Ваша корзина пуста"
+
+msgid "Looks like you haven't added any products to your cart yet."
+msgstr "Похоже, вы еще не добавили товары в корзину."
+
+msgid "Order Summary"
+msgstr "Сводка заказа"
+
+msgid "Items"
+msgstr "Товары"
+
+msgid "Total:"
+msgstr "Итого:"
+
+msgid "Proceed to Checkout"
+msgstr "Оформить заказ"
+
+msgid "Continue Shopping"
+msgstr "Продолжить покупки"
+
+msgid "Error updating item quantity"
+msgstr "Ошибка при обновлении количества товара"
+
+msgid "Error removing item from cart"
+msgstr "Ошибка при удалении товара из корзины"
+
+msgid "Are you sure you want to remove this item from your cart?"
+msgstr "Вы уверены, что хотите удалить этот товар из корзины?"
+
+msgid "Order"
+msgstr "Заказ"
+
+msgid "Order Details"
+msgstr "Детали заказа"
+
+msgid "Date:"
+msgstr "Дата:"
+
+msgid "Status:"
+msgstr "Статус:"
+
+msgid "Payment Status:"
+msgstr "Статус оплаты:"
+
+msgid "Paid"
+msgstr "Оплачено"
+
+msgid "Pending"
+msgstr "Ожидает оплаты"
+
+msgid "Total Amount:"
+msgstr "Итоговая сумма:"
+
+msgid "Delivery Address:"
+msgstr "Адрес доставки:"
+
+msgid "Contact Phone:"
+msgstr "Контактный телефон:"
+
+msgid "Payment Required"
+msgstr "Требуется оплата"
+
+msgid "This order has not been paid yet."
+msgstr "Этот заказ еще не оплачен."
+
+msgid "Complete Payment"
+msgstr "Выполнить оплату"
+
+msgid "Confirm Payment Received"
+msgstr "Подтвердить получение оплаты"
+
+msgid "Only click this button if you have confirmed receipt of payment from the buyer."
+msgstr "Нажимайте эту кнопку только если вы подтвердили получение оплаты от покупателя."
+
+msgid "Buyer Contact Information"
+msgstr "Контактная информация покупателя"
+
+msgid "Buyer Contact:"
+msgstr "Контакт покупателя:"
+
+msgid "Name:"
+msgstr "Имя:"
+
+msgid "Phone:"
+msgstr "Телефон:"
+
+msgid "Not available"
+msgstr "Недоступно"
+
+msgid "Call"
+msgstr "Позвонить"
+
+msgid "Order Items"
+msgstr "Позиции заказа"
+
+msgid "Price:"
+msgstr "Цена:"
+
+msgid "per unit"
+msgstr "за единицу"
+
+msgid "Qty:"
+msgstr "Кол-во:"
+
+msgid "Seller Contact:"
+msgstr "Контакт продавца:"
+
+msgid "Delivery Information"
+msgstr "Информация о доставке"
+
+msgid "Address:"
+msgstr "Адрес:"

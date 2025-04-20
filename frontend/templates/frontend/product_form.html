@@ -1,10 +1,11 @@
-<!-- frontend/templates/frontend/product_form.html -->
+<!-- Update the product_form.html template -->
 {% extends 'frontend/base.html' %}
+{% load i18n %}
 
-{% block title %}{% if product %}Edit{% else %}Add New{% endif %} Product - AgroConnect{% endblock %}
+{% block title %}{% if product %}{% trans "Edit" %}{% else %}{% trans "Add New" %}{% endif %} {% trans "Product" %} - AgroConnect{% endblock %}
 
 {% block content %}
-<h1 class="mb-4">{% if product %}Edit{% else %}Add New{% endif %} Product</h1>
+<h1 class="mb-4">{% if product %}{% trans "Edit" %}{% else %}{% trans "Add New" %}{% endif %} {% trans "Product" %}</h1>
 
 {% if error %}
 <div class="alert alert-danger mb-4">
@@ -18,34 +19,110 @@
         <div class="col-md-8">
             <div class="card mb-4">
                 <div class="card-header bg-success text-white">
-                    <h5 class="mb-0">Product Information</h5>
+                    <h5 class="mb-0">{% trans "Product Information" %}</h5>
                 </div>
                 <div class="card-body">
-                    <div class="mb-3">
-                        <label for="name" class="form-label required-field">Product Name</label>
-                        <input type="text" name="name" id="name" class="form-control" value="{{ product.name }}" required>
+                    <!-- Product name tabs -->
+                    <ul class="nav nav-tabs mb-3" id="nameTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="name-default-tab" data-bs-toggle="tab" data-bs-target="#name-default" type="button" role="tab" aria-controls="name-default" aria-selected="true">{% trans "Default" %}</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="name-en-tab" data-bs-toggle="tab" data-bs-target="#name-en" type="button" role="tab" aria-controls="name-en" aria-selected="false">English</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="name-ru-tab" data-bs-toggle="tab" data-bs-target="#name-ru" type="button" role="tab" aria-controls="name-ru" aria-selected="false">Русский</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="name-ky-tab" data-bs-toggle="tab" data-bs-target="#name-ky" type="button" role="tab" aria-controls="name-ky" aria-selected="false">Кыргызча</button>
+                        </li>
+                    </ul>
+                    
+                    <div class="tab-content mb-3" id="nameTabsContent">
+                        <div class="tab-pane fade show active" id="name-default" role="tabpanel" aria-labelledby="name-default-tab">
+                            <div class="mb-3">
+                                <label for="name" class="form-label required-field">{% trans "Product Name" %} ({% trans "Default" %})</label>
+                                <input type="text" name="name" id="name" class="form-control" value="{{ product.name }}" required>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="name-en" role="tabpanel" aria-labelledby="name-en-tab">
+                            <div class="mb-3">
+                                <label for="name_en" class="form-label">{% trans "Product Name" %} (English)</label>
+                                <input type="text" name="name_en" id="name_en" class="form-control" value="{{ product.name_en }}">
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="name-ru" role="tabpanel" aria-labelledby="name-ru-tab">
+                            <div class="mb-3">
+                                <label for="name_ru" class="form-label">{% trans "Product Name" %} (Русский)</label>
+                                <input type="text" name="name_ru" id="name_ru" class="form-control" value="{{ product.name_ru }}">
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="name-ky" role="tabpanel" aria-labelledby="name-ky-tab">
+                            <div class="mb-3">
+                                <label for="name_ky" class="form-label">{% trans "Product Name" %} (Кыргызча)</label>
+                                <input type="text" name="name_ky" id="name_ky" class="form-control" value="{{ product.name_ky }}">
+                            </div>
+                        </div>
                     </div>
                     
                     <div class="mb-3">
-                        <label for="category" class="form-label required-field">Category</label>
+                        <label for="category" class="form-label required-field">{% trans "Category" %}</label>
                         <select name="category" id="category" class="form-select" required>
-                            <option value="">Select a category</option>
+                            <option value="">{% trans "Select a category" %}</option>
                             {% for category in categories %}
                             <option value="{{ category.id }}" {% if product.category_id == category.id %}selected{% endif %}>
-                                {{ category.name }}
+                                {{ category.get_translated_name }}
                             </option>
                             {% endfor %}
                         </select>
                     </div>
                     
-                    <div class="mb-3">
-                        <label for="description" class="form-label">Description</label>
-                        <textarea name="description" id="description" rows="4" class="form-control">{{ product.description }}</textarea>
+                    <!-- Description tabs -->
+                    <ul class="nav nav-tabs mb-3" id="descriptionTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="description-default-tab" data-bs-toggle="tab" data-bs-target="#description-default" type="button" role="tab" aria-controls="description-default" aria-selected="true">{% trans "Default" %}</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="description-en-tab" data-bs-toggle="tab" data-bs-target="#description-en" type="button" role="tab" aria-controls="description-en" aria-selected="false">English</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="description-ru-tab" data-bs-toggle="tab" data-bs-target="#description-ru" type="button" role="tab" aria-controls="description-ru" aria-selected="false">Русский</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="description-ky-tab" data-bs-toggle="tab" data-bs-target="#description-ky" type="button" role="tab" aria-controls="description-ky" aria-selected="false">Кыргызча</button>
+                        </li>
+                    </ul>
+                    
+                    <div class="tab-content mb-3" id="descriptionTabsContent">
+                        <div class="tab-pane fade show active" id="description-default" role="tabpanel" aria-labelledby="description-default-tab">
+                            <div class="mb-3">
+                                <label for="description" class="form-label">{% trans "Description" %} ({% trans "Default" %})</label>
+                                <textarea name="description" id="description" rows="4" class="form-control">{{ product.description }}</textarea>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="description-en" role="tabpanel" aria-labelledby="description-en-tab">
+                            <div class="mb-3">
+                                <label for="description_en" class="form-label">{% trans "Description" %} (English)</label>
+                                <textarea name="description_en" id="description_en" rows="4" class="form-control">{{ product.description_en }}</textarea>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="description-ru" role="tabpanel" aria-labelledby="description-ru-tab">
+                            <div class="mb-3">
+                                <label for="description_ru" class="form-label">{% trans "Description" %} (Русский)</label>
+                                <textarea name="description_ru" id="description_ru" rows="4" class="form-control">{{ product.description_ru }}</textarea>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="description-ky" role="tabpanel" aria-labelledby="description-ky-tab">
+                            <div class="mb-3">
+                                <label for="description_ky" class="form-label">{% trans "Description" %} (Кыргызча)</label>
+                                <textarea name="description_ky" id="description_ky" rows="4" class="form-control">{{ product.description_ky }}</textarea>
+                            </div>
+                        </div>
                     </div>
                     
                     <div class="row">
                         <div class="col-md-4 mb-3">
-                            <label for="price" class="form-label required-field">Price</label>
+                            <label for="price" class="form-label required-field">{% trans "Price" %}</label>
                             <div class="input-group">
                                 <span class="input-group-text">$</span>
                                 <input type="number" name="price" id="price" class="form-control" step="0.01" min="0" value="{{ product.price }}" required>
@@ -53,26 +130,26 @@
                         </div>
                         
                         <div class="col-md-4 mb-3">
-                            <label for="quantity_available" class="form-label required-field">Quantity</label>
+                            <label for="quantity_available" class="form-label required-field">{% trans "Quantity" %}</label>
                             <input type="number" name="quantity_available" id="quantity_available" class="form-control" min="0" value="{{ product.quantity_available }}" required>
                         </div>
                         
                         <div class="col-md-4 mb-3">
-                            <label for="unit" class="form-label required-field">Unit</label>
+                            <label for="unit" class="form-label required-field">{% trans "Unit" %}</label>
                             <select name="unit" id="unit" class="form-select" required>
-                                <option value="kg" {% if product.unit == 'kg' %}selected{% endif %}>Kilogram (kg)</option>
-                                <option value="g" {% if product.unit == 'g' %}selected{% endif %}>Gram (g)</option>
-                                <option value="piece" {% if product.unit == 'piece' %}selected{% endif %}>Piece</option>
-                                <option value="bundle" {% if product.unit == 'bundle' %}selected{% endif %}>Bundle</option>
-                                <option value="box" {% if product.unit == 'box' %}selected{% endif %}>Box</option>
-                                <option value="dozen" {% if product.unit == 'dozen' %}selected{% endif %}>Dozen</option>
+                                <option value="kg" {% if product.unit == 'kg' %}selected{% endif %}>{% trans "Kilogram (kg)" %}</option>
+                                <option value="g" {% if product.unit == 'g' %}selected{% endif %}>{% trans "Gram (g)" %}</option>
+                                <option value="piece" {% if product.unit == 'piece' %}selected{% endif %}>{% trans "Piece" %}</option>
+                                <option value="bundle" {% if product.unit == 'bundle' %}selected{% endif %}>{% trans "Bundle" %}</option>
+                                <option value="box" {% if product.unit == 'box' %}selected{% endif %}>{% trans "Box" %}</option>
+                                <option value="dozen" {% if product.unit == 'dozen' %}selected{% endif %}>{% trans "Dozen" %}</option>
                             </select>
                         </div>
                     </div>
                     
                     <div class="mb-3 form-check">
                         <input type="checkbox" name="is_available" id="is_available" class="form-check-input" {% if product.is_available %}checked{% endif %}>
-                        <label for="is_available" class="form-check-label">Product is available for sale</label>
+                        <label for="is_available" class="form-check-label">{% trans "Product is available for sale" %}</label>
                     </div>
                 </div>
             </div>
@@ -81,17 +158,17 @@
         <div class="col-md-4">
             <div class="card mb-4">
                 <div class="card-header bg-success text-white">
-                    <h5 class="mb-0">Product Image</h5>
+                    <h5 class="mb-0">{% trans "Product Image" %}</h5>
                 </div>
                 <div class="card-body">
                     <div class="mb-3">
                         <input type="file" name="image" id="image" class="form-control" accept="image/*">
-                        <div class="form-text">Upload a clear image of your product. Max size: 5MB.</div>
+                        <div class="form-text">{% trans "Upload a clear image of your product. Max size: 5MB." %}</div>
                     </div>
                     
                     {% if product.image %}
                     <div class="mb-3">
-                        <p class="mb-2">Current Image:</p>
+                        <p class="mb-2">{% trans "Current Image:" %}</p>
                         <img src="{{ product.image.url }}" alt="{{ product.name }}" class="img-thumbnail" style="max-height: 200px;">
                     </div>
                     {% endif %}
@@ -102,11 +179,11 @@
     
     <div class="d-flex justify-content-between mt-4">
         <a href="{% url 'frontend:farmer_dashboard' %}" class="btn btn-outline-secondary">
-            Cancel
+            {% trans "Cancel" %}
         </a>
         
         <button type="submit" class="btn btn-success">
-            {% if product %}Update{% else %}Create{% endif %} Product
+            {% if product %}{% trans "Update" %}{% else %}{% trans "Create" %}{% endif %} {% trans "Product" %}
         </button>
     </div>
 </form>

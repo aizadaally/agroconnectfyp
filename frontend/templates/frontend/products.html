@@ -1,23 +1,34 @@
 <!-- frontend/templates/frontend/products.html -->
 {% extends 'frontend/base.html' %}
 {% load frontend_extras %}
+{% load i18n %}
 
-{% block title %}Products - AgroConnect{% endblock %}
+{% block title %}{% trans "Products" %} - AgroConnect{% endblock %}
 
 {% block content %}
 <div class="row">
     <div class="col-md-3 mb-4">
         <div class="card">
             <div class="card-header bg-success text-white">
-                <h5 class="mb-0">Categories</h5>
+                <h5 class="mb-0">{% trans "Categories" %}</h5>
             </div>
             <div class="list-group list-group-flush">
                 <a href="{% url 'frontend:products' %}" class="list-group-item list-group-item-action {% if not selected_category %}active{% endif %}">
-                    All Products
+                    {% trans "All Products" %}
                 </a>
                 {% for category in categories %}
                 <a href="{% url 'frontend:products' %}?category={{ category.id }}" class="list-group-item list-group-item-action {% if selected_category == category.id %}active{% endif %}">
-                    {{ category.name }}
+                    {% if category.name == 'Vegetables' %}
+                        {% trans "Vegetables" %}
+                    {% elif category.name == 'Fruits' %}
+                        {% trans "Fruits" %}
+                    {% elif category.name == 'Dairy' %}
+                        {% trans "Dairy" %}
+                    {% elif category.name == 'Grains' %}
+                        {% trans "Grains" %}
+                    {% else %}
+                        {{ category.get_translated_name }}
+                    {% endif %}
                 </a>
                 {% endfor %}
             </div>
@@ -31,19 +42,19 @@
                     {% if selected_category %}
                     <input type="hidden" name="category" value="{{ selected_category }}">
                     {% endif %}
-                    <input type="text" name="search" class="form-control me-2" placeholder="Search products..." value="{{ search_query }}">
-                    <button type="submit" class="btn btn-success">Search</button>
+                    <input type="text" name="search" class="form-control me-2" placeholder="{% trans 'Search products...' %}" value="{{ search_query }}">
+                    <button type="submit" class="btn btn-success">{% trans "Search" %}</button>
                 </form>
             </div>
         </div>
         
         <h2 class="mb-4">
             {% if selected_category %}
-                {{ selected_category_name }} Products
+                {{ selected_category_name }} {% trans "Products" %}
             {% elif search_query %}
-                Search Results for "{{ search_query }}"
+                {% trans "Search Results for" %} "{{ search_query }}"
             {% else %}
-                All Products
+                {% trans "All Products" %}
             {% endif %}
         </h2>
         
@@ -52,21 +63,65 @@
             <div class="col-md-4 mb-4">
                 <div class="card h-100">
                     {% if product.image %}
-                    <img src="{{ product.image.url }}" class="card-img-top product-image" alt="{{ product.name }}">
+                    <img src="{{ product.image.url }}" class="card-img-top product-image" alt="{{ product.get_translated_name }}">
                     {% else %}
-                    <img src="https://via.placeholder.com/300x200?text=No+Image" class="card-img-top product-image" alt="No Image Available">
+                    <img src="https://via.placeholder.com/300x200?text=No+Image" class="card-img-top product-image" alt="{% trans 'No Image Available' %}">
                     {% endif %}
                     <div class="card-body d-flex flex-column">
-                        <h5 class="card-title">{{ product.name }}</h5>
-                        <p class="card-text text-muted small">{{ product.category.name }}</p>
-                        <p class="card-text">{{ product.description|truncatechars:80 }}</p>
+                        <h5 class="card-title">
+                            {% if product.name == "Apple" or product.name == "apple" %}
+                                {% trans "Apple" %}
+                            {% elif product.name == "Potato" %}
+                                {% trans "Potato" %}
+                            {% elif product.name == "Tomato" %}
+                                {% trans "Tomato" %}
+                            {% elif product.name == "Cabbage" %}
+                                {% trans "Cabbage" %}
+                            {% else %}
+                                {{ product.get_translated_name }}
+                            {% endif %}
+                        </h5>
+                        <p class="card-text text-muted small">
+                            {% if product.category.name == "Vegetables" %}
+                                {% trans "Vegetables" %}
+                            {% elif product.category.name == "Fruits" %}
+                                {% trans "Fruits" %}
+                            {% elif product.category.name == "Dairy" %}
+                                {% trans "Dairy" %}
+                            {% elif product.category.name == "Grains" %}
+                                {% trans "Grains" %}
+                            {% else %}
+                                {{ product.category.get_translated_name }}
+                            {% endif %}
+                        </p>
+                        <p class="card-text">
+                            {% if product.description == "Fresh, organic tomatoes" %}
+                                {% trans "Fresh, organic tomatoes" %}
+                            {% elif product.description == "High-quality potatoes" %}
+                                {% trans "High-quality potatoes" %}
+                            {% elif product.description == "Large, fresh cabbages" %}
+                                {% trans "Large, fresh cabbages" %}
+                            {% else %}
+                                {{ product.get_translated_description|truncatechars:80 }}
+                            {% endif %}
+                        </p>
                         <div class="mt-auto">
+                            <!-- Update the price display in products.html -->
                             <div class="d-flex justify-content-between align-items-center">
-                                <h6 class="mb-0">${{ product.price }} per {{ product.unit }}</h6>
+                                <h6 class="mb-0">
+                                    {{ product.price|floatformat:2 }} сом
+                                    {% if product.unit == "kg" %}
+                                        {% trans "ap" %} {% trans "kg" %}
+                                    {% elif product.unit == "piece" %}
+                                        {% trans "ap" %} {% trans "piece" %}
+                                    {% else %}
+                                        {% trans "ap" %} {{ product.unit }}
+                                    {% endif %}
+                                </h6>
                                 <div>
-                                    <a href="{% url 'frontend:product_detail' product.id %}" class="btn btn-sm btn-outline-success me-1">Details</a>
+                                    <a href="{% url 'frontend:product_detail' product.id %}" class="btn btn-sm btn-outline-success me-1">{% trans "Details" %}</a>
                                     {% if user.is_authenticated and user.is_buyer %}
-                                    <button onclick="addToCart({{ product.id }})" class="btn btn-sm btn-success">Add to Cart</button>
+                                    <button onclick="addToCart({{ product.id }})" class="btn btn-sm btn-success">{% trans "Add to Cart" %}</button>
                                     {% endif %}
                                 </div>
                             </div>
@@ -76,7 +131,7 @@
             </div>
             {% empty %}
             <div class="col-12 text-center">
-                <p>No products found matching your criteria.</p>
+                <p>{% trans "No products found matching your criteria." %}</p>
             </div>
             {% endfor %}
         </div>

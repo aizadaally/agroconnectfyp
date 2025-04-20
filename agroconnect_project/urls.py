@@ -4,13 +4,24 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-from django.views.generic import RedirectView
+from django.conf.urls.i18n import i18n_patterns
+from django.utils.translation import gettext_lazy as _
 
+# Non-translated URL patterns
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    # This is critical for language switching to work
+    path('i18n/', include('django.conf.urls.i18n')),
+    # Place API paths outside of i18n patterns
     path('api/', include('api.urls')),
-    path('', include('frontend.urls')),  # Add this line
 ]
+
+# Translated URL patterns
+urlpatterns += i18n_patterns(
+    path(_('admin/'), admin.site.urls),
+    # Don't include API here - it should be in the non-translated section
+    path('', include('frontend.urls')),
+    prefix_default_language=True  # Keep language prefix for consistency
+)
 
 # Serve media files in development
 if settings.DEBUG:

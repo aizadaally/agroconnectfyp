@@ -15,6 +15,38 @@ import json
 import base64
 import qrcode
 from io import BytesIO
+from django.utils.translation import gettext_lazy as _
+
+# Update the products_view function in frontend/views.py
+
+from django.shortcuts import render, redirect, get_object_or_404
+from django.db.models import Q
+from django.utils.translation import get_language
+from products.models import Category, Product
+from django.http import JsonResponse
+from django.utils.translation import get_language
+from django.utils.translation import gettext as _
+def test_language(request):
+    """View to test language settings"""
+    current_language = get_language()
+    sample_translations = {
+        'home': _('Home'),
+        'products': _('Products'),
+        'categories': _('Categories'),
+        'search': _('Search'),
+    }
+    
+    debug_info = {
+        'current_language': current_language,
+        'session_language': request.session.get('_language', 'Not set in session'),
+        'cookie_language': request.COOKIES.get('django_language', 'Not set in cookie'),
+        'translations': sample_translations,
+        'session_items': dict(request.session),
+    }
+    
+    return JsonResponse(debug_info)
+
+
 
 
 
@@ -25,6 +57,7 @@ def home_view(request):
     context = {
         'categories': categories,
         'products': products
+        # 'page_title': _('Home') 
     }
     return render(request, 'frontend/home.html', context)
 
@@ -115,23 +148,53 @@ def products_view(request):
     products = Product.objects.filter(is_available=True)
     
     # Get category name for display
-    category_name = "All"
+    category_name = _("All")
     if category_id:
         products = products.filter(category_id=category_id)
         try:
             category = Category.objects.get(id=category_id)
-            category_name = category.name
+            category_name = category.get_translated_name()
         except Category.DoesNotExist:
             pass
     
+    # Handle search with multilingual support
+    current_lang = get_language()
+    
     if search_query:
-        products = products.filter(name__icontains=search_query)
+        # Create different filters based on the current language
+        if current_lang == 'ru':
+            products = products.filter(
+                Q(name_ru__icontains=search_query) | 
+                Q(name__icontains=search_query) |
+                Q(description_ru__icontains=search_query) |
+                Q(description__icontains=search_query)
+            )
+        elif current_lang == 'ky':
+            products = products.filter(
+                Q(name_ky__icontains=search_query) | 
+                Q(name__icontains=search_query) |
+                Q(description_ky__icontains=search_query) |
+                Q(description__icontains=search_query)
+            )
+        elif current_lang == 'en':
+            products = products.filter(
+                Q(name_en__icontains=search_query) | 
+                Q(name__icontains=search_query) |
+                Q(description_en__icontains=search_query) |
+                Q(description__icontains=search_query)
+            )
+        else:
+            # Default fallback
+            products = products.filter(
+                Q(name__icontains=search_query) |
+                Q(description__icontains=search_query)
+            )
     
     context = {
         'categories': categories,
         'products': products,
         'selected_category': int(category_id) if category_id else None,
-        'selected_category_name': category_name,  # Add this line
+        'selected_category_name': category_name,
         'search_query': search_query
     }
     return render(request, 'frontend/products.html', context)
@@ -313,10 +376,12 @@ def farmer_dashboard_view(request):
     }
     return render(request, 'frontend/farmer_dashboard.html', context)
 
+# Update the product_form_view function in frontend/views.py
+
 @login_required
 def product_form_view(request, product_id=None):
     if not request.user.is_farmer():
-        messages.error(request, 'You need to be a farmer to access this page.')
+        messages.error(request, _('You need to be a farmer to access this page.'))
         return redirect('frontend:home')
     
     # For editing an existing product
@@ -327,9 +392,19 @@ def product_form_view(request, product_id=None):
     categories = Category.objects.all()
     
     if request.method == 'POST':
+        # Get basic fields
         name = request.POST.get('name')
+        name_en = request.POST.get('name_en')
+        name_ru = request.POST.get('name_ru')
+        name_ky = request.POST.get('name_ky')
+        
         category_id = request.POST.get('category')
+        
         description = request.POST.get('description')
+        description_en = request.POST.get('description_en')
+        description_ru = request.POST.get('description_ru')
+        description_ky = request.POST.get('description_ky')
+        
         price = request.POST.get('price')
         quantity_available = request.POST.get('quantity_available')
         unit = request.POST.get('unit')
@@ -337,11 +412,11 @@ def product_form_view(request, product_id=None):
         
         # Validate form data
         if not (name and category_id and price and quantity_available and unit):
-            messages.error(request, 'Please fill in all required fields.')
+            messages.error(request, _('Please fill in all required fields.'))
             return render(request, 'frontend/product_form.html', {
                 'product': product,
                 'categories': categories,
-                'error': 'Please fill in all required fields.'
+                'error': _('Please fill in all required fields.')
             })
         
         try:
@@ -349,8 +424,17 @@ def product_form_view(request, product_id=None):
             
             if product:  # Update existing product
                 product.name = name
+                product.name_en = name_en
+                product.name_ru = name_ru
+                product.name_ky = name_ky
+                
                 product.category = category
+                
                 product.description = description
+                product.description_en = description_en
+                product.description_ru = description_ru
+                product.description_ky = description_ky
+                
                 product.price = price
                 product.quantity_available = quantity_available
                 product.unit = unit
@@ -358,9 +442,18 @@ def product_form_view(request, product_id=None):
             else:  # Create new product
                 product = Product(
                     name=name,
+                    name_en=name_en,
+                    name_ru=name_ru,
+                    name_ky=name_ky,
+                    
                     farmer=request.user,
                     category=category,
+                    
                     description=description,
+                    description_en=description_en,
+                    description_ru=description_ru,
+                    description_ky=description_ky,
+                    
                     price=price,
                     quantity_available=quantity_available,
                     unit=unit,
@@ -373,16 +466,22 @@ def product_form_view(request, product_id=None):
             
             product.save()
             
-            messages.success(request, f'Product {"updated" if product_id else "created"} successfully!')
+            messages.success(request, _('Product {status} successfully!').format(
+                status=_("updated") if product_id else _("created")
+            ))
             return redirect('frontend:farmer_dashboard')
         except Exception as e:
-            messages.error(request, f'Error saving product: {str(e)}')
+            messages.error(request, _('Error saving product: {error}').format(error=str(e)))
     
     context = {
         'product': product,
         'categories': categories
     }
     return render(request, 'frontend/product_form.html', context)
+
+
+
+
 
 @login_required
 def delete_product_view(request, product_id):

@@ -1,19 +1,17 @@
 <!-- frontend/templates/frontend/base.html -->
+{% load static %}
+{% load i18n %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
-
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}AgroConnect{% endblock %}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    {% load static %}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
     <link rel="stylesheet" href="{% static 'frontend/css/style.css' %}">
     {% block extra_css %}{% endblock %}
-
-
 
     <style>
         /* Sticky header styles */
@@ -40,22 +38,54 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'frontend:home' %}">Home</a>
+                        <a class="nav-link" href="{% url 'frontend:home' %}">{% trans "Home" %}</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'frontend:products' %}">Products</a>
+                        <a class="nav-link" href="{% url 'frontend:products' %}">{% trans "Products" %}</a>
                     </li>
                     {% if user.is_authenticated and user.is_farmer %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'frontend:farmer_dashboard' %}">Farmer Dashboard</a>
+                        <a class="nav-link" href="{% url 'frontend:farmer_dashboard' %}">{% trans "Farmer Dashboard" %}</a>
                     </li>
                     {% endif %}
                 </ul>
+
                 <ul class="navbar-nav">
+                    <!-- Updated Language Selector with Direct Links -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="languageDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-globe"></i>
+                            {% if LANGUAGE_CODE == 'en' %}
+                                English
+                            {% elif LANGUAGE_CODE == 'ru' %}
+                                Русский
+                            {% elif LANGUAGE_CODE == 'ky' %}
+                                Кыргызча
+                            {% endif %}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="languageDropdown">
+                            <li>
+                                <a href="/en{{ request.get_full_path|slice:'3:' }}" class="dropdown-item {% if LANGUAGE_CODE == 'en' %}active{% endif %}">
+                                    English
+                                </a>
+                            </li>
+                            <li>
+                                <a href="/ru{{ request.get_full_path|slice:'3:' }}" class="dropdown-item {% if LANGUAGE_CODE == 'ru' %}active{% endif %}">
+                                    Русский
+                                </a>
+                            </li>
+                            <li>
+                                <a href="/ky{{ request.get_full_path|slice:'3:' }}" class="dropdown-item {% if LANGUAGE_CODE == 'ky' %}active{% endif %}">
+                                    Кыргызча
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    
                     {% if user.is_authenticated %}
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'frontend:cart' %}">
-                            Cart <span class="badge bg-light text-dark cart-badge" id="cart-badge">0</span>
+                            {% trans "Cart" %} <span class="badge bg-light text-dark cart-badge" id="cart-badge">0</span>
                         </a>
                     </li>
                     <li class="nav-item dropdown">
@@ -63,18 +93,18 @@
                             {{ user.username }}
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end">
-                            <li><a class="dropdown-item" href="{% url 'frontend:profile' %}">Profile</a></li>
-                            <li><a class="dropdown-item" href="{% url 'frontend:orders' %}">My Orders</a></li>
+                            <li><a class="dropdown-item" href="{% url 'frontend:profile' %}">{% trans "Profile" %}</a></li>
+                            <li><a class="dropdown-item" href="{% url 'frontend:orders' %}">{% trans "My Orders" %}</a></li>
                             <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="{% url 'frontend:logout' %}">Logout</a></li>
+                            <li><a class="dropdown-item" href="{% url 'frontend:logout' %}">{% trans "Logout" %}</a></li>
                         </ul>
                     </li>
                     {% else %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'frontend:login' %}">Login</a>
+                        <a class="nav-link" href="{% url 'frontend:login' %}">{% trans "Login" %}</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'frontend:register' %}">Register</a>
+                        <a class="nav-link" href="{% url 'frontend:register' %}">{% trans "Register" %}</a>
                     </li>
                     {% endif %}
                 </ul>
@@ -100,30 +130,31 @@
             <div class="row">
                 <div class="col-md-4">
                     <h5>AgroConnect</h5>
-                    <p>Connecting farmers directly with consumers.</p>
+                    <p>{% trans "Connecting farmers directly with consumers." %}</p>
                 </div>
                 <div class="col-md-4">
-                    <h5>Quick Links</h5>
+                    <h5>{% trans "Quick Links" %}</h5>
                     <ul class="list-unstyled">
-                        <li><a href="{% url 'frontend:home' %}" class="text-white">Home</a></li>
-                        <li><a href="{% url 'frontend:products' %}" class="text-white">Products</a></li>
-                        <li><a href="#" class="text-white">About Us</a></li>
-                        <li><a href="#" class="text-white">Contact</a></li>
+                        <li><a href="{% url 'frontend:home' %}" class="text-white">{% trans "Home" %}</a></li>
+                        <li><a href="{% url 'frontend:products' %}" class="text-white">{% trans "Products" %}</a></li>
+                        <li><a href="#" class="text-white">{% trans "About Us" %}</a></li>
+                        <li><a href="#" class="text-white">{% trans "Contact" %}</a></li>
                     </ul>
                 </div>
                 <div class="col-md-4">
-                    <h5>Contact Us</h5>
-                    <p>Email: info@agroconnect.com</p>
-                    <p>Phone: +123-456-7890</p>
+                    <h5>{% trans "Contact Us" %}</h5>
+                    <p>{% trans "Email:" %} info@agroconnect.com</p>
+                    <p>{% trans "Phone:" %} +123-456-7890</p>
                 </div>
             </div>
             <hr>
-            <p class="text-center mb-0">&copy; 2025 AgroConnect. All rights reserved.</p>
+            <p class="text-center mb-0">&copy; 2025 AgroConnect. {% trans "All rights reserved." %}</p>
         </div>
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     <script src="{% static 'frontend/js/main.js' %}"></script>
+    
     {% block extra_js %}{% endblock %}
 </body>
 </html>

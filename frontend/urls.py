@@ -37,4 +37,6 @@ urlpatterns = [
     path('orders/<int:order_id>/verify-payment/', views.verify_payment, name='verify_payment'),
     path('orders/<int:order_id>/confirm-payment/', views.manual_payment_confirmation, name='confirm_payment'),
 
+    path('test-language/', views.test_language, name='test_language'),
+
 ]

@@ -1,5 +1,6 @@
 # agroconnect_project/settings.py
-
+# Add these imports at the top of settings.py
+from django.utils.translation import gettext_lazy as _
 import os
 from pathlib import Path
 
@@ -38,13 +39,32 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'corsheaders.middleware.CorsMiddleware',  # CORS middleware
-    'django.middleware.common.CommonMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',  # SessionMiddleware must come first
+    'django.middleware.locale.LocaleMiddleware',             # LocaleMiddleware must be here
+    'corsheaders.middleware.CorsMiddleware',                 # Your CORS middleware
+    'django.middleware.common.CommonMiddleware',             # Then CommonMiddleware
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+]
+
+# Internationalization settings
+# Set your language code to Kyrgyz as default
+LANGUAGE_CODE = 'en'  # Default language (Kyrgyz)
+
+# Define available languages
+LANGUAGES = [
+    ('en', _('English')),
+    ('ru', _('Russian')),
+    ('ky', _('Kyrgyz')),
+]
+
+
+# Location of translation files
+USE_I18N = True
+LOCALE_PATHS = [
+    os.path.join(BASE_DIR, 'locale'),
 ]
 
 ROOT_URLCONF = 'agroconnect_project.urls'
@@ -52,7 +72,7 @@ ROOT_URLCONF = 'agroconnect_project.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'frontend/templates')],  # Add this
+        'DIRS': [os.path.join(BASE_DIR, 'frontend/templates')],  # Your existing setting
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -60,6 +80,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'frontend.context_processors.language_context',  # Add this line
             ],
         },
     },
@@ -99,9 +120,9 @@ AUTH_PASSWORD_VALIDATORS = [
 AUTH_USER_MODEL = 'users.User'
 
 # Internationalization
-LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
-USE_I18N = True
+# USE_I18N = True  # Enable internationalization
+USE_L10N = True  # Enable localization
 USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)

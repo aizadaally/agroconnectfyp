@@ -3,12 +3,17 @@
 from django.utils.translation import gettext_lazy as _
 import os
 from pathlib import Path
+from pathlib import Path
+from dotenv import load_dotenv
+load_dotenv()
+from django.contrib.messages import constants as messages
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-your-secret-key-here'
+SECRET_KEY = os.getenv("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
@@ -91,12 +96,12 @@ WSGI_APPLICATION = 'agroconnect_project.wsgi.application'
 # Database
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'agroconnect_db',
-        'USER': 'postgres',
-        'PASSWORD': 'SepN@ryn2020',  # Change this to your actual password
-        'HOST': 'localhost',
-        'PORT': '5432',
+        'ENGINE': os.getenv("ENGINE"),
+        'NAME': os.getenv("PGNAME"),
+        'USER': os.getenv("PGUSER"),
+        'PASSWORD': os.getenv("PGPASSWORD"),
+        'HOST': os.getenv("PGHOST"),
+        'PORT': os.getenv("PGPORT"),
     }
 }
 
@@ -158,14 +163,14 @@ REST_FRAMEWORK = {
 CORS_ALLOW_CREDENTIALS = True
 
 
-# if not DEBUG:
-#     CSRF_TRUSTED_ORIGINS = ['', '']
-#     # SECURE_SSL_REDIRECT = True
-#     SESSION_COOKIE_SECURE = True
-#     CSRF_COOKIE_SECURE = True
-#     SECURE_BROWSER_XSS_FILTER = True
-#     SECURE_CONTENT_TYPE_NOSNIFF = True
-# #     SECURE_HSTS_SECONDS = 31536000  # 1 year
-# #     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-# #     SECURE_HSTS_PRELOAD = True
-#     X_FRAME_OPTIONS = 'DENY'
+if not DEBUG:
+    # CSRF_TRUSTED_ORIGINS = ['*']
+    # SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_BROWSER_XSS_FILTER = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+#     SECURE_HSTS_SECONDS = 31536000  # 1 year
+#     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+#     SECURE_HSTS_PRELOAD = True
+    X_FRAME_OPTIONS = 'DENY'

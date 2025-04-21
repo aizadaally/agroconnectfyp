@@ -167,7 +167,7 @@ CORS_ALLOW_CREDENTIALS = True
 
 
 if not DEBUG:
-    # CSRF_TRUSTED_ORIGINS = ['*']
+    CSRF_TRUSTED_ORIGINS = ['https://agroconnect.up.railway.app', 'https://agroconnectnaryn.org']
     # SECURE_SSL_REDIRECT = True
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True

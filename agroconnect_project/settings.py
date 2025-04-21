@@ -44,6 +44,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',  # SessionMiddleware must come first
     'django.middleware.locale.LocaleMiddleware',             # LocaleMiddleware must be here
     'corsheaders.middleware.CorsMiddleware',                 # Your CORS middleware
@@ -134,6 +135,8 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
 # Media files
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
@@ -143,10 +146,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # CORS settings
 CORS_ALLOW_ALL_ORIGINS = DEBUG  # In production, specify exact origins
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:8000",
+# CORS_ALLOWED_ORIGINS = [
+#     "http://localhost:8000",
     
-]
+# ]
 
 # REST Framework settings
 REST_FRAMEWORK = {

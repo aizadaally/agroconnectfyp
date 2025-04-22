@@ -16,6 +16,14 @@ import base64
 import qrcode
 from io import BytesIO
 from django.utils.translation import gettext_lazy as _
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from django.contrib.auth import login
+from django.utils.translation import gettext as _
+from users.models import User
+from users.verification import EmailVerificationToken
+from django.db.models import Q
+from products.models import Category, Product
 
 # Update the products_view function in frontend/views.py
 
@@ -26,6 +34,10 @@ from products.models import Category, Product
 from django.http import JsonResponse
 from django.utils.translation import get_language
 from django.utils.translation import gettext as _
+
+
+
+
 def test_language(request):
     """View to test language settings"""
     current_language = get_language()
@@ -48,98 +60,6 @@ def test_language(request):
 
 
 
-
-
-def home_view(request):
-    categories = Category.objects.all()[:4]  # Limit to 4 categories
-    products = Product.objects.filter(is_available=True).order_by('-created_at')[:6]  # Latest 6 products
-    
-    context = {
-        'categories': categories,
-        'products': products
-        # 'page_title': _('Home') 
-    }
-    return render(request, 'frontend/home.html', context)
-
-def login_view(request):
-    if request.method == 'POST':
-        username = request.POST.get('username')
-        password = request.POST.get('password')
-        
-        user = authenticate(request, username=username, password=password)
-        if user is not None:
-            login(request, user)
-            messages.success(request, 'You have successfully logged in!')
-            return redirect('frontend:home')
-        else:
-            return render(request, 'frontend/login.html', {'error': 'Invalid username or password'})
-    
-    return render(request, 'frontend/login.html')
-
-@login_required
-def logout_view(request):
-    logout(request)
-    messages.success(request, 'You have been logged out successfully!')
-    return redirect('frontend:home')
-
-# frontend/views.py (continued)
-
-def register_view(request):
-    if request.method == 'POST':
-        # Get form data
-        username = request.POST.get('username')
-        email = request.POST.get('email')
-        password = request.POST.get('password')
-        first_name = request.POST.get('first_name')
-        last_name = request.POST.get('last_name')
-        user_type = request.POST.get('user_type')
-        phone_number = request.POST.get('phone_number')
-        address = request.POST.get('address')
-        farm_name = request.POST.get('farm_name', '')
-        farm_location = request.POST.get('farm_location', '')
-        
-        # Basic validation
-        if not (username and email and password and first_name and last_name and user_type and phone_number and address):
-            messages.error(request, 'Please fill in all required fields.')
-            return render(request, 'frontend/register.html', {'error': 'Please fill in all required fields.'})
-        
-        if user_type == 'FARMER' and not (farm_name and farm_location):
-            messages.error(request, 'Farm name and location are required for farmers.')
-            return render(request, 'frontend/register.html', {'error': 'Farm name and location are required for farmers.'})
-        
-        # Check if username already exists
-        if User.objects.filter(username=username).exists():
-            messages.error(request, 'Username already exists. Please choose another one.')
-            return render(request, 'frontend/register.html', {'error': 'Username already exists.'})
-        
-        # Create new user
-        try:
-            user = User.objects.create_user(
-                username=username,
-                email=email,
-                password=password,
-                first_name=first_name,
-                last_name=last_name,
-                user_type=user_type,
-                phone_number=phone_number,
-                address=address,
-                farm_name=farm_name,
-                farm_location=farm_location
-            )
-            
-            # Log the user in
-            login(request, user)
-            messages.success(request, 'Account created successfully! Welcome to AgroConnect.')
-            return redirect('frontend:home')
-        except Exception as e:
-            messages.error(request, f'Error creating account: {str(e)}')
-            return render(request, 'frontend/register.html', {'error': f'Error creating account: {str(e)}'})
-    
-    # For GET request
-    user_type = request.GET.get('user_type', 'BUYER')  # Default to BUYER
-    return render(request, 'frontend/register.html', {'user_type': user_type})
-
-# In your views.py
 def products_view(request):
     category_id = request.GET.get('category')
     search_query = request.GET.get('search', '')
@@ -198,6 +118,159 @@ def products_view(request):
         'search_query': search_query
     }
     return render(request, 'frontend/products.html', context)
+
+
+
+
+
+def home_view(request):
+    categories = Category.objects.all()[:4]  # Limit to 4 categories
+    products = Product.objects.filter(is_available=True).order_by('-created_at')[:6]  # Latest 6 products
+    
+    context = {
+        'categories': categories,
+        'products': products
+        # 'page_title': _('Home') 
+    }
+    return render(request, 'frontend/home.html', context)
+
+
+def login_view(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            # Check if email is verified
+            if not user.email_verified:
+                messages.warning(request, _('Please verify your email address. Check your inbox or request a new verification email.'))
+                return render(request, 'frontend/login.html', {'error': _('Email not verified'), 'unverified_email': user.email})
+            
+            login(request, user)
+            messages.success(request, _('You have successfully logged in!'))
+            return redirect('frontend:home')
+        else:
+            return render(request, 'frontend/login.html', {'error': _('Invalid username or password')})
+    
+    return render(request, 'frontend/login.html')
+
+@login_required
+def logout_view(request):
+    logout(request)
+    messages.success(request, 'You have been logged out successfully!')
+    return redirect('frontend:home')
+
+# frontend/views.py (continued)
+
+def register_view(request):
+    if request.method == 'POST':
+        # Get form data
+        username = request.POST.get('username')
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+        first_name = request.POST.get('first_name')
+        last_name = request.POST.get('last_name')
+        user_type = request.POST.get('user_type')
+        phone_number = request.POST.get('phone_number')
+        address = request.POST.get('address')
+        farm_name = request.POST.get('farm_name', '')
+        farm_location = request.POST.get('farm_location', '')
+        
+        # Basic validation
+        if not (username and email and password and first_name and last_name and user_type and phone_number and address):
+            messages.error(request, _('Please fill in all required fields.'))
+            return render(request, 'frontend/register.html', {'error': _('Please fill in all required fields.')})
+        
+        if user_type == 'FARMER' and not (farm_name and farm_location):
+            messages.error(request, _('Farm name and location are required for farmers.'))
+            return render(request, 'frontend/register.html', {'error': _('Farm name and location are required for farmers.')})
+        
+        # Check if username already exists
+        if User.objects.filter(username=username).exists():
+            messages.error(request, _('Username already exists. Please choose another one.'))
+            return render(request, 'frontend/register.html', {'error': _('Username already exists.')})
+        
+        # Check if email already exists
+        if User.objects.filter(email=email).exists():
+            messages.error(request, _('Email already exists. Please use another email.'))
+            return render(request, 'frontend/register.html', {'error': _('Email already exists.')})
+        
+        # Create new user
+        try:
+            user = User.objects.create_user(
+                username=username,
+                email=email,
+                password=password,
+                first_name=first_name,
+                last_name=last_name,
+                user_type=user_type,
+                phone_number=phone_number,
+                address=address,
+                farm_name=farm_name,
+                farm_location=farm_location,
+                email_verified=False  # Initially set to False
+            )
+            
+            # Create and send verification email
+            verification_token = EmailVerificationToken.create_verification_token(user)
+            verification_token.send_verification_email(request)
+            
+            # Log the user in
+            login(request, user)
+            
+            messages.success(request, _('Account created successfully! Please check your email to verify your account.'))
+            return redirect('frontend:home')
+        except Exception as e:
+            messages.error(request, _('Error creating account: {error}').format(error=str(e)))
+            return render(request, 'frontend/register.html', {'error': _('Error creating account: {error}').format(error=str(e))})
+    
+    # For GET request
+    user_type = request.GET.get('user_type', 'BUYER')  # Default to BUYER
+    return render(request, 'frontend/register.html', {'user_type': user_type})
+
+def verify_email_view(request, token):
+    """View to handle email verification"""
+    verification_token = get_object_or_404(EmailVerificationToken, token=token)
+    
+    if not verification_token.is_valid():
+        messages.error(request, _('Verification link has expired. Please request a new one.'))
+        return redirect('frontend:resend_verification')
+    
+    # Mark user as verified
+    user = verification_token.user
+    user.email_verified = True
+    user.save()
+    
+    # Delete the token since it's been used
+    verification_token.delete()
+    
+    messages.success(request, _('Email verified successfully! Your account is now fully activated.'))
+    return redirect('frontend:profile')
+
+def resend_verification_view(request):
+    """View to resend verification email"""
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        
+        try:
+            user = User.objects.get(email=email)
+            
+            if user.email_verified:
+                messages.info(request, _('Your email is already verified.'))
+                return redirect('frontend:login')
+            
+            # Create and send new verification email
+            verification_token = EmailVerificationToken.create_verification_token(user)
+            verification_token.send_verification_email(request)
+            
+            messages.success(request, _('Verification email has been resent. Please check your inbox.'))
+            return redirect('frontend:login')
+        except User.DoesNotExist:
+            messages.error(request, _('No account found with this email address.'))
+    
+    return render(request, 'frontend/resend_verification.html')
+
 
 
 

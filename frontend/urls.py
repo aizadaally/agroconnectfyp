@@ -1,4 +1,4 @@
-# frontend/urls.py
+# Update frontend/urls.py to add verification endpoints
 
 from django.urls import path
 from . import views
@@ -15,6 +15,8 @@ urlpatterns = [
     path('login/', views.login_view, name='login'),
     path('logout/', views.logout_view, name='logout'),
     path('register/', views.register_view, name='register'),
+    path('verify-email/<str:token>/', views.verify_email_view, name='verify_email'),
+    path('resend-verification/', views.resend_verification_view, name='resend_verification'),
     
     # User profile
     path('profile/', views.profile_view, name='profile'),
@@ -38,5 +40,4 @@ urlpatterns = [
     path('orders/<int:order_id>/confirm-payment/', views.manual_payment_confirmation, name='confirm_payment'),
 
     path('test-language/', views.test_language, name='test_language'),
-
 ]

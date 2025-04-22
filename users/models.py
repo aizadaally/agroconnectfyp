@@ -1,4 +1,4 @@
-# users/models.py
+# Update users/models.py to add email verification field
 
 from django.db import models
 from django.contrib.auth.models import AbstractUser
@@ -26,6 +26,9 @@ class User(AbstractUser):
     bank_name = models.CharField(max_length=50, blank=True, null=True)  # e.g., MBank, Optima
     bank_account = models.CharField(max_length=50, blank=True, null=True)  # Account number
     bank_qr_code = models.ImageField(upload_to='payment_qr_codes/', blank=True, null=True)  # Uploaded QR code
+    
+    # Email verification
+    email_verified = models.BooleanField(default=False)
     
     def is_farmer(self):
         return self.user_type == self.UserType.FARMER

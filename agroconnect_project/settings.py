@@ -106,6 +106,23 @@ DATABASES = {
     }
 }
 
+
+
+# Email configuration
+if DEBUG:
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+else:
+    EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+    
+    EMAIL_HOST = 'smtp.zoho.com'
+    EMAIL_PORT = 587
+    EMAIL_USE_TLS = True
+    EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")  # Zoho from email
+    EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")  # Zoho App password
+    DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+
+
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
     {

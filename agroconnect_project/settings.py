@@ -21,7 +21,7 @@ DEBUG = False
 
 ALLOWED_HOSTS = ["*"]
 
-SITE_URL = 'https://agroconnectnaryn.org'
+# SITE_URL = 'https://agroconnectnaryn.org'
 
 # Application definition
 INSTALLED_APPS = [

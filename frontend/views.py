@@ -176,6 +176,11 @@ def register_view(request):
         address = request.POST.get('address')
         farm_name = request.POST.get('farm_name', '')
         farm_location = request.POST.get('farm_location', '')
+
+          # Add debug logging
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.info(f"Registration attempt - Username: {username}, Email: {email}")
         
         # Basic validation
         if not (username and email and password and first_name and last_name and user_type and phone_number and address):
@@ -186,13 +191,13 @@ def register_view(request):
             messages.error(request, _('Farm name and location are required for farmers.'))
             return render(request, 'frontend/register.html', {'error': _('Farm name and location are required for farmers.')})
         
-        # Check if username already exists
-        if User.objects.filter(username=username).exists():
+        # Check if username already exists - do a case-insensitive check
+        if User.objects.filter(username__iexact=username).exists():
             messages.error(request, _('Username already exists. Please choose another one.'))
             return render(request, 'frontend/register.html', {'error': _('Username already exists.')})
         
         # Check if email already exists
-        if User.objects.filter(email=email).exists():
+        if User.objects.filter(email__iexact=email).exists():
             messages.error(request, _('Email already exists. Please use another email.'))
             return render(request, 'frontend/register.html', {'error': _('Email already exists.')})
         
@@ -228,6 +233,9 @@ def register_view(request):
     # For GET request
     user_type = request.GET.get('user_type', 'BUYER')  # Default to BUYER
     return render(request, 'frontend/register.html', {'user_type': user_type})
+
+
+
 
 def verify_email_view(request, token):
     """View to handle email verification"""

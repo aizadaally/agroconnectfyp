@@ -177,7 +177,36 @@ STATICFILES_DIRS = [
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
+# In settings.py
+DEFAULT_FILE_STORAGE = 'storage.PersistentMediaStorage'
+
+
+
+# In settings.py
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': 'INFO',
+        },
+        'django.request': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    },
+}
+
+
+
+# DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
 
 # Cloudinary settings
 # cloudinary.config(

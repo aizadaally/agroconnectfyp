@@ -25,6 +25,13 @@ urlpatterns += i18n_patterns(
 )
 
 # Serve media files in development
+# if settings.DEBUG:
+#     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)  # new
+#     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)  # new
+
+
 if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)  # new
-    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)  # new
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+else:
+    # Even in production, serve media files
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

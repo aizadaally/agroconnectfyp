@@ -33,9 +33,12 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'cloudinary_storage',  # Add this
-    'cloudinary',          # Add this
+    # 'cloudinary_storage',  # Add this
+    # 'cloudinary',          # Add this
     'django.contrib.staticfiles',
+    'whitenoise.runserver_nostatic',
+
+
     
     # Third-party apps
     'rest_framework',

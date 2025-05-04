@@ -6,6 +6,195 @@
 {% block title %}{% trans "Shopping Cart" %} - AgroConnect{% endblock %}
 
 {% block content %}
+<div class="cart-container" data-cart-id="{{ cart.id }}">
+  <div class="container">
+    <div class="cart-header">
+      <h1 class="cart-title">{% trans "Your Shopping Cart" %}</h1>
+      <p class="cart-subtitle">{% trans "Review your items before checkout" %}</p>
+    </div>
+    
+    <div class="row">
+      <div class="col-lg-8">
+        {% if cart.items.all %}
+        <div class="cart-items-container">
+          {% for item in cart.items.all %}
+          <div class="cart-item" id="item-{{ item.id }}">
+            <div class="cart-item-image">
+              {% if item.product.image %}
+              <img src="{{ item.product.image.url }}" alt="{{ item.product_name }}">
+              {% else %}
+              <div class="cart-item-placeholder">
+                <i class="bi bi-image"></i>
+              </div>
+              {% endif %}
+            </div>
+            
+            <div class="cart-item-details">
+              <h5 class="cart-item-title">{{ item.product_name }}</h5>
+              <p class="cart-item-farmer">{% trans "By" %}: {{ item.product.farmer.farm_name|default:item.product.farmer.username }}</p>
+              <p class="cart-item-price">{{ item.product_price|floatformat:2 }} сом / {{ item.product.unit }}</p>
+            </div>
+            
+            <div class="cart-item-quantity">
+              <div class="quantity-controls">
+                <button class="quantity-btn" onclick="updateQuantity({{ item.id }}, -1)">-</button>
+                <input type="number" class="quantity-input" id="item-qty-{{ item.id }}" value="{{ item.quantity }}" min="1" onchange="quantityChanged({{ item.id }})">
+                <button class="quantity-btn" onclick="updateQuantity({{ item.id }}, 1)">+</button>
+              </div>
+            </div>
+            
+            <div class="cart-item-subtotal">
+              <span class="item-subtotal">
+                {{ item.product_price|floatformat:2|mul:item.quantity }} сом
+              </span>
+            </div>
+            
+            <div class="cart-item-actions">
+              <button onclick="removeItem({{ item.id }})" class="cart-remove-btn" aria-label="Remove item">
+                <i class="bi bi-trash"></i>
+              </button>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-cart">
+          <div class="empty-cart-icon">
+            <i class="bi bi-cart-x"></i>
+          </div>
+          <h3>{% trans "Your cart is empty" %}</h3>
+          <p>{% trans "Looks like you haven't added any products to your cart yet." %}</p>
+          <a href="{% url 'frontend:products' %}" class="btn btn-success btn-lg">
+            {% trans "Browse Products" %}
+          </a>
+        </div>
+        {% endif %}
+      </div>
+      
+      <div class="col-lg-4">
+        <div class="cart-summary">
+          <h4 class="summary-title">{% trans "Order Summary" %}</h4>
+          
+          <div class="summary-items">
+            <span>{% trans "Items" %} ({{ cart.items.count }}):</span>
+            <span id="summary-items">{{ cart.total_amount|floatformat:2 }} сом</span>
+          </div>
+          
+          <div class="summary-delivery">
+            <span>{% trans "Delivery" %}:</span>
+            <span>{% trans "Free" %}</span>
+          </div>
+          
+          <div class="summary-total">
+            <span>{% trans "Total" %}:</span>
+            <span id="summary-total">{{ cart.total_amount|floatformat:2 }} сом</span>
+          </div>
+          
+          {% if cart.items.all %}
+          <a href="{% url 'frontend:checkout' %}" class="btn btn-success btn-lg checkout-btn">
+            <i class="bi bi-bag-check"></i> {% trans "Proceed to Checkout" %}
+          </a>
+          {% else %}
+          <button class="btn btn-success btn-lg checkout-btn" disabled>
+            <i class="bi bi-bag-check"></i> {% trans "Proceed to Checkout" %}
+          </button>
+          {% endif %}
+          
+          <a href="{% url 'frontend:products' %}" class="continue-shopping">
+            <i class="bi bi-arrow-left"></i> {% trans "Continue Shopping" %}
+          </a>
+        </div>
+        
+        <div class="naryn-delivery-info">
+          <div class="delivery-info-header">
+            <i class="bi bi-truck"></i>
+            <h5>{% trans "Delivery Information" %}</h5>
+          </div>
+          <ul class="delivery-info-list">
+            <li>{% trans "Free delivery in Naryn city" %}</li>
+            <li>{% trans "Villages within 30km: 100 сом" %}</li>
+            <li>{% trans "Estimated delivery: 1-2 days" %}</li>
+          </ul>
+        </div>
+        
+        {% if cart.items.all %}
+        <div class="naryn-payment-options">
+          <div class="payment-options-header">
+            <i class="bi bi-credit-card"></i>
+            <h5>{% trans "Payment Options" %}</h5>
+          </div>
+          <div class="payment-options-icons">
+            <div class="payment-option" data-bs-toggle="tooltip" title="{% trans 'Cash on Delivery' %}">
+              <i class="bi bi-cash"></i>
+            </div>
+            <div class="payment-option" data-bs-toggle="tooltip" title="{% trans 'Mobile Money' %}">
+              <i class="bi bi-phone"></i>
+            </div>
+            <div class="payment-option" data-bs-toggle="tooltip" title="{% trans 'Bank Transfer' %}">
+              <i class="bi bi-bank"></i>
+            </div>
+          </div>
+        </div>
+        {% endif %}
+        
+        <div class="seasonal-products">
+          <div class="seasonal-header">
+            <i class="bi bi-calendar-event"></i>
+            <h5>{% trans "Seasonal Products in Naryn" %}</h5>
+          </div>
+          <div class="seasonal-message">
+            <p>{% trans "Don't miss fresh seasonal products from Naryn mountains available now!" %}</p>
+            <a href="{% url 'frontend:products' %}" class="btn btn-sm btn-outline-success">
+              {% trans "See Seasonal Items" %}
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Loading overlay -->
+<div id="loading-overlay" class="loading-overlay" style="display: none;">
+  <div class="loading-spinner"></div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Initialize calculations when page loads
+    calculateItemSubtotals();
+    
+    // Add animation to cart items
+    const cartItems = document.querySelectorAll('.cart-item');
+    cartItems.forEach((item, index) => {
+      item.style.animationDelay = `${0.1 * index}s`;
+      item.classList.add('fade-in');
+    });
+    
+    // Add smooth transitions for quantity changes
+    const quantityInputs = document.querySelectorAll('.quantity-input');
+    quantityInputs.forEach(input => {
+      input.addEventListener('change', function() {
+        const item = this.closest('.cart-item');
+        item.classList.add('updating');
+        setTimeout(() => {
+          item.classList.remove('updating');
+        }, 300);
+      });
+    });
+  });
+</script>
+{% endblock %}
+
+
+<!-- frontend/templates/frontend/cart.html
+{% extends 'frontend/base.html' %}
+{% load frontend_extras %}
+{% load i18n %}
+
+{% block title %}{% trans "Shopping Cart" %} - AgroConnect{% endblock %}
+
+{% block content %}
 <h1 class="mb-4">{% trans "Shopping Cart" %}</h1>
 
 <div class="row">
@@ -254,4 +443,4 @@
         calculateItemSubtotals();
     });
 </script>
-{% endblock %}
+{% endblock %} -->

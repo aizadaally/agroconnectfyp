@@ -1,0 +1,47 @@
+<!-- frontend/templates/frontend/partials/hero.html -->
+<div class="hero-section">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-lg-6">
+          <h1 class="hero-title">{% trans "Farm to Table in Naryn" %}</h1>
+          <p class="hero-subtitle">{% trans "Fresh produce from Naryn's local farmers delivered directly to your table" %}</p>
+          
+          <div class="hero-features">
+            <div class="hero-feature">
+              <i class="bi bi-geo-alt-fill"></i>
+              <span>{% trans "Locally grown in Naryn" %}</span>
+            </div>
+            <div class="hero-feature">
+              <i class="bi bi-truck"></i>
+              <span>{% trans "Direct delivery" %}</span>
+            </div>
+            <div class="hero-feature">
+              <i class="bi bi-heart-fill"></i>
+              <span>{% trans "Support local farmers" %}</span>
+            </div>
+          </div>
+          
+          <div class="hero-buttons">
+            <a href="{% url 'frontend:products' %}" class="btn btn-success btn-lg hero-btn">
+              {% trans "Browse Products" %}
+            </a>
+            {% if not user.is_authenticated %}
+            <a href="{% url 'frontend:register' %}?user_type=FARMER" class="btn btn-outline-light btn-lg hero-btn">
+              {% trans "Join as Farmer" %}
+            </a>
+            {% endif %}
+          </div>
+        </div>
+        <div class="col-lg-6 d-none d-lg-block">
+          <div class="hero-image-container">
+            <!-- Use Bootstrap icons instead of image files -->
+            <div class="hero-graphic">
+              <i class="bi bi-tree"></i>
+              <i class="bi bi-house"></i>
+              <i class="bi bi-basket"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

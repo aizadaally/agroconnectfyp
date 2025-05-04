@@ -1,0 +1,29 @@
+<!-- frontend/templates/frontend/partials/naryn_products.html -->
+<section class="naryn-products-section">
+    <div class="container">
+      <div class="section-header">
+        <h2>{% trans "From Naryn's Mountains" %}</h2>
+        <p>{% trans "Discover unique agricultural products from the Naryn region" %}</p>
+      </div>
+      
+      <div class="naryn-categories">
+        <button class="naryn-category-btn active" data-category="all">{% trans "All" %}</button>
+        <button class="naryn-category-btn" data-category="dairy">{% trans "Dairy" %}</button>
+        <button class="naryn-category-btn" data-category="meat">{% trans "Meat" %}</button>
+        <button class="naryn-category-btn" data-category="honey">{% trans "Honey" %}</button>
+        <button class="naryn-category-btn" data-category="herbs">{% trans "Herbs" %}</button>
+      </div>
+      
+      <div class="row naryn-products-container">
+        {% for product in naryn_products %}
+        <div class="col-md-4 mb-4 naryn-product-item" data-categories="{{ product.category.name|lower }}">
+          {% include "frontend/components/product_card.html" with product=product %}
+        </div>
+        {% empty %}
+        <div class="col-12 text-center py-5">
+          <p>{% trans "No products available at the moment" %}</p>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </section>

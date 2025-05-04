@@ -1,60 +1,216 @@
 <!-- frontend/templates/frontend/home.html -->
 {% extends 'frontend/base.html' %}
 {% load i18n %}
+{% load static %}
 
-{% block title %}{% trans "AgroConnect - Farm to Table Marketplace" %}{% endblock %}
+{% block title %}{% trans "AgroConnect Naryn - Farm to Table Marketplace" %}{% endblock %}
 
 {% block content %}
+<!-- Hero Section with Naryn-specific messaging -->
 <div class="hero-section text-center mb-5">
     <div class="container">
-        <h1 class="display-4 mb-4">{% trans "Fresh From Farm to Table" %}</h1>
-        <p class="lead mb-4">{% trans "AgroConnect brings you the freshest produce directly from local farmers to your table." %}</p>
-        <a href="{% url 'frontend:products' %}" class="btn btn-light btn-lg me-2">{% trans "Browse Products" %}</a>
-        {% if not user.is_authenticated %}
-        <a href="{% url 'frontend:register' %}" class="btn btn-outline-light btn-lg">{% trans "Join Us" %}</a>
-        {% endif %}
+        <h1 class="hero-title">{% trans "Fresh From Naryn's Mountains to Your Table" %}</h1>
+        <p class="hero-subtitle">{% trans "AgroConnect brings you the freshest produce directly from Naryn's local farmers to your table." %}</p>
+        
+        <div class="hero-features">
+            <div class="hero-feature">
+                <i class="bi bi-geo-alt-fill"></i>
+                <span>{% trans "Locally grown in Naryn" %}</span>
+            </div>
+            <div class="hero-feature">
+                <i class="bi bi-truck"></i>
+                <span>{% trans "Direct delivery" %}</span>
+            </div>
+            <div class="hero-feature">
+                <i class="bi bi-heart-fill"></i>
+                <span>{% trans "Support local farmers" %}</span>
+            </div>
+        </div>
+        
+        <div class="hero-buttons">
+            <a href="{% url 'frontend:products' %}" class="btn btn-light btn-lg me-2">{% trans "Browse Products" %}</a>
+            {% if not user.is_authenticated %}
+            <a href="{% url 'frontend:register' %}" class="btn btn-outline-light btn-lg">{% trans "Join Us" %}</a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Naryn Region Banner -->
+<div class="naryn-banner">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <div class="naryn-banner-content">
+                    <h2 class="naryn-banner-title">{% trans "Experience the Taste of Naryn" %}</h2>
+                    <p class="naryn-banner-subtitle">{% trans "Discover fresh, authentic products from the mountain farmers of Naryn" %}</p>
+                    
+                    <div class="naryn-features">
+                        <div class="naryn-feature">
+                            <i class="bi bi-award"></i>
+                            <span>{% trans "High altitude, high quality" %}</span>
+                        </div>
+                        <div class="naryn-feature">
+                            <i class="bi bi-water"></i>
+                            <span>{% trans "Pure mountain water" %}</span>
+                        </div>
+                        <div class="naryn-feature">
+                            <i class="bi bi-sun"></i>
+                            <span>{% trans "300+ sunny days yearly" %}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="naryn-cta">
+                        <a href="{% url 'frontend:products' %}" class="btn btn-success btn-lg">
+                            {% trans "Shop Naryn Products" %}
+                        </a>
+                        <a href="#about-naryn" class="naryn-learn-more">
+                            {% trans "Learn about Naryn" %} <i class="bi bi-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 d-none d-lg-block">
+                <div class="naryn-banner-graphic">
+                    <!-- SVG for reliable rendering -->
+                    <svg width="300" height="300" viewBox="0 0 300 300">
+                        <defs>
+                            <linearGradient id="mountain-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#4a90e2"/>
+                                <stop offset="100%" stop-color="#28a745"/>
+                            </linearGradient>
+                        </defs>
+                        
+                        <!-- Naryn Mountains Silhouette -->
+                        <path d="M0,150 L60,80 L100,120 L150,50 L200,100 L250,70 L300,120 L300,300 L0,300 Z" fill="url(#mountain-gradient)"/>
+                        
+                        <!-- Sun -->
+                        <circle cx="220" cy="60" r="30" fill="#f5a623">
+                            <animate attributeName="r" values="30;32;30" dur="3s" repeatCount="indefinite"/>
+                        </circle>
+                        
+                        <!-- Cloud -->
+                        <g fill="#fff" opacity="0.8">
+                            <ellipse cx="80" cy="60" rx="25" ry="15">
+                                <animate attributeName="cx" values="80;85;80" dur="7s" repeatCount="indefinite"/>
+                            </ellipse>
+                            <ellipse cx="110" cy="55" rx="30" ry="18">
+                                <animate attributeName="cx" values="110;115;110" dur="7s" repeatCount="indefinite"/>
+                            </ellipse>
+                            <ellipse cx="140" cy="60" rx="25" ry="15">
+                                <animate attributeName="cx" values="140;145;140" dur="7s" repeatCount="indefinite"/>
+                            </ellipse>
+                        </g>
+                        
+                        <!-- Trees -->
+                        <g>
+                            <path d="M40,180 L55,140 L70,180 Z" fill="#28a745"/>
+                            <rect x="52" y="180" width="5" height="10" fill="#8B4513"/>
+                            
+                            <path d="M80,190 L95,150 L110,190 Z" fill="#28a745"/>
+                            <rect x="92" y="190" width="5" height="10" fill="#8B4513"/>
+                            
+                            <path d="M120,185 L135,145 L150,185 Z" fill="#28a745"/>
+                            <rect x="132" y="185" width="5" height="10" fill="#8B4513"/>
+                        </g>
+                        
+                        <!-- House -->
+                        <g>
+                            <rect x="180" y="200" width="40" height="30" fill="#FFF"/>
+                            <polygon points="170,200 230,200 200,180" fill="#8B4513"/>
+                            <rect x="190" y="210" width="10" height="20" fill="#8B4513"/>
+                            <rect x="205" y="205" width="8" height="8" fill="#4a90e2"/>
+                        </g>
+                        
+                        <!-- Small animations for interactivity -->
+                        <g>
+                            <circle cx="50" cy="220" r="2" fill="#FFF">
+                                <animate attributeName="cy" values="220;225;220" dur="2s" repeatCount="indefinite"/>
+                            </circle>
+                            <circle cx="120" cy="240" r="2" fill="#FFF">
+                                <animate attributeName="cy" values="240;245;240" dur="3s" repeatCount="indefinite"/>
+                            </circle>
+                            <circle cx="200" cy="230" r="2" fill="#FFF">
+                                <animate attributeName="cy" values="230;235;230" dur="4s" repeatCount="indefinite"/>
+                            </circle>
+                        </g>
+                    </svg>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
 <div class="container">
-    <h2 class="text-center mb-5">{% trans "Featured Categories" %}</h2>
+    <!-- Featured Categories with enhanced design -->
+    <div class="section-header text-center">
+        <h2>{% trans "Featured Categories" %}</h2>
+        <p>{% trans "Explore the best of Naryn's agricultural offerings" %}</p>
+    </div>
+    
     <div class="row">
         {% for category in categories %}
-        <div class="col-md-3 mb-4">
-            <div class="card text-center h-100">
-                <div class="card-body">
-                    <h3 class="card-title h5">
-                        {% if category.name == 'Vegetables' %}
-                            {% trans "Vegetables" %}
-                        {% elif category.name == 'Fruits' %}
-                            {% trans "Fruits" %}
-                        {% elif category.name == 'Dairy' %}
-                            {% trans "Dairy" %}
-                        {% elif category.name == 'Grains' %}
-                            {% trans "Grains" %}
-                        {% else %}
-                            {{ category.get_translated_name }}
-                        {% endif %}
-                    </h3>
-                    <a href="{% url 'frontend:products' %}?category={{ category.id }}" class="stretched-link"></a>
+        <div class="col-6 col-md-3 mb-4 stagger-item">
+            <div class="category-card">
+                <div class="category-icon">
+                    {% if category.name == "Vegetables" %}
+                    <i class="bi bi-flower1"></i>
+                    {% elif category.name == "Fruits" %}
+                    <i class="bi bi-apple"></i>
+                    {% elif category.name == "Dairy" %}
+                    <i class="bi bi-cup-hot"></i>
+                    {% elif category.name == "Grains" %}
+                    <i class="bi bi-grid-3x2"></i>
+                    {% else %}
+                    <i class="bi bi-basket"></i>
+                    {% endif %}
                 </div>
+                <h3 class="category-name">
+                    {% if category.name == 'Vegetables' %}
+                        {% trans "Vegetables" %}
+                    {% elif category.name == 'Fruits' %}
+                        {% trans "Fruits" %}
+                    {% elif category.name == 'Dairy' %}
+                        {% trans "Dairy" %}
+                    {% elif category.name == 'Grains' %}
+                        {% trans "Grains" %}
+                    {% else %}
+                        {{ category.get_translated_name }}
+                    {% endif %}
+                </h3>
+                <a href="{% url 'frontend:products' %}?category={{ category.id }}" class="category-link"></a>
             </div>
         </div>
         {% endfor %}
     </div>
 
-    <h2 class="text-center mb-5 mt-5">{% trans "Featured Products" %}</h2>
+    <!-- Featured Products with enhanced product cards -->
+    <div class="section-header text-center mt-5">
+        <h2>{% trans "Featured Products from Naryn" %}</h2>
+        <p>{% trans "Discover the finest products from Naryn's farmers" %}</p>
+    </div>
+    
     <div class="row">
         {% for product in products %}
-        <div class="col-md-4 mb-4">
-            <div class="card h-100">
-                {% if product.image %}
-                <img src="{{ product.image.url }}" class="card-img-top product-image" alt="{{ product.get_translated_name }}">
-                {% else %}
-                <img src="https://via.placeholder.com/300x200?text=No+Image" class="card-img-top product-image" alt="{% trans 'No Image Available' %}">
-                {% endif %}
-                <div class="card-body">
-                    <h5 class="card-title">
+        <div class="col-md-4 mb-4 stagger-item">
+            <div class="product-card">
+                <div class="product-image-container">
+                    {% if product.image %}
+                    <img src="{{ product.image.url }}" class="product-image" alt="{{ product.get_translated_name }}">
+                    {% else %}
+                    <div class="product-image-placeholder">
+                        <i class="bi bi-image"></i>
+                    </div>
+                    {% endif %}
+                    {% if user.is_authenticated and user.is_buyer %}
+                    <button onclick="addToCart({{ product.id }})" class="quick-add-btn" title="{% trans 'Add to Cart' %}">
+                        <i class="bi bi-plus-circle-fill"></i>
+                    </button>
+                    {% endif %}
+                </div>
+                <div class="product-info">
+                    <h5 class="product-title">
                         {% if product.name == "Apple" or product.name == "apple" %}
                             {% trans "Apple" %}
                         {% elif product.name == "Potato" %}
@@ -67,7 +223,7 @@
                             {{ product.get_translated_name }}
                         {% endif %}
                     </h5>
-                    <p class="card-text text-muted">
+                    <p class="product-category">
                         {% if product.category.name == "Vegetables" %}
                             {% trans "Vegetables" %}
                         {% elif product.category.name == "Fruits" %}
@@ -80,7 +236,7 @@
                             {{ product.category.get_translated_name }}
                         {% endif %}
                     </p>
-                    <p class="card-text">
+                    <p class="product-description">
                         {% if product.description == "Fresh, organic tomatoes" %}
                             {% trans "Fresh, organic tomatoes" %}
                         {% elif product.description == "High-quality potatoes" %}
@@ -88,25 +244,20 @@
                         {% elif product.description == "Large, fresh cabbages" %}
                             {% trans "Large, fresh cabbages" %}
                         {% else %}
-                            {{ product.get_translated_description|truncatechars:100 }}
+                            {{ product.get_translated_description|truncatechars:60 }}
                         {% endif %}
                     </p>
-                    <div class="d-flex justify-content-between align-items-center">
-                        <h6 class="mb-0">${{ product.price }} 
+                    <div class="product-footer">
+                        <span class="product-price">{{ product.price|floatformat:2 }} сом / 
                             {% if product.unit == "kg" %}
-                                {% trans "ap" %} {% trans "kg" %}
+                                {% trans "kg" %}
                             {% elif product.unit == "piece" %}
-                                {% trans "ap" %} {% trans "piece" %}
+                                {% trans "piece" %}
                             {% else %}
-                                {% trans "ap" %} {{ product.unit }}
+                                {{ product.unit }}
                             {% endif %}
-                        </h6>
-                        <div>
-                            <a href="{% url 'frontend:product_detail' product.id %}" class="btn btn-sm btn-outline-success me-1">{% trans "Details" %}</a>
-                            {% if user.is_authenticated and user.is_buyer %}
-                            <button onclick="addToCart({{ product.id }})" class="btn btn-sm btn-success">{% trans "Add to Cart" %}</button>
-                            {% endif %}
-                        </div>
+                        </span>
+                        <a href="{% url 'frontend:product_detail' product.id %}" class="btn btn-sm btn-outline-success">{% trans "Details" %}</a>
                     </div>
                 </div>
             </div>
@@ -119,7 +270,86 @@
     </div>
 </div>
 
-<div class="bg-light py-5 mt-5">
+<!-- About Naryn Region section -->
+<div class="bg-light py-5 mt-5" id="about-naryn">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6 slide-up">
+                <h2 class="mb-4 text-success">{% trans "About Naryn Region" %}</h2>
+                <p>{% trans "Naryn is the largest province of Kyrgyzstan, located in the heart of the Tian Shan mountains. With an average elevation of over 2,000 meters, Naryn is known for its pristine nature, clean air, and traditional agricultural practices." %}</p>
+                
+                <div class="naryn-facts mt-4">
+                    <div class="naryn-fact">
+                        <div class="fact-icon">
+                            <i class="bi bi-geo"></i>
+                        </div>
+                        <div class="fact-text">
+                            <h5>{% trans "Pristine Environment" %}</h5>
+                            <p>{% trans "High-altitude farming in clean mountain ecosystems" %}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="naryn-fact">
+                        <div class="fact-icon">
+                            <i class="bi bi-people"></i>
+                        </div>
+                        <div class="fact-text">
+                            <h5>{% trans "Rich Traditions" %}</h5>
+                            <p>{% trans "Centuries-old farming knowledge passed through generations" %}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="naryn-fact">
+                        <div class="fact-icon">
+                            <i class="bi bi-flower3"></i>
+                        </div>
+                        <div class="fact-text">
+                            <h5>{% trans "Unique Products" %}</h5>
+                            <p>{% trans "Exclusive high-altitude honey, dairy, and herbs" %}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-6 mt-4 mt-lg-0 slide-in-right">
+                <div class="naryn-map-container">
+                    <h4 class="text-center mb-3">{% trans "Naryn Region" %}</h4>
+                    <svg viewBox="0 0 300 250" class="naryn-map">
+                        <!-- Naryn region map -->
+                        <path d="M10,120 L50,100 L90,110 L120,130 L110,170 L70,180 L20,160 Z" class="district-path" data-district="at_bashy"></path>
+                        <text x="65" y="140" class="district-label">At-Bashy</text>
+                        
+                        <path d="M120,130 L150,120 L190,130 L200,170 L160,190 L110,170 Z" class="district-path" data-district="naryn"></path>
+                        <text x="155" y="155" class="district-label">Naryn</text>
+                        
+                        <path d="M150,120 L180,90 L220,100 L240,140 L200,170 L190,130 Z" class="district-path" data-district="ak_talaa"></path>
+                        <text x="195" y="125" class="district-label">Ak-Talaa</text>
+                        
+                        <path d="M200,170 L240,140 L280,150 L290,190 L250,210 L210,190 Z" class="district-path" data-district="jumgal"></path>
+                        <text x="245" y="175" class="district-label">Jumgal</text>
+                        
+                        <path d="M180,90 L220,70 L270,80 L280,110 L240,140 L220,100 Z" class="district-path" data-district="kochkor"></path>
+                        <text x="230" y="100" class="district-label">Kochkor</text>
+                    </svg>
+                    
+                    <div class="district-selector">
+                        <select class="form-select" id="district-selector">
+                            <option value="">{% trans "Select District" %}</option>
+                            <option value="at_bashy">At-Bashy</option>
+                            <option value="naryn">Naryn</option>
+                            <option value="ak_talaa">Ak-Talaa</option>
+                            <option value="jumgal">Jumgal</option>
+                            <option value="kochkor">Kochkor</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Farmer section with enhanced graphics -->
+<div class="bg-white py-5 mt-5">
     <div class="container">
         <div class="row align-items-center">
             <div class="col-lg-6">
@@ -142,12 +372,211 @@
                         <p>{% trans "Reach more customers through our platform." %}</p>
                     </div>
                 </div>
-                <a href="{% url 'frontend:register' %}?user_type=FARMER" class="btn btn-success mt-2">{% trans "Register as Farmer" %}</a>
+                <div class="d-flex mb-4">
+                    <div class="me-3">
+                        <span class="bg-success text-white d-inline-flex justify-content-center align-items-center rounded-circle" style="width: 50px; height: 50px; font-size: 1.5rem;">3</span>
+                    </div>
+                    <div>
+                        <h5>{% trans "Preserve Naryn Traditions" %}</h5>
+                        <p>{% trans "Share your traditional farming practices with a wider audience." %}</p>
+                    </div>
+                </div>
+                <a href="{% url 'frontend:register' %}?user_type=FARMER" class="btn btn-success btn-lg mt-2">{% trans "Register as Farmer" %}</a>
             </div>
             <div class="col-lg-6 mt-4 mt-lg-0">
-                <img src="https://images.unsplash.com/photo-1500937386664-56d1dfef3854" alt="{% trans 'Farmer' %}" class="img-fluid rounded shadow">
+                <div class="naryn-farmers-illustration">
+                    <!-- SVG illustration for reliable rendering -->
+                    <svg width="100%" height="300" viewBox="0 0 600 400">
+                        <!-- Landscape background -->
+                        <rect x="0" y="200" width="600" height="200" fill="#28a745" opacity="0.2"/>
+                        
+                        <!-- Mountains -->
+                        <polygon points="0,200 100,120 200,180 300,80 400,150 500,100 600,200" fill="#28a745" opacity="0.3"/>
+                        
+                        <!-- Sun -->
+                        <circle cx="500" cy="80" r="40" fill="#f5a623" opacity="0.8">
+                            <animate attributeName="r" values="40;42;40" dur="4s" repeatCount="indefinite"/>
+                        </circle>
+                        
+                        <!-- Farmer figure -->
+                        <g transform="translate(150, 250)">
+                            <!-- Body -->
+                            <rect x="20" y="0" width="40" height="80" fill="#8B4513"/>
+                            <!-- Head -->
+                            <circle cx="40" cy="-15" r="20" fill="#D2B48C"/>
+                            <!-- Hat -->
+                            <path d="M15,-25 L65,-25 L40,-45 Z" fill="#28a745"/>
+                            <!-- Arms -->
+                            <rect x="0" y="10" width="20" height="10" fill="#D2B48C"/>
+                            <rect x="60" y="10" width="20" height="10" fill="#D2B48C"/>
+                            <!-- Legs -->
+                            <rect x="20" y="80" width="15" height="30" fill="#2F4F4F"/>
+                            <rect x="45" y="80" width="15" height="30" fill="#2F4F4F"/>
+                            
+                            <!-- Farming tool -->
+                            <line x1="80" y1="10" x2="80" y2="60" stroke="#8B4513" stroke-width="3"/>
+                            <path d="M75,60 L85,60 L80,75 Z" fill="#A0522D"/>
+                            
+                            <animateTransform 
+                                attributeName="transform"
+                                type="translate"
+                                values="150,250; 155,250; 150,250"
+                                dur="2s"
+                                repeatCount="indefinite"/>
+                        </g>
+                        
+                        <!-- Crops -->
+                        <g>
+                            <rect x="300" y="250" width="200" height="30" fill="#8B4513"/>
+                            <!-- For loop for crops here, using SVG directly -->
+                            <line x1="320" y1="250" x2="320" y2="220" stroke="#28a745" stroke-width="2"/>
+                            <circle cx="320" cy="210" r="10" fill="#f5a623">
+                                <animate attributeName="r" values="10;11;10" dur="2s" repeatCount="indefinite"/>
+                            </circle>
+                            
+                            <line x1="350" y1="250" x2="350" y2="220" stroke="#28a745" stroke-width="2"/>
+                            <circle cx="350" cy="210" r="10" fill="#f5a623">
+                                <animate attributeName="r" values="10;11;10" dur="3s" repeatCount="indefinite"/>
+                            </circle>
+                            
+                            <line x1="380" y1="250" x2="380" y2="220" stroke="#28a745" stroke-width="2"/>
+                            <circle cx="380" cy="210" r="10" fill="#f5a623">
+                                <animate attributeName="r" values="10;11;10" dur="4s" repeatCount="indefinite"/>
+                            </circle>
+                            
+                            <line x1="410" y1="250" x2="410" y2="220" stroke="#28a745" stroke-width="2"/>
+                            <circle cx="410" cy="210" r="10" fill="#f5a623">
+                                <animate attributeName="r" values="10;11;10" dur="5s" repeatCount="indefinite"/>
+                            </circle>
+                            
+                            <line x1="440" y1="250" x2="440" y2="220" stroke="#28a745" stroke-width="2"/>
+                            <circle cx="440" cy="210" r="10" fill="#f5a623">
+                                <animate attributeName="r" values="10;11;10" dur="3.5s" repeatCount="indefinite"/>
+                            </circle>
+                        </g>
+                    </svg>
+                </div>
             </div>
         </div>
     </div>
 </div>
+
+<!-- Naryn Testimonials -->
+<div class="testimonials-section py-5">
+    <div class="container">
+        <div class="section-header text-center">
+            <h2>{% trans "Voices from Naryn" %}</h2>
+            <p>{% trans "Hear from our farmers and customers" %}</p>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-4 mb-4 stagger-item">
+                <div class="testimonial-card">
+                    <div class="testimonial-icon">
+                        <i class="bi bi-quote"></i>
+                    </div>
+                    <p class="testimonial-text">{% trans "AgroConnect has changed my life as a farmer. Now I can sell directly to customers in Bishkek without leaving my village in At-Bashy." %}</p>
+                    <div class="testimonial-author">
+                        <div class="author-image">A</div>
+                        <div class="author-details">
+                            <h5>Askar</h5>
+                            <p>{% trans "Honey Farmer, At-Bashy" %}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4 mb-4 stagger-item">
+                <div class="testimonial-card">
+                    <div class="testimonial-icon">
+                        <i class="bi bi-quote"></i>
+                    </div>
+                    <p class="testimonial-text">{% trans "I love the fresh dairy products from Naryn mountains. The kurut and kymyz are the best I've ever tasted!" %}</p>
+                    <div class="testimonial-author">
+                        <div class="author-image">G</div>
+                        <div class="author-details">
+                            <h5>Gulnara</h5>
+                            <p>{% trans "Customer, Bishkek" %}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4 mb-4 stagger-item">
+                <div class="testimonial-card">
+                    <div class="testimonial-icon">
+                        <i class="bi bi-quote"></i>
+                    </div>
+                    <p class="testimonial-text">{% trans "Thanks to AgroConnect, I'm able to share my traditional farming methods and earn a fair price for my vegetables." %}</p>
+                    <div class="testimonial-author">
+                        <div class="author-image">M</div>
+                        <div class="author-details">
+                            <h5>Marat</h5>
+                            <p>{% trans "Vegetable Farmer, Naryn" %}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Naryn Map Interaction
+    document.addEventListener('DOMContentLoaded', function() {
+        const mapPaths = document.querySelectorAll('.district-path');
+        const districtSelector = document.getElementById('district-selector');
+        
+        // Add click events to map areas
+        mapPaths.forEach(path => {
+            path.addEventListener('click', function() {
+                const district = this.getAttribute('data-district');
+                
+                // Reset all paths
+                mapPaths.forEach(p => p.classList.remove('active'));
+                
+                // Activate clicked path
+                this.classList.add('active');
+                
+                // Update selector
+                if (districtSelector) {
+                    districtSelector.value = district;
+                }
+            });
+        });
+        
+        // Add change event to selector
+        if (districtSelector) {
+            districtSelector.addEventListener('change', function() {
+                const district = this.value;
+                
+                // Reset all paths
+                mapPaths.forEach(p => p.classList.remove('active'));
+                
+                // Activate selected path
+                if (district) {
+                    document.querySelector(`.district-path[data-district="${district}"]`).classList.add('active');
+                }
+            });
+        }
+        
+        // Animation on scroll
+        const animatedElements = document.querySelectorAll('.fade-in, .slide-up, .slide-in-right, .stagger-item');
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1 });
+        
+        animatedElements.forEach(element => {
+            observer.observe(element);
+        });
+    });
+</script>
 {% endblock %}

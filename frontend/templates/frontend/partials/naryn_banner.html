@@ -1,0 +1,105 @@
+<!-- frontend/templates/frontend/partials/naryn_banner.html -->
+<div class="naryn-banner">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-lg-8">
+          <div class="naryn-banner-content">
+            <h2 class="naryn-banner-title">{% trans "Experience the Taste of Naryn" %}</h2>
+            <p class="naryn-banner-subtitle">{% trans "Discover fresh, authentic products from the mountain farmers of Naryn" %}</p>
+            
+            <div class="naryn-features">
+              <div class="naryn-feature">
+                <i class="bi bi-award"></i>
+                <span>{% trans "High altitude, high quality" %}</span>
+              </div>
+              <div class="naryn-feature">
+                <i class="bi bi-water"></i>
+                <span>{% trans "Pure mountain water" %}</span>
+              </div>
+              <div class="naryn-feature">
+                <i class="bi bi-sun"></i>
+                <span>{% trans "300+ sunny days yearly" %}</span>
+              </div>
+            </div>
+            
+            <div class="naryn-cta">
+              <a href="{% url 'frontend:products' %}" class="btn btn-success btn-lg">
+                {% trans "Shop Naryn Products" %}
+              </a>
+              <a href="#" class="naryn-learn-more">
+                {% trans "Learn about Naryn" %} <i class="bi bi-arrow-right"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-lg-4 d-none d-lg-block">
+          <div class="naryn-banner-graphic">
+            <!-- Use SVG for reliable rendering -->
+            <svg width="300" height="300" viewBox="0 0 300 300">
+              <defs>
+                <linearGradient id="mountain-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#4a90e2"/>
+                  <stop offset="100%" stop-color="#28a745"/>
+                </linearGradient>
+              </defs>
+              
+              <!-- Naryn Mountains Silhouette -->
+              <path d="M0,150 L60,80 L100,120 L150,50 L200,100 L250,70 L300,120 L300,300 L0,300 Z" fill="url(#mountain-gradient)"/>
+              
+              <!-- Sun -->
+              <circle cx="220" cy="60" r="30" fill="#f5a623">
+                <animate attributeName="r" values="30;32;30" dur="3s" repeatCount="indefinite"/>
+              </circle>
+              
+              <!-- Cloud -->
+              <g fill="#fff" opacity="0.8">
+                <ellipse cx="80" cy="60" rx="25" ry="15">
+                  <animate attributeName="cx" values="80;85;80" dur="7s" repeatCount="indefinite"/>
+                </ellipse>
+                <ellipse cx="110" cy="55" rx="30" ry="18">
+                  <animate attributeName="cx" values="110;115;110" dur="7s" repeatCount="indefinite"/>
+                </ellipse>
+                <ellipse cx="140" cy="60" rx="25" ry="15">
+                    <animate attributeName="cx" values="140;145;140" dur="7s" repeatCount="indefinite"/>
+                  </ellipse>
+                </g>
+                
+                <!-- Trees -->
+                <g>
+                  <path d="M40,180 L55,140 L70,180 Z" fill="#28a745"/>
+                  <rect x="52" y="180" width="5" height="10" fill="#8B4513"/>
+                  
+                  <path d="M80,190 L95,150 L110,190 Z" fill="#28a745"/>
+                  <rect x="92" y="190" width="5" height="10" fill="#8B4513"/>
+                  
+                  <path d="M120,185 L135,145 L150,185 Z" fill="#28a745"/>
+                  <rect x="132" y="185" width="5" height="10" fill="#8B4513"/>
+                </g>
+                
+                <!-- House -->
+                <g>
+                  <rect x="180" y="200" width="40" height="30" fill="#FFF"/>
+                  <polygon points="170,200 230,200 200,180" fill="#8B4513"/>
+                  <rect x="190" y="210" width="10" height="20" fill="#8B4513"/>
+                  <rect x="205" y="205" width="8" height="8" fill="#4a90e2"/>
+                </g>
+                
+                <!-- Small animations for interactivity -->
+                <g>
+                  <circle cx="50" cy="220" r="2" fill="#FFF">
+                    <animate attributeName="cy" values="220;225;220" dur="2s" repeatCount="indefinite"/>
+                  </circle>
+                  <circle cx="120" cy="240" r="2" fill="#FFF">
+                    <animate attributeName="cy" values="240;245;240" dur="3s" repeatCount="indefinite"/>
+                  </circle>
+                  <circle cx="200" cy="230" r="2" fill="#FFF">
+                    <animate attributeName="cy" values="230;235;230" dur="4s" repeatCount="indefinite"/>
+                  </circle>
+                </g>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>

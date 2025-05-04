@@ -1,4 +1,4 @@
-<!-- Update your product_detail.html template -->
+<!-- frontend/templates/frontend/product_detail.html -->
 {% extends 'frontend/base.html' %}
 {% load i18n %}
 
@@ -18,232 +18,325 @@
 {% endblock %}
 
 {% block content %}
-<div class="row">
-    <div class="col-md-6 mb-4">
-        <div class="card">
+<div class="product-detail-container">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-6">
+        <div class="product-gallery">
+          <div class="product-gallery-main">
             {% if product.image %}
-            <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.get_translated_name }}" style="max-height: 400px; object-fit: contain;">
+            <img src="{{ product.image.url }}" alt="{{ product.get_translated_name }}" class="img-fluid product-main-image" id="main-product-image">
             {% else %}
-            <img src="https://via.placeholder.com/400x400?text=No+Image" class="card-img-top" alt="{% trans 'No Image Available' %}">
+            <div class="product-image-placeholder d-flex align-items-center justify-content-center">
+              <i class="bi bi-image display-1 text-muted"></i>
+            </div>
             {% endif %}
+          </div>
+          
+          <!-- Naryn Region Origin Badge -->
+          <div class="product-origin-badge">
+            <i class="bi bi-geo-alt-fill"></i> {% trans "From Naryn Region" %}
+          </div>
         </div>
+      </div>
+      
+      <div class="col-lg-6">
+        <div class="product-info-container">
+          <div class="product-category">
+            <a href="{% url 'frontend:products' %}?category={{ product.category.id }}">
+              {{ product.category.get_translated_name }}
+            </a>
+          </div>
+          
+          <h1 class="product-title">{{ product.get_translated_name }}</h1>
+          
+          <div class="product-farmer">
+            <span>{% trans "Sold by" %}:</span>
+            <a href="#farmer-info">{{ product.farmer.farm_name|default:product.farmer.username }}</a>
+          </div>
+          
+          <div class="product-price-container">
+            <span class="product-price">{{ product.price|floatformat:2 }} сом</span>
+            <span class="product-unit">/ {{ product.get_translated_unit }}</span>
+          </div>
+          
+          <div class="product-availability mb-4">
+            {% if product.is_available and product.quantity_available > 0 %}
+            <span class="availability-badge in-stock">
+              <i class="bi bi-check-circle-fill"></i> {% trans "In Stock" %}
+            </span>
+            <span class="availability-count">{{ product.quantity_available }} {{ product.get_translated_unit }} {% trans "available" %}</span>
+            {% else %}
+            <span class="availability-badge out-of-stock">
+              <i class="bi bi-x-circle-fill"></i> {% trans "Out of Stock" %}
+            </span>
+            {% endif %}
+          </div>
+          
+          <div class="product-description">
+            <h5>{% trans "Description" %}</h5>
+            <p>{{ product.get_translated_description|linebreaks|default:_("No description available.") }}</p>
+          </div>
+          
+          {% if user.is_authenticated and user.is_buyer %}
+          <div class="product-purchase">
+            <div class="quantity-selector">
+              <button type="button" class="quantity-btn" onclick="decrementQuantity()">-</button>
+              <input type="number" id="quantity" class="form-control" min="1" max="{{ product.quantity_available }}" value="1">
+              <button type="button" class="quantity-btn" onclick="incrementQuantity()">+</button>
+            </div>
+            
+            <button onclick="addToCartWithQuantity({{ product.id }})" class="btn btn-success btn-lg add-to-cart-btn" {% if not product.is_available or product.quantity_available <= 0 %}disabled{% endif %}>
+              <i class="bi bi-cart-plus"></i> {% trans "Add to Cart" %}
+            </button>
+          </div>
+          {% endif %}
+          
+          {% if user.is_authenticated and user.is_farmer and product.farmer == user %}
+          <a href="{% url 'frontend:edit_product' product.id %}" class="btn btn-outline-success btn-lg w-100">
+            <i class="bi bi-pencil"></i> {% trans "Edit Product" %}
+          </a>
+          {% endif %}
+          
+          {% if not user.is_authenticated %}
+          <div class="alert alert-info">
+            <i class="bi bi-info-circle-fill"></i> {% trans "Please" %} <a href="{% url 'frontend:login' %}" class="alert-link">{% trans "login" %}</a> {% trans "to purchase this product and view seller contact information." %}
+          </div>
+          {% endif %}
+          
+          <!-- Naryn Product Quality Badges -->
+          <div class="naryn-product-badges">
+            <div class="naryn-quality-badge">
+              <i class="bi bi-award"></i>
+              <span>{% trans "Mountain Quality" %}</span>
+            </div>
+            <div class="naryn-quality-badge">
+              <i class="bi bi-check2-circle"></i>
+              <span>{% trans "Verified Seller" %}</span>
+            </div>
+            <div class="naryn-quality-badge">
+              <i class="bi bi-truck"></i>
+              <span>{% trans "Local Delivery" %}</span>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
     
-    <div class="col-md-6">
-        <h1 class="mb-3">
-            {% if product.name == "Apple" or product.name == "apple" %}
-                {% trans "Apple" %}
-            {% elif product.name == "Potato" %}
-                {% trans "Potato" %}
-            {% elif product.name == "Tomato" %}
-                {% trans "Tomato" %}
-            {% elif product.name == "Cabbage" %}
-                {% trans "Cabbage" %}
-            {% else %}
-                {{ product.get_translated_name }}
-            {% endif %}
-        </h1>
-        
-        <p class="text-muted mb-2">
-            {% trans "Category" %}: 
-            <a href="{% url 'frontend:products' %}?category={{ product.category.id }}">
-                {% if product.category.name == "Vegetables" %}
-                    {% trans "Vegetables" %}
-                {% elif product.category.name == "Fruits" %}
-                    {% trans "Fruits" %}
-                {% elif product.category.name == "Dairy" %}
-                    {% trans "Dairy" %}
-                {% elif product.category.name == "Grains" %}
-                    {% trans "Grains" %}
+    <!-- Farmer Information Section -->
+    <div class="row mt-5" id="farmer-info">
+      <div class="col-12">
+        <div class="farmer-info-card">
+          <div class="row">
+            <div class="col-md-4">
+              <div class="farmer-image-container">
+                {% if product.farmer.profile_image %}
+                <img src="{{ product.farmer.profile_image.url }}" alt="{{ product.farmer.username }}" class="farmer-image">
                 {% else %}
-                    {{ product.category.get_translated_name }}
+                <div class="farmer-image-placeholder">
+                  {{ product.farmer.username|first|upper }}
+                </div>
                 {% endif %}
-            </a>
-        </p>
-        
-        <p class="text-muted mb-3">
-            {% trans "Sold by" %}: {{ product.farmer.farm_name|default:product.farmer.username }}
-        </p>
-        
-        <h4 class="mb-3">
-            {{ product.price|floatformat:2 }} сом
-            {% if product.unit == "kg" %}
-                {% trans "ap" %} {% trans "kg" %}
-            {% elif product.unit == "piece" %}
-                {% trans "ap" %} {% trans "piece" %}
-            {% else %}
-                {% trans "ap" %} {{ product.unit }}
-            {% endif %}
-        </h4>
-        
-        <p class="mb-4">
-            {% trans "Available" %}: {{ product.quantity_available }} 
-            {% if product.unit == "kg" %}
-                {% trans "kg" %}
-            {% elif product.unit == "piece" %}
-                {% trans "piece" %}
-            {% else %}
-                {{ product.unit }}
-            {% endif %}
-        </p>
-        
-        <div class="card mb-4">
-            <div class="card-body">
-                <h5 class="mb-3">{% trans "Description" %}</h5>
-                <p class="mb-0">
-                    {% if product.description == "Fresh, organic tomatoes" %}
-                        {% trans "Fresh, organic tomatoes" %}
-                    {% elif product.description == "High-quality potatoes" %}
-                        {% trans "High-quality potatoes" %}
-                    {% elif product.description == "Large, fresh cabbages" %}
-                        {% trans "Large, fresh cabbages" %}
-                    {% else %}
-                        {{ product.get_translated_description|linebreaks|default:_("No description available.") }}
-                    {% endif %}
-                </p>
+                <div class="farmer-badge">{% trans "Naryn Farmer" %}</div>
+              </div>
             </div>
-        </div>
-        
-        <!-- Rest of the content remains the same -->
-        {% if user.is_authenticated %}
-        <div class="card mb-4">
-            <div class="card-body">
-                <h5 class="mb-3">{% trans "Seller Contact" %}</h5>
+            
+            <div class="col-md-8">
+              <h3 class="farmer-name">{{ product.farmer.get_full_name|default:product.farmer.username }}</h3>
+              <p class="farmer-farm">{{ product.farmer.farm_name }}</p>
+              
+              <div class="farmer-location">
+                <i class="bi bi-geo-alt-fill"></i>
+                <span>{{ product.farmer.farm_location|default:_("Naryn Region") }}</span>
+              </div>
+              
+              {% if user.is_authenticated %}
+              <div class="farmer-contact mt-4">
+                <h5>{% trans "Contact Information" %}</h5>
                 <p class="mb-2">
-                    <strong>{% trans "Name" %}:</strong> {{ product.farmer.get_full_name|default:product.farmer.username }}
+                  <i class="bi bi-telephone-fill"></i> {{ product.farmer.phone_number|default:_("Not available") }}
                 </p>
-                <p class="mb-2">
-                    <strong>{% trans "Phone" %}:</strong> {{ product.farmer.phone_number|default:_("Not available") }}
-                </p>
+                
                 {% if product.farmer.phone_number %}
-                <div class="d-flex gap-2">
-                    <a href="https://wa.me/{{ product.farmer.phone_number|cut:'+' }}" target="_blank" class="btn btn-sm btn-success">
-                        <i class="bi bi-whatsapp me-1"></i> WhatsApp
-                    </a>
-                    <a href="tel:{{ product.farmer.phone_number }}" class="btn btn-sm btn-outline-success">
-                        <i class="bi bi-telephone me-1"></i> {% trans "Call" %}
-                    </a>
+                <div class="contact-buttons">
+                  <a href="https://wa.me/{{ product.farmer.phone_number|cut:'+' }}" target="_blank" class="btn btn-success">
+                    <i class="bi bi-whatsapp"></i> WhatsApp
+                  </a>
+                  <a href="tel:{{ product.farmer.phone_number }}" class="btn btn-outline-success">
+                    <i class="bi bi-telephone"></i> {% trans "Call" %}
+                  </a>
                 </div>
                 {% endif %}
+              </div>
+              {% endif %}
+              
+              <!-- Farmer Story -->
+              <div class="farmer-story mt-4">
+                <h5>{% trans "About the Farmer" %}</h5>
+                <p>{% trans "I am a proud farmer from the beautiful Naryn region, where I've been growing organic produce for over 10 years. My farm is located in the pristine mountains, where clean air and pure water help create the highest quality products." %}</p>
+              </div>
             </div>
+          </div>
         </div>
-        {% endif %}
-        
-        {% if user.is_authenticated and user.is_buyer %}
-        <div class="d-flex align-items-center mb-3">
-            <label for="quantity" class="form-label me-2 mb-0">{% trans "Quantity" %}:</label>
-            <input type="number" id="quantity" class="form-control me-2" style="width: 80px;" min="1" max="{{ product.quantity_available }}" value="1">
-            <span class="me-2">
-                {% if product.unit == "kg" %}
-                    {% trans "kg" %}
-                {% elif product.unit == "piece" %}
-                    {% trans "piece" %}
-                {% else %}
-                    {{ product.unit }}
-                {% endif %}
-            </span>
-        </div>
-        
-        <button onclick="addToCartWithQuantity({{ product.id }})" class="btn btn-success btn-lg w-100" {% if not product.is_available or product.quantity_available <= 0 %}disabled{% endif %}>
-            {% trans "Add to Cart" %}
-        </button>
-        
-        {% if not product.is_available or product.quantity_available <= 0 %}
-        <div class="text-danger mt-2">
-            {% trans "This product is currently unavailable." %}
-        </div>
-        {% endif %}
-        {% endif %}
-        
-        {% if user.is_authenticated and user.is_farmer and product.farmer == user %}
-        <a href="{% url 'frontend:edit_product' product.id %}" class="btn btn-outline-success btn-lg w-100">
-            {% trans "Edit Product" %}
-        </a>
-        {% endif %}
-        
-        {% if not user.is_authenticated %}
-        <div class="alert alert-info">
-            {% trans "Please" %} <a href="{% url 'frontend:login' %}" class="alert-link">{% trans "login" %}</a> {% trans "to purchase this product and view seller contact information." %}
-        </div>
-        {% endif %}
+      </div>
     </div>
-</div>
-
-{% if related_products %}
-<h3 class="mt-5 mb-4">{% trans "Related Products" %}</h3>
-<div class="row">
-    {% for related in related_products %}
-    <div class="col-md-4 mb-4">
-        <div class="card h-100">
-            {% if related.image %}
-            <img src="{{ related.image.url }}" class="card-img-top product-image" alt="{{ related.get_translated_name }}">
-            {% else %}
-            <img src="https://via.placeholder.com/300x200?text=No+Image" class="card-img-top product-image" alt="{% trans 'No Image Available' %}">
-            {% endif %}
-            <div class="card-body d-flex flex-column">
-                <h5 class="card-title">
-                    {% if related.name == "Apple" or related.name == "apple" %}
-                        {% trans "Apple" %}
-                    {% elif related.name == "Potato" %}
-                        {% trans "Potato" %}
-                    {% elif related.name == "Tomato" %}
-                        {% trans "Tomato" %}
-                    {% elif related.name == "Cabbage" %}
-                        {% trans "Cabbage" %}
-                    {% else %}
-                        {{ related.get_translated_name }}
-                    {% endif %}
-                </h5>
-                <p class="card-text text-muted small">
-                    {% if related.category.name == "Vegetables" %}
-                        {% trans "Vegetables" %}
-                    {% elif related.category.name == "Fruits" %}
-                        {% trans "Fruits" %}
-                    {% elif related.category.name == "Dairy" %}
-                        {% trans "Dairy" %}
-                    {% elif related.category.name == "Grains" %}
-                        {% trans "Grains" %}
-                    {% else %}
-                        {{ related.category.get_translated_name }}
-                    {% endif %}
-                </p>
-                <p class="card-text">
-                    {% if related.description == "Fresh, organic tomatoes" %}
-                        {% trans "Fresh, organic tomatoes" %}
-                    {% elif related.description == "High-quality potatoes" %}
-                        {% trans "High-quality potatoes" %}
-                    {% elif related.description == "Large, fresh cabbages" %}
-                        {% trans "Large, fresh cabbages" %}
-                    {% else %}
-                        {{ related.get_translated_description|truncatechars:80 }}
-                    {% endif %}
-                </p>
-                <div class="mt-auto">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <h6 class="mb-0">
-                            {{ related.price|floatformat:2 }} сом
-                            {% if related.unit == "kg" %}
-                                {% trans "ap" %} {% trans "kg" %}
-                            {% elif related.unit == "piece" %}
-                                {% trans "ap" %} {% trans "piece" %}
-                            {% else %}
-                                {% trans "ap" %} {{ related.unit }}
-                            {% endif %}
-                        </h6>
-                        <a href="{% url 'frontend:product_detail' related.id %}" class="btn btn-sm btn-outline-success">{% trans "View" %}</a>
-                    </div>
+    
+    <!-- Naryn Region Information -->
+    <div class="naryn-info-section mt-5">
+      <div class="row">
+        <div class="col-md-6">
+          <div class="naryn-info-card">
+            <h4>{% trans "About Naryn Region Products" %}</h4>
+            <p>{% trans "Naryn is known for its pristine environment, high altitudes, and fertile soil, which create perfect conditions for growing high-quality agricultural products. The region's extreme continental climate with cold winters and warm summers creates unique growing conditions." %}</p>
+            <div class="naryn-features">
+              <div class="naryn-feature">
+                <i class="bi bi-droplet-fill"></i>
+                <div>
+                  <h6>{% trans "Pure Water" %}</h6>
+                  <p>{% trans "Products grown with glacier water" %}</p>
                 </div>
+              </div>
+              <div class="naryn-feature">
+                <i class="bi bi-sun-fill"></i>
+                <div>
+                  <h6>{% trans "High Altitude" %}</h6>
+                  <p>{% trans "Crops grown at 2000+ meters" %}</p>
+                </div>
+              </div>
+              <div class="naryn-feature">
+                <i class="bi bi-flower1"></i>
+                <div>
+                  <h6>{% trans "Organic Methods" %}</h6>
+                  <p>{% trans "Traditional farming techniques" %}</p>
+                </div>
+              </div>
             </div>
+          </div>
         </div>
+        
+        <div class="col-md-6">
+          <div class="naryn-map-card">
+            <h4>{% trans "Product Origin" %}</h4>
+            <div class="naryn-map-container">
+              <svg viewBox="0 0 300 250" class="naryn-map">
+                <!-- Naryn region outline -->
+                <path d="M10,120 L50,100 L90,110 L120,130 L150,120 L180,90 L220,70 L270,80 L280,110 L280,150 L290,190 L250,210 L210,190 L200,170 L160,190 L110,170 L70,180 L20,160 Z" class="naryn-region-outline"></path>
+                
+                <!-- Districts -->
+                <path d="M10,120 L50,100 L90,110 L120,130 L110,170 L70,180 L20,160 Z" class="district-path"></path>
+                <path d="M120,130 L150,120 L190,130 L200,170 L160,190 L110,170 Z" class="district-path"></path>
+                <path d="M150,120 L180,90 L220,100 L240,140 L200,170 L190,130 Z" class="district-path"></path>
+                <path d="M200,170 L240,140 L280,150 L290,190 L250,210 L210,190 Z" class="district-path"></path>
+                <path d="M180,90 L220,70 L270,80 L280,110 L240,140 L220,100 Z" class="district-path"></path>
+                
+                <!-- Product location marker - position will depend on the product's location -->
+                <circle id="product-location" cx="155" cy="155" r="6" class="product-location-marker">
+                  <animate attributeName="r" values="6;8;6" dur="2s" repeatCount="indefinite"/>
+                </circle>
+              </svg>
+              
+              <div class="map-label">
+                <span class="map-pin"><i class="bi bi-geo-alt-fill"></i></span>
+                <span class="map-text">{% trans "Product from" %} {{ product.farmer.farm_location|default:"Naryn" }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-    {% endfor %}
+    
+    <!-- Related Products Section -->
+    {% if related_products %}
+    <div class="related-products mt-5">
+      <h3 class="section-title">{% trans "More from Naryn" %}</h3>
+      <div class="row">
+        {% for related in related_products %}
+        <div class="col-md-4 mb-4">
+          <div class="product-card">
+            <div class="product-image-container">
+              {% if related.image %}
+              <img src="{{ related.image.url }}" alt="{{ related.get_translated_name }}" class="product-image">
+              {% else %}
+              <div class="product-image-placeholder">
+                <i class="bi bi-image"></i>
+              </div>
+              {% endif %}
+              {% if user.is_authenticated and user.is_buyer %}
+              <button onclick="addToCart({{ related.id }})" class="quick-add-btn">
+                <i class="bi bi-plus-circle-fill"></i>
+              </button>
+              {% endif %}
+            </div>
+            <div class="product-info">
+              <h5 class="product-title">{{ related.get_translated_name }}</h5>
+              <p class="product-category">{{ related.category.get_translated_name }}</p>
+              <p class="product-description">{{ related.get_translated_description|truncatechars:60 }}</p>
+              <div class="product-footer">
+                <span class="product-price">{{ related.price|floatformat:2 }} сом / {{ related.get_translated_unit }}</span>
+                <a href="{% url 'frontend:product_detail' related.id %}" class="btn btn-sm btn-outline-success">{% trans "Details" %}</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+  </div>
 </div>
-{% endif %}
 
 <script>
-    function addToCartWithQuantity(productId) {
-        const quantity = parseInt(document.getElementById('quantity').value) || 1;
-        addToCart(productId, quantity);
+  document.addEventListener('DOMContentLoaded', function() {
+    // Fade in the product details
+    document.querySelector('.product-gallery').classList.add('fade-in');
+    document.querySelector('.product-info-container').classList.add('slide-in-right');
+    
+    // Update product location on map
+    const productLocation = document.getElementById('product-location');
+    
+    // This would ideally be replaced with actual coordinates
+    // For demonstration, we're using random positioning within Naryn district
+    const randomX = 155 + (Math.random() * 20 - 10);
+    const randomY = 155 + (Math.random() * 20 - 10);
+    
+    productLocation.setAttribute('cx', randomX);
+    productLocation.setAttribute('cy', randomY);
+  });
+  
+  // Product quantity functions
+  function incrementQuantity() {
+    const input = document.getElementById('quantity');
+    const max = parseInt(input.max);
+    let value = parseInt(input.value) || 0;
+    
+    if (value < max) {
+      input.value = value + 1;
     }
+  }
+  
+  function decrementQuantity() {
+    const input = document.getElementById('quantity');
+    let value = parseInt(input.value) || 0;
+    
+    if (value > 1) {
+      input.value = value - 1;
+    }
+  }
+  
+  function addToCartWithQuantity(productId) {
+    const quantity = parseInt(document.getElementById('quantity').value) || 1;
+    
+    // Show add to cart animation
+    const button = document.querySelector('.add-to-cart-btn');
+    button.classList.add('adding');
+    
+    // Call the main addToCart function
+    addToCart(productId, quantity);
+    
+    // Reset button state after a delay
+    setTimeout(() => {
+      button.classList.remove('adding');
+    }, 1000);
+  }
 </script>
 {% endblock %}

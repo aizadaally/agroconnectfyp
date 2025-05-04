@@ -1,0 +1,107 @@
+<!-- frontend/templates/frontend/partials/navbar.html -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-success sticky-header">
+    <div class="container">
+      <a class="navbar-brand" href="{% url 'frontend:home' %}">
+        <span class="brand-icon"><i class="bi bi-flower1"></i></span>
+        <span class="brand-text">AgroConnect</span>
+        <small class="brand-region">Naryn</small>
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav me-auto">
+          <li class="nav-item">
+            <a class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}" href="{% url 'frontend:home' %}">
+              <i class="bi bi-house-door"></i> {% trans "Home" %}
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {% if request.resolver_match.url_name == 'products' %}active{% endif %}" href="{% url 'frontend:products' %}">
+              <i class="bi bi-basket"></i> {% trans "Products" %}
+            </a>
+          </li>
+          {% if user.is_authenticated and user.is_farmer %}
+          <li class="nav-item">
+            <a class="nav-link {% if request.resolver_match.url_name == 'farmer_dashboard' %}active{% endif %}" href="{% url 'frontend:farmer_dashboard' %}">
+              <i class="bi bi-speedometer2"></i> {% trans "Farmer Dashboard" %}
+            </a>
+          </li>
+          {% endif %}
+        </ul>
+  
+        <ul class="navbar-nav">
+          <!-- Language Selector -->
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="languageDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="bi bi-globe"></i>
+              {% if LANGUAGE_CODE == 'en' %}
+                <span class="d-none d-sm-inline">English</span>
+              {% elif LANGUAGE_CODE == 'ru' %}
+                <span class="d-none d-sm-inline">Русский</span>
+              {% elif LANGUAGE_CODE == 'ky' %}
+                <span class="d-none d-sm-inline">Кыргызча</span>
+              {% endif %}
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="languageDropdown">
+              <li>
+                <a href="/en{{ request.get_full_path|slice:'3:' }}" class="dropdown-item {% if LANGUAGE_CODE == 'en' %}active{% endif %}">
+                  English
+                </a>
+              </li>
+              <li>
+                <a href="/ru{{ request.get_full_path|slice:'3:' }}" class="dropdown-item {% if LANGUAGE_CODE == 'ru' %}active{% endif %}">
+                  Русский
+                </a>
+              </li>
+              <li>
+                <a href="/ky{{ request.get_full_path|slice:'3:' }}" class="dropdown-item {% if LANGUAGE_CODE == 'ky' %}active{% endif %}">
+                  Кыргызча
+                </a>
+              </li>
+            </ul>
+          </li>
+          
+          <!-- Cart and User Menu -->
+          {% if user.is_authenticated %}
+          <li class="nav-item">
+            <a class="nav-link position-relative {% if request.resolver_match.url_name == 'cart' %}active{% endif %}" href="{% url 'frontend:cart' %}">
+              <i class="bi bi-cart"></i>
+              <span class="d-none d-sm-inline">{% trans "Cart" %}</span>
+              <span class="badge bg-light text-dark cart-badge" id="cart-badge">0</span>
+            </a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
+              <i class="bi bi-person-circle"></i>
+              <span class="d-none d-sm-inline">{{ user.username }}</span>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end">
+              <li><a class="dropdown-item" href="{% url 'frontend:profile' %}">
+                <i class="bi bi-person"></i> {% trans "Profile" %}
+              </a></li>
+              <li><a class="dropdown-item" href="{% url 'frontend:orders' %}">
+                <i class="bi bi-bag"></i> {% trans "My Orders" %}
+              </a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" href="{% url 'frontend:logout' %}">
+                <i class="bi bi-box-arrow-right"></i> {% trans "Logout" %}
+              </a></li>
+            </ul>
+          </li>
+          {% else %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'frontend:login' %}">
+              <i class="bi bi-box-arrow-in-right"></i> {% trans "Login" %}
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'frontend:register' %}">
+              <i class="bi bi-person-plus"></i> {% trans "Register" %}
+            </a>
+          </li>
+          {% endif %}
+        </ul>
+      </div>
+    </div>
+  </nav>

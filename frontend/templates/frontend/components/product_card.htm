@@ -1,0 +1,26 @@
+<!-- frontend/templates/frontend/components/product_card.html -->
+<div class="product-card">
+    <div class="product-image-container">
+      {% if product.image %}
+      <img src="{{ product.image.url }}" alt="{{ product.get_translated_name }}" class="product-image">
+      {% else %}
+      <div class="product-image-placeholder">
+        <i class="bi bi-image"></i>
+      </div>
+      {% endif %}
+      {% if user.is_authenticated and user.is_buyer %}
+      <button onclick="addToCart({{ product.id }})" class="quick-add-btn">
+        <i class="bi bi-plus-circle-fill"></i>
+      </button>
+      {% endif %}
+    </div>
+    <div class="product-info">
+      <h5 class="product-title">{{ product.get_translated_name }}</h5>
+      <p class="product-category">{{ product.category.get_translated_name }}</p>
+      <p class="product-description">{{ product.get_translated_description|truncatechars:60 }}</p>
+      <div class="product-footer">
+        <span class="product-price">{{ product.price|floatformat:2 }} сом / {{ product.get_translated_unit }}</span>
+        <a href="{% url 'frontend:product_detail' product.id %}" class="btn btn-sm btn-outline-success">{% trans "Details" %}</a>
+      </div>
+    </div>
+  </div>

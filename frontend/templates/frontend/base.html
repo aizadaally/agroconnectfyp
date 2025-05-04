@@ -7,60 +7,70 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}AgroConnect{% endblock %}</title>
+    <title>{% block title %}AgroConnect Naryn{% endblock %}</title>
+    
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- Custom CSS -->
     <link rel="stylesheet" href="{% static 'frontend/css/style.css' %}">
+    
     {% block extra_css %}{% endblock %}
 
-    <style>
-        /* Sticky header styles */
-        .sticky-header {
-            position: sticky;
-            top: 0;
-            z-index: 1000; /* Ensures header stays above other content */
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Optional: adds a subtle shadow */
-        }
-        
-        /* Add padding to body to prevent content from being hidden under the fixed header */
-        body {
-            padding-top: 0; /* Adjust if needed based on your header height */
-        }
-    </style>
+    <!-- Toast container for notifications -->
+    <div class="toast-container"></div>
 </head>
-<body>
+<body class="page-transition">
     <nav class="navbar navbar-expand-lg navbar-dark bg-success sticky-header">
         <div class="container">
-            <a class="navbar-brand" href="{% url 'frontend:home' %}">AgroConnect</a>
+            <a class="navbar-brand" href="{% url 'frontend:home' %}">
+                <span class="brand-icon"><i class="bi bi-flower1"></i></span>
+                <span class="brand-text">AgroConnect</span>
+                <small class="brand-region">Naryn</small>
+            </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'frontend:home' %}">{% trans "Home" %}</a>
+                        <a class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}" href="{% url 'frontend:home' %}">
+                            <i class="bi bi-house-door"></i> {% trans "Home" %}
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'frontend:products' %}">{% trans "Products" %}</a>
+                        <a class="nav-link {% if request.resolver_match.url_name == 'products' %}active{% endif %}" href="{% url 'frontend:products' %}">
+                            <i class="bi bi-basket"></i> {% trans "Products" %}
+                        </a>
                     </li>
                     {% if user.is_authenticated and user.is_farmer %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'frontend:farmer_dashboard' %}">{% trans "Farmer Dashboard" %}</a>
+                        <a class="nav-link {% if request.resolver_match.url_name == 'farmer_dashboard' %}active{% endif %}" href="{% url 'frontend:farmer_dashboard' %}">
+                            <i class="bi bi-speedometer2"></i> {% trans "Farmer Dashboard" %}
+                        </a>
                     </li>
                     {% endif %}
                 </ul>
 
                 <ul class="navbar-nav">
-                    <!-- Updated Language Selector with Direct Links -->
+                    <!-- Language Selector -->
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="languageDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             <i class="bi bi-globe"></i>
                             {% if LANGUAGE_CODE == 'en' %}
-                                English
+                                <span class="d-none d-sm-inline">English</span>
                             {% elif LANGUAGE_CODE == 'ru' %}
-                                Русский
+                                <span class="d-none d-sm-inline">Русский</span>
                             {% elif LANGUAGE_CODE == 'ky' %}
-                                Кыргызча
+                                <span class="d-none d-sm-inline">Кыргызча</span>
                             {% endif %}
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="languageDropdown">
@@ -82,29 +92,43 @@
                         </ul>
                     </li>
                     
+                    <!-- Cart and User Menu -->
                     {% if user.is_authenticated %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'frontend:cart' %}">
-                            {% trans "Cart" %} <span class="badge bg-light text-dark cart-badge" id="cart-badge">0</span>
+                        <a class="nav-link position-relative {% if request.resolver_match.url_name == 'cart' %}active{% endif %}" href="{% url 'frontend:cart' %}">
+                            <i class="bi bi-cart"></i>
+                            <span class="d-none d-sm-inline">{% trans "Cart" %}</span>
+                            <span class="badge bg-light text-dark cart-badge" id="cart-badge">0</span>
                         </a>
                     </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
-                            {{ user.username }}
+                            <i class="bi bi-person-circle"></i>
+                            <span class="d-none d-sm-inline">{{ user.username }}</span>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end">
-                            <li><a class="dropdown-item" href="{% url 'frontend:profile' %}">{% trans "Profile" %}</a></li>
-                            <li><a class="dropdown-item" href="{% url 'frontend:orders' %}">{% trans "My Orders" %}</a></li>
+                            <li><a class="dropdown-item" href="{% url 'frontend:profile' %}">
+                                <i class="bi bi-person"></i> {% trans "Profile" %}
+                            </a></li>
+                            <li><a class="dropdown-item" href="{% url 'frontend:orders' %}">
+                                <i class="bi bi-bag"></i> {% trans "My Orders" %}
+                            </a></li>
                             <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="{% url 'frontend:logout' %}">{% trans "Logout" %}</a></li>
+                            <li><a class="dropdown-item" href="{% url 'frontend:logout' %}">
+                                <i class="bi bi-box-arrow-right"></i> {% trans "Logout" %}
+                            </a></li>
                         </ul>
                     </li>
                     {% else %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'frontend:login' %}">{% trans "Login" %}</a>
+                        <a class="nav-link {% if request.resolver_match.url_name == 'login' %}active{% endif %}" href="{% url 'frontend:login' %}">
+                            <i class="bi bi-box-arrow-in-right"></i> {% trans "Login" %}
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'frontend:register' %}">{% trans "Register" %}</a>
+                        <a class="nav-link {% if request.resolver_match.url_name == 'register' %}active{% endif %}" href="{% url 'frontend:register' %}">
+                            <i class="bi bi-person-plus"></i> {% trans "Register" %}
+                        </a>
                     </li>
                     {% endif %}
                 </ul>
@@ -112,10 +136,11 @@
         </div>
     </nav>
 
+    <!-- Alert Messages -->
     <div class="container mt-4">
         {% if messages %}
             {% for message in messages %}
-                <div class="alert alert-{{ message.tags }} alert-dismissible fade show">
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show slide-in-right">
                     {{ message }}
                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                 </div>
@@ -125,35 +150,102 @@
         {% block content %}{% endblock %}
     </div>
 
+    <!-- Footer -->
     <footer class="bg-success text-white py-4 mt-5">
         <div class="container">
             <div class="row">
-                <div class="col-md-4">
-                    <h5>AgroConnect</h5>
-                    <p>{% trans "Connecting farmers directly with consumers." %}</p>
+                <div class="col-md-4 mb-4 mb-md-0">
+                    <div class="footer-brand">
+                        <i class="bi bi-flower1"></i> 
+                        <span>AgroConnect</span>
+                        <small>Naryn</small>
+                    </div>
+                    <p class="mt-3">{% trans "Connecting farmers directly with consumers in the Naryn region." %}</p>
+                    <div class="social-icons">
+                        <a href="#" class="social-icon"><i class="bi bi-facebook"></i></a>
+                        <a href="#" class="social-icon"><i class="bi bi-instagram"></i></a>
+                        <a href="#" class="social-icon"><i class="bi bi-whatsapp"></i></a>
+                        <a href="#" class="social-icon"><i class="bi bi-telegram"></i></a>
+                    </div>
                 </div>
-                <div class="col-md-4">
-                    <h5>{% trans "Quick Links" %}</h5>
-                    <ul class="list-unstyled">
-                        <li><a href="{% url 'frontend:home' %}" class="text-white">{% trans "Home" %}</a></li>
-                        <li><a href="{% url 'frontend:products' %}" class="text-white">{% trans "Products" %}</a></li>
-                        <li><a href="#" class="text-white">{% trans "About Us" %}</a></li>
-                        <li><a href="#" class="text-white">{% trans "Contact" %}</a></li>
+                <div class="col-md-4 mb-4 mb-md-0">
+                    <h5 class="footer-heading">{% trans "Quick Links" %}</h5>
+                    <ul class="footer-links">
+                        <li><a href="{% url 'frontend:home' %}">{% trans "Home" %}</a></li>
+                        <li><a href="{% url 'frontend:products' %}">{% trans "Products" %}</a></li>
+                        <li><a href="#">{% trans "About Us" %}</a></li>
+                        <li><a href="#">{% trans "Contact" %}</a></li>
+                        <li><a href="#">{% trans "Delivery Information" %}</a></li>
                     </ul>
                 </div>
                 <div class="col-md-4">
-                    <h5>{% trans "Contact Us" %}</h5>
-                    <p>{% trans "Email:" %} info@agroconnect.com</p>
-                    <p>{% trans "Phone:" %} +123-456-7890</p>
+                    <h5 class="footer-heading">{% trans "Contact Us" %}</h5>
+                    <ul class="footer-contact">
+                        <li><i class="bi bi-geo-alt-fill"></i> {% trans "Naryn City, Kyrgyzstan" %}</li>
+                        <li><i class="bi bi-envelope-fill"></i> info@agroconnect.com</li>
+                        <li><i class="bi bi-telephone-fill"></i> +996 770 123 456</li>
+                        <li><i class="bi bi-clock-fill"></i> {% trans "Mon-Fri: 9:00 - 18:00" %}</li>
+                    </ul>
                 </div>
             </div>
-            <hr>
-            <p class="text-center mb-0">&copy; 2025 AgroConnect. {% trans "All rights reserved." %}</p>
+            <hr class="footer-divider">
+            <div class="footer-bottom">
+                <p>&copy; 2025 AgroConnect Naryn. {% trans "All rights reserved." %}</p>
+                <div class="footer-bottom-links">
+                    <a href="#">{% trans "Privacy Policy" %}</a>
+                    <a href="#">{% trans "Terms of Service" %}</a>
+                </div>
+            </div>
         </div>
     </footer>
 
+    <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     <script src="{% static 'frontend/js/main.js' %}"></script>
+    
+    <script>
+        // Initialize tooltips
+        document.addEventListener('DOMContentLoaded', function() {
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            tooltipTriggerList.forEach(function(tooltipTriggerEl) {
+                new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+            
+            // Update cart badge when page loads
+            updateCartBadge();
+        });
+        
+        // Toast notification system
+        function showToast(message, type = 'success') {
+            const toastContainer = document.querySelector('.toast-container') || createToastContainer();
+            
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type} show`;
+            toast.innerHTML = `
+                <div class="toast-header">
+                    <strong class="me-auto">${type === 'success' ? 'Success' : type === 'warning' ? 'Warning' : 'Error'}</strong>
+                    <button type="button" class="btn-close" onclick="this.parentElement.parentElement.remove()"></button>
+                </div>
+                <div class="toast-body">
+                    ${message}
+                </div>
+            `;
+            
+            toastContainer.appendChild(toast);
+            
+            // Auto remove after 3 seconds
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
+
+        function createToastContainer() {
+            const container = document.createElement('div');
+            container.className = 'toast-container';
+            document.body.appendChild(container);
+            return container;
+        }
+    </script>
     
     {% block extra_js %}{% endblock %}
 </body>

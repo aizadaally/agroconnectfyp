@@ -6,102 +6,352 @@
 {% block title %}{% trans "Complete Your Payment" %} - AgroConnect{% endblock %}
 
 {% block content %}
-<div class="container py-4">
-    <h1 class="mb-4">{% trans "Complete Your Payment" %}</h1>
+<div class="payment-container">
+  <div class="container">
+    <div class="payment-header">
+      <h1 class="payment-title">{% trans "Complete Your Payment" %}</h1>
+      <div class="checkout-steps">
+        <div class="checkout-step completed">
+          <span class="step-number">1</span>
+          <span class="step-name">{% trans "Cart" %}</span>
+        </div>
+        <div class="step-connector"></div>
+        <div class="checkout-step completed">
+          <span class="step-number">2</span>
+          <span class="step-name">{% trans "Delivery" %}</span>
+        </div>
+        <div class="step-connector"></div>
+        <div class="checkout-step active">
+          <span class="step-number">3</span>
+          <span class="step-name">{% trans "Payment" %}</span>
+        </div>
+      </div>
+    </div>
     
     <div class="row">
-        <div class="col-lg-8">
-            <div class="card mb-4">
-                <div class="card-header bg-success text-white">
-                    <h5 class="mb-0">{% trans "Payment Instructions" %}</h5>
-                </div>
-                <div class="card-body">
-                    <p>{% trans "Please complete your payment to the following farmer(s) for your order" %} #{{ order.id }}:</p>
-                    
-                    {% for farmer in farmers %}
-                    <div class="farmer-payment mb-4 p-3 border rounded">
-                        <h5>{% trans "Payment to:" %} {{ farmer.name }}</h5>
-                        <p><strong>{% trans "Amount:" %}</strong> {{ farmer.amount|floatformat:2 }} сом</p>
-                        
-                        {% if farmer.bank_name %}
-                        <p><strong>{% trans "Bank:" %}</strong> {{ farmer.bank_name }}</p>
-                        <p><strong>{% trans "Account Number:" %}</strong> {{ farmer.bank_account }}</p>
-                        {% endif %}
-                        
-                        {% if farmer.qr_code %}
-                        <div class="qr-code-container text-center my-3">
-                            <p>{% trans "Scan the QR code below with your banking app:" %}</p>
-                            <img src="{{ farmer.qr_code }}" alt="{% trans "Payment QR Code" %}" class="img-fluid" style="max-width: 200px;">
-                        </div>
-                        {% else %}
-                        <div class="alert alert-info">
-                            {% trans "This farmer has not yet provided a QR code for payments. Please contact them directly or use the account information above." %}
-                        </div>
-                        {% endif %}
-                        
-                        <h6 class="mt-3">{% trans "Items from this farmer:" %}</h6>
-                        <ul class="list-group">
-                            {% for item in farmer.items %}
-                            <li class="list-group-item d-flex justify-content-between align-items-center">
-                                {{ item.name }} ({{ item.quantity }} x {{ item.price|floatformat:2 }} сом)
-                                <span>{{ item.total|floatformat:2 }} сом</span>
-                            </li>
-                            {% endfor %}
-                        </ul>
+      <div class="col-lg-8">
+        <div class="payment-methods-container">
+          <div class="payment-section-header">
+            <h3>{% trans "Choose Payment Method" %}</h3>
+          </div>
+          
+          <div class="payment-tabs">
+            <ul class="nav nav-tabs" id="paymentTabs" role="tablist">
+              <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="cash-tab" data-bs-toggle="tab" data-bs-target="#cash-pane" type="button" role="tab" aria-selected="true">
+                  <i class="bi bi-cash"></i> {% trans "Cash on Delivery" %}
+                </button>
+              </li>
+              <li class="nav-item" role="presentation">
+                <button class="nav-link" id="mobile-tab" data-bs-toggle="tab" data-bs-target="#mobile-pane" type="button" role="tab" aria-selected="false">
+                  <i class="bi bi-phone"></i> {% trans "Mobile Money" %}
+                </button>
+              </li>
+              <li class="nav-item" role="presentation">
+                <button class="nav-link" id="bank-tab" data-bs-toggle="tab" data-bs-target="#bank-pane" type="button" role="tab" aria-selected="false">
+                  <i class="bi bi-bank"></i> {% trans "Bank Transfer" %}
+                </button>
+              </li>
+            </ul>
+            
+            <div class="tab-content payment-tab-content" id="paymentTabContent">
+              <div class="tab-pane fade show active" id="cash-pane" role="tabpanel" aria-labelledby="cash-tab">
+                <div class="payment-method-body">
+                  <div class="cod-info">
+                    <div class="payment-icon">
+                      <i class="bi bi-cash-coin"></i>
                     </div>
-                    {% endfor %}
+                    <h5>{% trans "Pay with Cash on Delivery" %}</h5>
+                    <p>{% trans "Our courier will deliver your order and collect the payment in cash." %}</p>
                     
-                    <div class="alert alert-warning">
-                        <p><strong>{% trans "Important:" %}</strong> {% trans "After making your payment, please enter the confirmation code below:" %}</p>
-                    </div>
-                    
-                    <form action="{% url 'frontend:verify_payment' order.id %}" method="post" class="mt-3">
-                        {% csrf_token %}
-                        <div class="mb-3">
-                            <label for="confirmation_code" class="form-label">{% trans "Confirmation Code" %}</label>
-                            <input type="text" name="confirmation_code" id="confirmation_code" class="form-control" placeholder="{% trans "Enter the confirmation code" %}" required>
-                            <div class="form-text">
-                                {% trans "Enter the confirmation code:" %} {{ confirmation_code }}
-                            </div>
-                        </div>
-                        
-                        <button type="submit" class="btn btn-success">{% trans "Verify Payment" %}</button>
+                    <form action="{% url 'frontend:verify_payment' order.id %}" method="post" class="cod-form">
+                      {% csrf_token %}
+                      <input type="hidden" name="payment_method" value="cash">
+                      <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="cod-agreement" required>
+                        <label class="form-check-label" for="cod-agreement">
+                          {% trans "I agree to pay the total amount upon delivery" %}
+                        </label>
+                      </div>
+                      <button type="submit" class="btn btn-success btn-lg">
+                        {% trans "Place Order" %}
+                      </button>
                     </form>
+                  </div>
                 </div>
+              </div>
+              
+              <div class="tab-pane fade" id="mobile-pane" role="tabpanel" aria-labelledby="mobile-tab">
+                <div class="payment-method-body">
+                  <div class="mobile-payment-info">
+                    <div class="payment-icon">
+                      <i class="bi bi-phone"></i>
+                    </div>
+                    <h5>{% trans "Pay with Elsom/O!Dengi" %}</h5>
+                    <p>{% trans "Transfer the payment to our mobile wallet and enter the transaction ID." %}</p>
+                    
+                    <div class="mobile-payment-details">
+                      <div class="payment-detail">
+                        <span class="detail-label">{% trans "Mobile Number" %}:</span>
+                        <span class="detail-value">+996 770 123 456</span>
+                        <button class="copy-btn" data-clipboard-text="+996770123456">
+                          <i class="bi bi-clipboard"></i>
+                        </button>
+                      </div>
+                      <div class="payment-detail">
+                        <span class="detail-label">{% trans "Amount" %}:</span>
+                        <span class="detail-value">{{ order.total_amount|floatformat:2 }} сом</span>
+                      </div>
+                      <div class="payment-detail">
+                        <span class="detail-label">{% trans "Reference" %}:</span>
+                        <span class="detail-value">ORDER-{{ order.id }}</span>
+                        <button class="copy-btn" data-clipboard-text="ORDER-{{ order.id }}">
+                          <i class="bi bi-clipboard"></i>
+                        </button>
+                      </div>
+                    </div>
+                    
+                    <form action="{% url 'frontend:verify_payment' order.id %}" method="post" class="mobile-payment-form mt-4">
+                      {% csrf_token %}
+                      <input type="hidden" name="payment_method" value="mobile">
+                      <div class="mb-3">
+                        <label for="transaction_id" class="form-label required-field">{% trans "Transaction ID" %}</label>
+                        <input type="text" name="transaction_id" id="transaction_id" class="form-control" required>
+                        <div class="form-text">{% trans "Enter the transaction ID you received after making the payment" %}</div>
+                      </div>
+                      <button type="submit" class="btn btn-success btn-lg">
+                        {% trans "Verify Payment" %}
+                      </button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="tab-pane fade" id="bank-pane" role="tabpanel" aria-labelledby="bank-tab">
+                <div class="payment-method-body">
+                  <div class="bank-payment-info">
+                    <div class="payment-icon">
+                      <i class="bi bi-bank"></i>
+                    </div>
+                    <h5>{% trans "Pay via Bank Transfer" %}</h5>
+                    <p>{% trans "Transfer the payment to our bank account and provide the confirmation code." %}</p>
+                    
+                    <div class="bank-payment-details">
+                      <div class="payment-detail">
+                        <span class="detail-label">{% trans "Bank" %}:</span>
+                        <span class="detail-value">Demir Bank Kyrgyzstan</span>
+                      </div>
+                      <div class="payment-detail">
+                        <span class="detail-label">{% trans "Account Name" %}:</span>
+                        <span class="detail-value">AgroConnect Naryn LLC</span>
+                      </div>
+                      <div class="payment-detail">
+                        <span class="detail-label">{% trans "Account Number" %}:</span>
+                        <span class="detail-value">1234567890123456</span>
+                        <button class="copy-btn" data-clipboard-text="1234567890123456">
+                          <i class="bi bi-clipboard"></i>
+                        </button>
+                      </div>
+                      <div class="payment-detail">
+                        <span class="detail-label">{% trans "Amount" %}:</span>
+                        <span class="detail-value">{{ order.total_amount|floatformat:2 }} сом</span>
+                      </div>
+                      <div class="payment-detail">
+                        <span class="detail-label">{% trans "Reference" %}:</span>
+                        <span class="detail-value">ORDER-{{ order.id }}</span>
+                        <button class="copy-btn" data-clipboard-text="ORDER-{{ order.id }}">
+                          <i class="bi bi-clipboard"></i>
+                        </button>
+                      </div>
+                    </div>
+                    
+                    <form action="{% url 'frontend:verify_payment' order.id %}" method="post" class="bank-payment-form mt-4">
+                      {% csrf_token %}
+                      <input type="hidden" name="payment_method" value="bank">
+                      <div class="mb-3">
+                        <label for="confirmation_code" class="form-label required-field">{% trans "Confirmation Code" %}</label>
+                        <input type="text" name="confirmation_code" id="confirmation_code" class="form-control" required>
+                        <div class="form-text">{% trans "Enter the confirmation code from your bank receipt" %}</div>
+                      </div>
+                      <button type="submit" class="btn btn-success btn-lg">
+                        {% trans "Verify Payment" %}
+                      </button>
+                    </form>
+                  </div>
+                </div>
+              </div>
             </div>
+          </div>
         </div>
-        
-        <div class="col-lg-4">
-            <div class="card">
-                <div class="card-header bg-success text-white">
-                    <h5 class="mb-0">{% trans "Order Summary" %}</h5>
-                </div>
-                <div class="card-body">
-                    <p class="mb-3">{% trans "Order" %} #{{ order.id }}</p>
-                    
-                    {% for item in order.items.all %}
-                    <div class="mb-3 pb-3 border-bottom">
-                        <p class="mb-1 fw-semibold">{{ item.product_name }}</p>
-                        <div class="d-flex justify-content-between text-muted small">
-                            <span>{{ item.quantity }} × {{ item.product_price|floatformat:2 }} сом</span>
-                            <span>{{ item.product_price|floatformat:2|mul:item.quantity }} сом</span>
-                        </div>
-                    </div>
-                    {% endfor %}
-                    
-                    <div class="d-flex justify-content-between mt-4">
-                        <strong>{% trans "Total:" %}</strong>
-                        <strong>{{ order.total_amount|floatformat:2 }} сом</strong>
-                    </div>
-                </div>
+
+        <div class="payment-farmers-container">
+          <div class="payment-section-header">
+            <h3>{% trans "Pay Directly to Farmers" %}</h3>
+            <p class="text-muted">{% trans "Your order contains products from the following farmers" %}</p>
+          </div>
+          
+          {% for farmer in farmers %}
+          <div class="farmer-payment-card">
+            <div class="farmer-payment-header">
+              <h5>{{ farmer.name }}</h5>
+              <span class="farmer-amount">{{ farmer.amount|floatformat:2 }} сом</span>
             </div>
             
-            <div class="d-grid gap-2 mt-3">
-                <a href="{% url 'frontend:order_detail' order.id %}" class="btn btn-outline-secondary">
-                    {% trans "Back to Order Details" %}
-                </a>
+            <div class="farmer-payment-items">
+              <p class="items-label">{% trans "Items" %}:</p>
+              <ul class="items-list">
+                {% for item in farmer.items %}
+                <li>{{ item.name }} ({{ item.quantity }} × {{ item.price|floatformat:2 }} сом)</li>
+                {% endfor %}
+              </ul>
             </div>
+            
+            <div class="farmer-payment-methods">
+              {% if farmer.bank_name %}
+              <div class="farmer-payment-method">
+                <i class="bi bi-bank"></i>
+                <div class="method-details">
+                  <p class="method-name">{{ farmer.bank_name }}</p>
+                  <p class="method-value">{{ farmer.bank_account }}</p>
+                  <button class="copy-btn" data-clipboard-text="{{ farmer.bank_account }}">
+                    <i class="bi bi-clipboard"></i>
+                  </button>
+                </div>
+              </div>
+              {% endif %}
+              
+              {% if farmer.qr_code %}
+              <div class="farmer-qr-code">
+                <p>{% trans "Scan QR Code" %}:</p>
+                <img src="{{ farmer.qr_code }}" alt="{% trans "Payment QR Code" %}" class="img-fluid">
+              </div>
+              {% else %}
+              <div class="no-qr-message">
+                <i class="bi bi-exclamation-circle"></i>
+                <p>{% trans "This farmer has not provided a QR code. Please use their bank details above." %}</p>
+              </div>
+              {% endif %}
+            </div>
+          </div>
+          {% endfor %}
+          
+          <form action="{% url 'frontend:verify_payment' order.id %}" method="post" class="direct-payment-form mt-4">
+            {% csrf_token %}
+            <input type="hidden" name="payment_method" value="direct">
+            <div class="mb-3">
+              <label for="direct_confirmation" class="form-label required-field">{% trans "Payment Confirmation" %}</label>
+              <div class="direct-confirmation-check">
+                <input class="form-check-input" type="checkbox" id="direct_confirmation" name="direct_confirmation" required>
+                <label class="form-check-label" for="direct_confirmation">
+                  {% trans "I confirm that I have paid all farmers directly for this order" %}
+                </label>
+              </div>
+            </div>
+            <button type="submit" class="btn btn-success btn-lg">
+              {% trans "Complete Order" %}
+            </button>
+          </form>
         </div>
+      </div>
+
+      <div class="col-lg-4">
+        <div class="order-summary">
+          <div class="summary-header">
+            <h4>{% trans "Order Summary" %}</h4>
+            <span class="order-id">{% trans "Order" %} #{{ order.id }}</span>
+          </div>
+          
+          <div class="order-items">
+            {% for item in order.items.all %}
+            <div class="order-item">
+              <div class="order-item-info">
+                <span class="order-item-quantity">{{ item.quantity }}×</span>
+                <span class="order-item-name">{{ item.product_name }}</span>
+              </div>
+              <span class="order-item-price">{{ item.product_price|mul:item.quantity|floatformat:2 }} сом</span>
+            </div>
+            {% endfor %}
+          </div>
+          
+          <div class="order-subtotal">
+            <span>{% trans "Subtotal" %}:</span>
+            <span>{{ order.total_amount|floatformat:2 }} сом</span>
+          </div>
+          
+          <div class="order-delivery-fee">
+            <span>{% trans "Delivery" %}:</span>
+            <span>{% if order.delivery_fee %}{{ order.delivery_fee|floatformat:2 }} сом{% else %}{% trans "Free" %}{% endif %}</span>
+          </div>
+          
+          <div class="order-total">
+            <span>{% trans "Total" %}:</span>
+            <span>{{ order.total_amount|add:order.delivery_fee|default:order.total_amount|floatformat:2 }} сом</span>
+          </div>
+          
+          <div class="delivery-info-summary">
+            <div class="delivery-info-header">
+              <i class="bi bi-truck"></i>
+              <h5>{% trans "Delivery Information" %}</h5>
+            </div>
+            <div class="delivery-info-details">
+              <p class="mb-1"><strong>{% trans "Address" %}:</strong> {{ order.delivery_address }}</p>
+              <p class="mb-1"><strong>{% trans "Phone" %}:</strong> {{ order.contact_phone }}</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="naryn-payment-info">
+          <div class="payment-info-header">
+            <i class="bi bi-info-circle"></i>
+            <h5>{% trans "Payment Information" %}</h5>
+          </div>
+          <div class="payment-info-content">
+            <p>{% trans "Payments in Naryn region can be made through the following methods:" %}</p>
+            <ul class="payment-info-list">
+              <li>{% trans "Cash on delivery (COD)" %}</li>
+              <li>{% trans "Mobile money transfers (Elsom, O!Dengi)" %}</li>
+              <li>{% trans "Bank transfers (Demir Bank, RSK Bank)" %}</li>
+              <li>{% trans "QR code payments (supported by most Kyrgyz banks)" %}</li>
+            </ul>
+            <p class="payment-support">
+              {% trans "Need help with payment?" %} <a href="tel:+996770123456">+996 770 123 456</a>
+            </p>
+          </div>
+        </div>
+        
+        <div class="d-grid gap-2 mt-3">
+          <a href="{% url 'frontend:order_detail' order.id %}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> {% trans "Back to Order Details" %}
+          </a>
+        </div>
+      </div>
     </div>
+  </div>
 </div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Copy to clipboard functionality
+    const copyButtons = document.querySelectorAll('.copy-btn');
+    
+    copyButtons.forEach(button => {
+      button.addEventListener('click', function() {
+        const textToCopy = this.dataset.clipboardText;
+        navigator.clipboard.writeText(textToCopy)
+          .then(() => {
+            // Change button icon temporarily to show success
+            const originalIcon = this.innerHTML;
+            this.innerHTML = '<i class="bi bi-check"></i>';
+            
+            setTimeout(() => {
+              this.innerHTML = originalIcon;
+            }, 2000);
+          })
+          .catch(err => {
+            console.error('Failed to copy text: ', err);
+          });
+      });
+    });
+  });
+</script>
 {% endblock %}

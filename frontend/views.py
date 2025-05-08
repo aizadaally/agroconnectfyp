@@ -702,3 +702,15 @@ def manual_payment_confirmation(request, order_id):
         messages.success(request, "Payment confirmed successfully!")
     
     return redirect('frontend:order_detail', order_id=order.id)
+
+
+
+def debug_image_urls(request):
+    products = Product.objects.all()[:5]  # Get first 5 products
+    urls = {
+        p.name: {
+            'image_field': p.image.name if p.image else None,
+            'resolved_url': p.image.url if p.image else None,
+        } for p in products
+    }
+    return JsonResponse(urls)   

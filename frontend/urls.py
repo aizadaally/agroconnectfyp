@@ -42,4 +42,6 @@ urlpatterns = [
     path('test-language/', views.test_language, name='test_language'),
 
     path('test-email/', views.test_email, name='test_email'),
+    # In frontend/urls.py
+    path('debug-images/', views.debug_image_urls, name='debug_images'),
 ]

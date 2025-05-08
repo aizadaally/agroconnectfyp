@@ -119,7 +119,6 @@ DATABASES = {
 }
 
 
-
 # Email configuration
 if DEBUG:
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
@@ -132,6 +131,51 @@ else:
     EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")  # Zoho from email
     EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")  # Zoho App password
     DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+
+# Site URL for generating absolute URLs
+SITE_URL = os.getenv("SITE_URL", "https://agroconnectnaryn.org")
+# SITE_URL=http://localhost:8000
+
+# For debugging email issues
+# Enhanced logging in production
+if not DEBUG:
+    LOGGING = {
+        'version': 1,
+        'disable_existing_loggers': False,
+        'handlers': {
+            'console': {
+                'level': 'DEBUG',
+                'class': 'logging.StreamHandler',
+            },
+        },
+        'loggers': {
+            'django.request': {
+                'handlers': ['console'],
+                'level': 'DEBUG',
+                'propagate': True,
+            },
+            'django.mail': {
+                'handlers': ['console'],
+                'level': 'DEBUG',
+                'propagate': True,
+            },
+        },
+    }
+
+
+# # Email configuration
+# if DEBUG:
+#     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+# else:
+#     EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+    
+#     EMAIL_HOST = 'smtp.zoho.com'
+#     EMAIL_PORT = 587
+#     EMAIL_USE_TLS = True
+#     EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")  # Zoho from email
+#     EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")  # Zoho App password
+#     DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 
 

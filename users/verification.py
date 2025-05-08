@@ -50,4 +50,36 @@ class EmailVerificationToken(models.Model):
         else:
             domain = 'https://agroconnectnaryn.org'
 
-        # Generate new URL format (e.g., /
+        # Generate the verification URL
+        # Include language code in URL for internationalization
+        lang_code = getattr(request, 'LANGUAGE_CODE', 'en')
+        verification_url = f"{domain}/{lang_code}/verify-email/{self.token}/"
+        
+        # Format the email with a proper template
+        context = {
+            'user': self.user,
+            'verification_url': verification_url,
+            'expiry_time': self.expires_at.strftime('%Y-%m-%d %H:%M:%S')
+        }
+        
+        # Render the HTML email template
+        html_message = render_to_string('emails/verify_email.html', context)
+        plain_message = strip_tags(html_message)
+        
+        # Send the email
+        try:
+            result = send_mail(
+                subject='Verify Your Email - AgroConnect Naryn',
+                message=plain_message,
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                recipient_list=[self.user.email],
+                html_message=html_message,
+                fail_silently=False,
+            )
+            print(f"Verification email send result: {result} to {self.user.email}")
+            return True
+        except Exception as e:
+            print(f"Error sending verification email: {str(e)}")
+            import traceback
+            traceback.print_exc()
+            return False

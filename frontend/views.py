@@ -40,35 +40,39 @@ from django.core.mail import send_mail
 from django.conf import settings
 
 def test_email(request):
+    """Test view to check if emails are working"""
+    if not request.user.is_superuser:
+        return HttpResponse("Unauthorized", status=403)
+    
+    recipient = request.GET.get('email', request.user.email)
+    
     try:
-        from django.core.mail import send_mail
-        from django.conf import settings
-        
-        # Log configuration for debugging
-        email_config = {
-            'EMAIL_BACKEND': settings.EMAIL_BACKEND,
-            'EMAIL_HOST': settings.EMAIL_HOST,
-            'EMAIL_PORT': settings.EMAIL_PORT,
-            'EMAIL_HOST_USER': settings.EMAIL_HOST_USER,
-            'DEFAULT_FROM_EMAIL': settings.DEFAULT_FROM_EMAIL,
-        }
-        
-        # Send a test email to the admin
-        result = send_mail(
+        send_mail(
             subject='Test Email from AgroConnect',
-            message='This is a test email from the production server.',
+            message='This is a test email from AgroConnect Naryn.',
             from_email=settings.DEFAULT_FROM_EMAIL,
-            recipient_list=['your-personal-email@example.com'],  # Use your own email
+            recipient_list=[recipient],
             fail_silently=False,
         )
         
-        return HttpResponse(f"Test email result: {result}. Config: {email_config}")
+        # Print email configuration for debugging
+        config = {
+            'EMAIL_BACKEND': settings.EMAIL_BACKEND,
+            'EMAIL_HOST': settings.EMAIL_HOST,
+            'EMAIL_PORT': settings.EMAIL_PORT,
+            'EMAIL_USE_TLS': settings.EMAIL_USE_TLS,
+            'EMAIL_HOST_USER': settings.EMAIL_HOST_USER,
+            'DEFAULT_FROM_EMAIL': settings.DEFAULT_FROM_EMAIL,
+            'recipient': recipient
+        }
+        
+        return HttpResponse(f"Test email sent to {recipient}! Configuration: {config}")
     except Exception as e:
         import traceback
-        error_trace = traceback.format_exc()
-        return HttpResponse(f"Error sending email: {str(e)}\n\n{error_trace}", status=500)
-    
-    
+        error_details = traceback.format_exc()
+        return HttpResponse(f"Error sending test email: {str(e)}\n\n{error_details}", status=500)
+
+
 
 def test_language(request):
     """View to test language settings"""

@@ -19,7 +19,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = False  
 
 
 ALLOWED_HOSTS = ["*"]
@@ -121,8 +121,11 @@ DATABASES = {
 
 
 # IO Intelligence API Configuration
-# IO_INTELLIGENCE_API_KEY = os.getenv("IO_INTELLIGENCE_API_KEY")
+# IO_INTELLIGENCE_API_KEY = os.getenv("IO_INTELLIGENCE_API_KEY", "io-v2-eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJvd25lciI6IjMwNWE3OGU3LTA2ZTYtNGNjNS1hM2Q3LWQyMjdmMmU2MGI4YiIsImV4cCI6NDkwMDMxODYyN30.UJ_HrUC-EZhZcBEXCbl-1Ty80keYDa2mAjj8g61Q9nJnyM1xJlfy6Q4-QrYWZ9sDzROpz2AWDOse6ecnKtUifQ")
 
+IO_INTELLIGENCE_API_KEY = "IO_INTELLIGENCE_API_KEY"
+IO_INTELLIGENCE_ENDPOINT = "https://api.io.net/v1/chat/completions"
+IO_INTELLIGENCE_MODEL = "llama-3-70b-chat"
 
 # Email configuration
 if DEBUG:
@@ -239,4 +242,4 @@ if not DEBUG:
 # agroconnect_project/settings.py
 
 # IO Intelligence API Configuration
-IO_INTELLIGENCE_API_KEY = os.getenv("IO_INTELLIGENCE_API_KEY")
+# IO_INTELLIGENCE_API_KEY = os.getenv("IO_INTELLIGENCE_API_KEY")

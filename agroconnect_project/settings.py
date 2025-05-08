@@ -7,9 +7,9 @@ from pathlib import Path
 from dotenv import load_dotenv
 load_dotenv()
 from django.contrib.messages import constants as messages
-# import cloudinary
-# import cloudinary.uploader
-# import cloudinary.api
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -34,8 +34,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # 'cloudinary_storage',  # Add this
-    # 'cloudinary',          # Add this
+    'cloudinary_storage',  # Add this
+    'cloudinary',          # Add this
     
     # 'whitenoise.runserver_nostatic',
 
@@ -179,14 +179,14 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Cloudinary settings
-# cloudinary.config(
-#     cloud_name=os.getenv('CLOUDINARY_CLOUD_NAME'),
-#     api_key=os.getenv('CLOUDINARY_API_KEY'),
-#     api_secret=os.getenv('CLOUDINARY_API_SECRET')
-# )
+cloudinary.config(
+    cloud_name=os.getenv('CLOUDINARY_CLOUD_NAME'),
+    api_key=os.getenv('CLOUDINARY_API_KEY'),
+    api_secret=os.getenv('CLOUDINARY_API_SECRET')
+)
 
 # Make sure this is after the MEDIA_URL and MEDIA_ROOT settings
-# DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 # CLOUDINARY_STORAGE = {
 #     'CLOUD_NAME': os.getenv('CLOUDINARY_CLOUD_NAME'),

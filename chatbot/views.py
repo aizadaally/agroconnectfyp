@@ -22,7 +22,6 @@ def chat_page(request):
 def chat_api(request):
     """API endpoint to handle chat messages"""
     print(f"Request method: {request.method}")
-    print(f"Request headers: {request.headers}")
     
     if request.method != 'POST':
         return JsonResponse({'error': f'Only POST method is allowed. You sent {request.method}'}, status=405)
@@ -54,26 +53,53 @@ def chat_api(request):
             content=message
         )
         
-        # Call the IO Intelligence API directly
-        api_key = os.environ.get('IO_INTELLIGENCE_API_KEY', settings.IO_INTELLIGENCE_API_KEY)
+        # Get API key from settings
+        api_key = settings.IO_INTELLIGENCE_API_KEY
         
         headers = {
             "Authorization": f"Bearer {api_key}",
             "Content-Type": "application/json"
         }
         
-        # Add system message with language instruction if specified
-        system_message = "You are a helpful farming assistant knowledgeable about agriculture in Naryn region of Kyrgyzstan."
+        # Prepare language-specific system instructions
         if language == 'ky':
-            system_message = "Сиз айыл чарба боюнча жардам берүүчү ассистентсиз. Сиз Нарын областындагы айыл чарбасы жөнүндө билимдүүсүз. Бардык суроолорго кыргызча жооп бериңиз."
+            system_message = (
+                "Сиз айыл чарба боюнча жардам берүүчү ассистентсиз. "
+                "Сиз Нарын областындагы айыл чарбасы жөнүндө билимдүүсүз. "
+                "Бардык суроолорго кыргызча жооп бериңиз. "
+                "Нарын областы - Кыргызстандын тоолуу аймагы, бийик тоолуу климаты бар, "
+                "негизинен мал чарбачылыгы, жайыт чарбачылыгы жана айрым айыл чарба өсүмдүктөрү өстүрүлөт."
+            )
         elif language == 'ru':
-            system_message = "Вы ассистент по сельскому хозяйству, обладающий знаниями о сельском хозяйстве в Нарынской области Кыргызстана. Пожалуйста, отвечайте на все вопросы на русском языке."
+            system_message = (
+                "Вы ассистент по сельскому хозяйству, обладающий знаниями о сельском хозяйстве "
+                "в Нарынской области Кыргызстана. Пожалуйста, отвечайте на все вопросы на русском языке. "
+                "Нарынская область - горный регион Кыргызстана с высокогорным климатом, "
+                "в основном специализирующийся на животноводстве, пастбищном хозяйстве и некоторых сельскохозяйственных культурах."
+            )
+        else:
+            system_message = (
+                "You are a helpful farming assistant knowledgeable about agriculture "
+                "in Naryn region of Kyrgyzstan. Please respond in English. "
+                "The Naryn region is a mountainous area of Kyrgyzstan with a high-altitude climate, "
+                "primarily focused on livestock, pasture management, and some agricultural crops."
+            )
+        
+        # Get previous messages for context (last 5 messages excluding the current one)
+        previous_messages = list(ChatMessage.objects.filter(session=session).order_by('-timestamp')[1:6])
+        previous_messages.reverse()  # Reverse to get chronological order
         
         # Format messages for the API
         api_messages = [
-            {"role": "system", "content": system_message},
-            {"role": "user", "content": message}
+            {"role": "system", "content": system_message}
         ]
+        
+        # Add previous conversation context if available
+        for msg in previous_messages:
+            api_messages.append({"role": msg.role, "content": msg.content})
+        
+        # Add the current user message
+        api_messages.append({"role": "user", "content": message})
         
         api_data = {
             "model": "llama3-70b-8192",
@@ -82,7 +108,7 @@ def chat_api(request):
             "max_tokens": 800
         }
         
-        print(f"Sending to API: {json.dumps(api_data)}")
+        print(f"Sending to API with messages: {json.dumps(api_messages)}")
         
         response = requests.post(
             "https://api.io.net/v1/chat/completions",
@@ -110,10 +136,16 @@ def chat_api(request):
                 'session_id': session_id
             })
         else:
-            print(f"API error: {response.text}")
+            error_text = f"API Error: {response.status_code}"
+            try:
+                error_text += f" - {response.json().get('error', {}).get('message', '')}"
+            except:
+                error_text += f" - {response.text[:200]}"
+                
+            print(f"API error: {error_text}")
+            
             return JsonResponse({
-                'error': f"API Error: {response.status_code}",
-                'details': response.text,
+                'error': error_text,
                 'session_id': session_id
             }, status=500)
             
@@ -134,12 +166,16 @@ def chat_history(request, session_id=None):
     if session_id:
         try:
             session = ChatSession.objects.get(session_id=session_id)
+            # Ensure user can only access their own sessions
+            if session.user != request.user and not request.user.is_staff:
+                return JsonResponse({'error': 'Not authorized to access this session'}, status=403)
+                
             messages = ChatMessage.objects.filter(session=session)
             
             history = [{
                 'role': msg.role,
                 'content': msg.content,
-                'timestamp': msg.timestamp
+                'timestamp': msg.timestamp.isoformat()
             } for msg in messages]
             
             return JsonResponse({'history': history, 'session_id': session_id})
@@ -152,7 +188,7 @@ def chat_history(request, session_id=None):
         
         session_list = [{
             'id': session.session_id,
-            'created_at': session.created_at
+            'created_at': session.created_at.isoformat()
         } for session in sessions]
         
         return JsonResponse({'sessions': session_list})
@@ -170,6 +206,7 @@ def debug_endpoint(request):
         'user': str(request.user),
         'is_ajax': request.headers.get('x-requested-with') == 'XMLHttpRequest',
         'content_type': request.content_type,
+        'language': request.LANGUAGE_CODE,
     })
 
 def test_form(request):

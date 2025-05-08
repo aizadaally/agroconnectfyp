@@ -51,6 +51,19 @@
             </div>
             
             <div class="card mt-4">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">{% trans "Language" %}</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-outline-success language-btn active" data-lang="en" type="button">English</button>
+                        <button class="btn btn-outline-success language-btn" data-lang="ru" type="button">Русский</button>
+                        <button class="btn btn-outline-success language-btn" data-lang="ky" type="button">Кыргызча</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card mt-4">
                 <div class="card-header bg-light">
                     <h5 class="mb-0">{% trans "Previous Conversations" %}</h5>
                 </div>
@@ -71,9 +84,45 @@
         const sendButton = document.getElementById('send-button');
         const typingIndicator = document.getElementById('typing-indicator');
         const suggestionButtons = document.querySelectorAll('.suggestion-btn');
+        const languageButtons = document.querySelectorAll('.language-btn');
         const sessionsList = document.getElementById('sessions-list');
         
         let sessionId = localStorage.getItem('chatSessionId') || null;
+        let currentLanguage = '{{ LANGUAGE_CODE }}';
+        
+        // Set active language button based on current language
+        languageButtons.forEach(button => {
+            if (button.dataset.lang === currentLanguage) {
+                button.classList.add('active');
+            } else {
+                button.classList.remove('active');
+            }
+        });
+        
+        // Handle language selection
+        languageButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                // Update UI
+                languageButtons.forEach(btn => btn.classList.remove('active'));
+                this.classList.add('active');
+                
+                // Set current language
+                currentLanguage = this.dataset.lang;
+                
+                // Add a language change notification
+                const message = document.createElement('div');
+                message.className = 'message assistant-message';
+                message.innerHTML = `
+                    <div class="message-content" style="background-color: #e9ecef80; font-style: italic;">
+                        ${currentLanguage === 'en' ? 'Switched to English' : 
+                          currentLanguage === 'ru' ? 'Переключено на русский язык' : 
+                          'Кыргыз тилине которулду'}
+                    </div>
+                `;
+                chatMessages.insertBefore(message, typingIndicator);
+                scrollToBottom();
+            });
+        });
         
         // Send message when button is clicked
         sendButton.addEventListener('click', function() {
@@ -115,10 +164,11 @@
             const csrftoken = getCookie('csrftoken');
             
             console.log("Sending message:", message);
-            console.log("CSRF token:", csrftoken);
+            console.log("Language:", currentLanguage);
+            console.log("Session ID:", sessionId);
             
             // Send message to API using fetch with POST method
-            fetch('/chat/api/send/', {
+            fetch('/{{ LANGUAGE_CODE }}/chat/api/send/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -127,7 +177,7 @@
                 body: JSON.stringify({
                     message: message,
                     session_id: sessionId,
-                    language: '{{ LANGUAGE_CODE }}'
+                    language: currentLanguage
                 })
             })
             .then(response => {
@@ -142,7 +192,7 @@
                 
                 if (data.error) {
                     // Display error
-                    addMessage('assistant', 'Sorry, I encountered an error: ' + data.error);
+                    addMessage('assistant', 'Error: ' + data.error);
                 } else {
                     // Add assistant response to chat
                     addMessage('assistant', data.response);
@@ -194,6 +244,82 @@
                 }
             }
             return cookieValue;
+        }
+        
+        // Load previous sessions
+        function loadPreviousSessions() {
+            fetch(`/{{ LANGUAGE_CODE }}/chat/api/history/`, {
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken')
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.sessions && data.sessions.length > 0) {
+                    let html = '<ul class="list-group">';
+                    data.sessions.forEach(session => {
+                        const date = new Date(session.created_at).toLocaleDateString();
+                        html += `
+                            <li class="list-group-item session-item" data-session-id="${session.id}">
+                                <small class="text-muted">${date}</small>
+                                <div>Session #${session.id.substring(0, 8)}...</div>
+                            </li>
+                        `;
+                    });
+                    html += '</ul>';
+                    sessionsList.innerHTML = html;
+                    
+                    // Add click handlers to session items
+                    document.querySelectorAll('.session-item').forEach(item => {
+                        item.addEventListener('click', function() {
+                            sessionId = this.dataset.sessionId;
+                            localStorage.setItem('chatSessionId', sessionId);
+                            loadSessionMessages(sessionId);
+                        });
+                    });
+                } else {
+                    sessionsList.innerHTML = '<p class="text-center text-muted">No previous conversations</p>';
+                }
+            })
+            .catch(error => {
+                console.error('Error loading sessions:', error);
+                sessionsList.innerHTML = '<p class="text-center text-muted">Error loading conversations</p>';
+            });
+        }
+        
+        // Load messages for a specific session
+        function loadSessionMessages(sessionId) {
+            fetch(`/{{ LANGUAGE_CODE }}/chat/api/history/${sessionId}/`, {
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken')
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                chatMessages.innerHTML = ''; // Clear existing messages
+                
+                if (data.history && data.history.length > 0) {
+                    data.history.forEach(msg => {
+                        addMessage(msg.role, msg.content);
+                    });
+                }
+                
+                // Add typing indicator back
+                chatMessages.appendChild(typingIndicator);
+                
+                scrollToBottom();
+            })
+            .catch(error => {
+                console.error('Error loading messages:', error);
+                addMessage('assistant', 'Error loading conversation history.');
+            });
+        }
+        
+        // Try to load previous sessions if user is logged in
+        if ('{{ user.is_authenticated }}' === 'True') {
+            loadPreviousSessions();
+        } else {
+            sessionsList.innerHTML = '<p class="text-center text-muted">Login to see history</p>';
         }
     });
 </script>

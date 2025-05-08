@@ -1,0 +1,50 @@
+<!-- templates/chatbot/test_form.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test POST Form</title>
+    <meta charset="UTF-8">
+</head>
+<body>
+    <h1>Test POST Form</h1>
+    <form action="/chat/api/send/" method="post">
+        {% csrf_token %}
+        <input type="text" name="message" placeholder="Message">
+        <input type="hidden" name="session_id" value="test123">
+        <input type="hidden" name="language" value="en">
+        <button type="submit">Send</button>
+    </form>
+    
+    <h2>Test Fetch</h2>
+    <input type="text" id="message-input" placeholder="Message">
+    <button id="fetch-button">Send with Fetch</button>
+    <div id="result"></div>
+    
+    <script>
+        document.getElementById('fetch-button').addEventListener('click', function() {
+            const message = document.getElementById('message-input').value;
+            const csrftoken = '{{ csrf_token }}';
+            
+            fetch('/chat/api/send/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrftoken
+                },
+                body: JSON.stringify({
+                    message: message,
+                    session_id: 'test123',
+                    language: 'en'
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('result').textContent = JSON.stringify(data, null, 2);
+            })
+            .catch(error => {
+                document.getElementById('result').textContent = 'Error: ' + error;
+            });
+        });
+    </script>
+</body>
+</html>

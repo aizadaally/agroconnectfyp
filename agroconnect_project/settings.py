@@ -19,7 +19,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 
 ALLOWED_HOSTS = ["*"]
@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'orders',
     'api',
     'frontend',
+    'chatbot',
 ]
 
 MIDDLEWARE = [
@@ -119,6 +120,9 @@ DATABASES = {
 }
 
 
+# IO Intelligence API Configuration
+# IO_INTELLIGENCE_API_KEY = os.getenv("IO_INTELLIGENCE_API_KEY")
+
 
 # Email configuration
 if DEBUG:
@@ -167,9 +171,8 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'frontend', 'staticfiles'),
+    os.path.join(BASE_DIR, 'frontend', 'static'),
 ]
-
 
 
 
@@ -230,3 +233,10 @@ if not DEBUG:
 #     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 #     SECURE_HSTS_PRELOAD = True
     X_FRAME_OPTIONS = 'DENY'
+
+
+
+# agroconnect_project/settings.py
+
+# IO Intelligence API Configuration
+IO_INTELLIGENCE_API_KEY = os.getenv("IO_INTELLIGENCE_API_KEY")

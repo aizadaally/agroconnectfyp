@@ -125,19 +125,19 @@ if DEBUG:
 else:
     EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
     
+    # Zoho Mail configuration - using SSL instead of TLS
     EMAIL_HOST = 'smtp.zoho.com'
-    EMAIL_PORT = 587
-    EMAIL_USE_TLS = True
-    EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")  # Zoho from email
-    EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")  # Zoho App password
+    EMAIL_PORT = 465  # Changed from 587 to 465 for SSL
+    EMAIL_USE_TLS = False  # Changed from True to False
+    EMAIL_USE_SSL = True  # Added SSL support
+    EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER", "noreply@agroconnectnaryn.org")  # Hardcoded fallback
+    EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD", "7SB8yGaqAn3z")  # Hardcoded fallback
     DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
-
+    EMAIL_TIMEOUT = 30  # Added timeout to prevent hanging
 
 # Site URL for generating absolute URLs
 SITE_URL = os.getenv("SITE_URL", "https://agroconnectnaryn.org")
-# SITE_URL=http://localhost:8000
 
-# For debugging email issues
 # Enhanced logging in production
 if not DEBUG:
     LOGGING = {
@@ -160,8 +160,21 @@ if not DEBUG:
                 'level': 'DEBUG',
                 'propagate': True,
             },
+            'django.server': {
+                'handlers': ['console'],
+                'level': 'DEBUG',
+                'propagate': True,
+            },
+            'django.template': {
+                'handlers': ['console'],
+                'level': 'DEBUG',
+                'propagate': True,
+            },
         },
     }
+    
+    # Print email configuration at startup for debugging
+    print(f"EMAIL CONFIG: Host={EMAIL_HOST}, Port={EMAIL_PORT}, SSL={EMAIL_USE_SSL}, USER={EMAIL_HOST_USER}")
 
 
 # # Email configuration

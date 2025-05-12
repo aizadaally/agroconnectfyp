@@ -58,6 +58,9 @@
     </div>
 </div>
 
+<!-- Update the Naryn Districts Section in frontend/templates/frontend/home.html -->
+<!-- Replace the existing district section with this one -->
+
 <!-- Naryn Districts Section -->
 <section class="naryn-districts-section py-5">
     <div class="container">
@@ -282,33 +285,17 @@
             <div class="col-lg-6 mt-4 mt-lg-0 slide-in-right">
                 <div class="naryn-map-container">
                     <h4 class="text-center mb-3">{% trans "Naryn Region" %}</h4>
-                    <svg viewBox="0 0 300 250" class="naryn-map">
-                        <!-- Naryn region map -->
-                        <path d="M10,120 L50,100 L90,110 L120,130 L110,170 L70,180 L20,160 Z" class="district-path" data-district="at_bashy"></path>
-                        <text x="65" y="140" class="district-label">At-Bashy</text>
-                        
-                        <path d="M120,130 L150,120 L190,130 L200,170 L160,190 L110,170 Z" class="district-path" data-district="naryn"></path>
-                        <text x="155" y="155" class="district-label">Naryn</text>
-                        
-                        <path d="M150,120 L180,90 L220,100 L240,140 L200,170 L190,130 Z" class="district-path" data-district="ak_talaa"></path>
-                        <text x="195" y="125" class="district-label">Ak-Talaa</text>
-                        
-                        <path d="M200,170 L240,140 L280,150 L290,190 L250,210 L210,190 Z" class="district-path" data-district="jumgal"></path>
-                        <text x="245" y="175" class="district-label">Jumgal</text>
-                        
-                        <path d="M180,90 L220,70 L270,80 L280,110 L240,140 L220,100 Z" class="district-path" data-district="kochkor"></path>
-                        <text x="230" y="100" class="district-label">Kochkor</text>
-                    </svg>
-                    
-                    <div class="district-selector">
-                        <select class="form-select" id="district-selector">
-                            <option value="">{% trans "Select District" %}</option>
-                            <option value="at_bashy">At-Bashy</option>
-                            <option value="naryn">Naryn</option>
-                            <option value="ak_talaa">Ak-Talaa</option>
-                            <option value="jumgal">Jumgal</option>
-                            <option value="kochkor">Kochkor</option>
-                        </select>
+                    <!-- Embedded Google Map showing Naryn location -->
+                    <div class="map-responsive">
+                        <iframe 
+                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d378841.3644296889!2d75.72847577936833!3d41.43478920658371!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x38864e59e0c5280d%3A0xc4dd89b4dd581c8d!2sNaryn%2C%20Kyrgyzstan!5e0!3m2!1sen!2sus!4v1704810928374!5m2!1sen!2sus" 
+                            width="100%" 
+                            height="350" 
+                            style="border:0; border-radius: 15px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);" 
+                            allowfullscreen="" 
+                            loading="lazy" 
+                            referrerpolicy="no-referrer-when-downgrade">
+                        </iframe>
                     </div>
                 </div>
             </div>
@@ -353,76 +340,10 @@
             </div>
             <div class="col-lg-6 mt-4 mt-lg-0">
                 <div class="naryn-farmers-illustration snow-cap">
-                    <!-- SVG illustration for reliable rendering -->
-                    <svg width="100%" height="300" viewBox="0 0 600 400">
-                        <!-- Landscape background -->
-                        <rect x="0" y="200" width="600" height="200" fill="#28a745" opacity="0.2"/>
-                        
-                        <!-- Mountains -->
-                        <polygon points="0,200 100,120 200,180 300,80 400,150 500,100 600,200" fill="#28a745" opacity="0.3"/>
-                        
-                        <!-- Sun -->
-                        <circle cx="500" cy="80" r="40" fill="#f5a623" opacity="0.8">
-                            <animate attributeName="r" values="40;42;40" dur="4s" repeatCount="indefinite"/>
-                        </circle>
-                        
-                        <!-- Farmer figure -->
-                        <g transform="translate(150, 250)">
-                            <!-- Body -->
-                            <rect x="20" y="0" width="40" height="80" fill="#8B4513"/>
-                            <!-- Head -->
-                            <circle cx="40" cy="-15" r="20" fill="#D2B48C"/>
-                            <!-- Hat -->
-                            <path d="M15,-25 L65,-25 L40,-45 Z" fill="#28a745"/>
-                            <!-- Arms -->
-                            <rect x="0" y="10" width="20" height="10" fill="#D2B48C"/>
-                            <rect x="60" y="10" width="20" height="10" fill="#D2B48C"/>
-                            <!-- Legs -->
-                            <rect x="20" y="80" width="15" height="30" fill="#2F4F4F"/>
-                            <rect x="45" y="80" width="15" height="30" fill="#2F4F4F"/>
-                            
-                            <!-- Farming tool -->
-                            <line x1="80" y1="10" x2="80" y2="60" stroke="#8B4513" stroke-width="3"/>
-                            <path d="M75,60 L85,60 L80,75 Z" fill="#A0522D"/>
-                            
-                            <animateTransform 
-                                attributeName="transform"
-                                type="translate"
-                                values="150,250; 155,250; 150,250"
-                                dur="2s"
-                                repeatCount="indefinite"/>
-                        </g>
-                        
-                        <!-- Crops -->
-                        <g>
-                            <rect x="300" y="250" width="200" height="30" fill="#8B4513"/>
-                            <!-- For loop for crops here, using SVG directly -->
-                            <line x1="320" y1="250" x2="320" y2="220" stroke="#28a745" stroke-width="2"/>
-                            <circle cx="320" cy="210" r="10" fill="#f5a623">
-                                <animate attributeName="r" values="10;11;10" dur="2s" repeatCount="indefinite"/>
-                            </circle>
-                            
-                            <line x1="350" y1="250" x2="350" y2="220" stroke="#28a745" stroke-width="2"/>
-                            <circle cx="350" cy="210" r="10" fill="#f5a623">
-                                <animate attributeName="r" values="10;11;10" dur="3s" repeatCount="indefinite"/>
-                            </circle>
-                            
-                            <line x1="380" y1="250" x2="380" y2="220" stroke="#28a745" stroke-width="2"/>
-                            <circle cx="380" cy="210" r="10" fill="#f5a623">
-                                <animate attributeName="r" values="10;11;10" dur="4s" repeatCount="indefinite"/>
-                            </circle>
-                            
-                            <line x1="410" y1="250" x2="410" y2="220" stroke="#28a745" stroke-width="2"/>
-                            <circle cx="410" cy="210" r="10" fill="#f5a623">
-                                <animate attributeName="r" values="10;11;10" dur="5s" repeatCount="indefinite"/>
-                            </circle>
-                            
-                            <line x1="440" y1="250" x2="440" y2="220" stroke="#28a745" stroke-width="2"/>
-                            <circle cx="440" cy="210" r="10" fill="#f5a623">
-                                <animate attributeName="r" values="10;11;10" dur="3.5s" repeatCount="indefinite"/>
-                            </circle>
-                        </g>
-                    </svg>
+                    <!-- Using a proper mountain image -->
+                    <img src="https://images.unsplash.com/photo-1609137144813-7d9921338f24?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" 
+                         alt="Kyrgyz Mountains" 
+                         class="img-fluid rounded-3 shadow-lg">
                 </div>
             </div>
         </div>
@@ -492,6 +413,31 @@
 <!-- Floating cloud effect -->
 <div class="floating-cloud"></div>
 
+<style>
+    /* Map responsive iframe wrapper */
+    .map-responsive {
+        position: relative;
+        padding-bottom: 56.25%; /* 16:9 aspect ratio */
+        height: 0;
+        overflow: hidden;
+        max-width: 100%;
+    }
+    
+    .map-responsive iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+    }
+    
+    @media (max-width: 768px) {
+        .map-responsive {
+            padding-bottom: 75%; /* Adjust for mobile */
+        }
+    }
+</style>
+
 {% endblock %}
 
 {% block extra_js %}
@@ -520,43 +466,6 @@
         // Create initial batch of particles
         for (let i = 0; i < 10; i++) {
             setTimeout(createParticle, i * 200);
-        }
-        
-        // Naryn Map Interaction
-        const mapPaths = document.querySelectorAll('.district-path');
-        const districtSelector = document.getElementById('district-selector');
-        
-        // Add click events to map areas
-        mapPaths.forEach(path => {
-            path.addEventListener('click', function() {
-                const district = this.getAttribute('data-district');
-                
-                // Reset all paths
-                mapPaths.forEach(p => p.classList.remove('active'));
-                
-                // Activate clicked path
-                this.classList.add('active');
-                
-                // Update selector
-                if (districtSelector) {
-                    districtSelector.value = district;
-                }
-            });
-        });
-        
-        // Add change event to selector
-        if (districtSelector) {
-            districtSelector.addEventListener('change', function() {
-                const district = this.value;
-                
-                // Reset all paths
-                mapPaths.forEach(p => p.classList.remove('active'));
-                
-                // Activate selected path
-                if (district) {
-                    document.querySelector(`.district-path[data-district="${district}"]`).classList.add('active');
-                }
-            });
         }
         
         // Animation on scroll

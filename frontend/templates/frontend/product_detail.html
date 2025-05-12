@@ -1,4 +1,4 @@
-<!-- Updated product_detail.html with Kyrgyz elements -->
+<!-- frontend/templates/frontend/product_detail.html -->
 {% extends 'frontend/base.html' %}
 {% load i18n %}
 {% load static %}
@@ -21,18 +21,6 @@
         box-shadow: 0 8px 25px var(--shadow);
     }
     
-    .product-image-container::after {
-        content: '';
-        position: absolute;
-        top: 0;
-        right: 0;
-        width: 80px;
-        height: 80px;
-        background: url('/media/kyrgyz-patterns/naryn-watermark.png') no-repeat center;
-        background-size: contain;
-        opacity: 0.1;
-    }
-    
     .naryn-origin-badge {
         background: linear-gradient(45deg, var(--bg-success), #229954);
         color: white;
@@ -52,18 +40,6 @@
         box-shadow: 0 4px 15px var(--shadow);
         position: relative;
         overflow: hidden;
-    }
-    
-    .farmer-card-kyrgyz::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        right: 0;
-        width: 150px;
-        height: 150px;
-        background: url('/media/kyrgyz-patterns/yurt-pattern-light.png') no-repeat center;
-        background-size: contain;
-        opacity: 0.05;
     }
     
     .farmer-avatar-kyrgyz {
@@ -114,6 +90,7 @@
         border-radius: 8px;
         font-size: 0.9rem;
         border: 1px solid var(--border-color);
+        z-index: 10;
     }
     
     .related-products-section {
@@ -142,6 +119,32 @@
         position: relative;
         z-index: 1;
     }
+    
+    /* Map responsive iframe wrapper */
+    .map-responsive {
+        position: relative;
+        padding-bottom: 56.25%; /* 16:9 aspect ratio */
+        height: 0;
+        overflow: hidden;
+        max-width: 100%;
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    .map-responsive iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border-radius: 15px;
+    }
+    
+    @media (max-width: 768px) {
+        .map-responsive {
+            padding-bottom: 75%; /* Adjust for mobile */
+        }
+    }
 </style>
 {% endblock %}
 
@@ -167,7 +170,7 @@
                 {% if product.image %}
                 <img src="{{ product.image.url }}" alt="{{ product.get_translated_name }}" class="img-fluid">
                 {% else %}
-                <img src="/media/products/default-naryn-product.jpg" alt="{{ product.get_translated_name }}" class="img-fluid">
+                <img src="https://images.unsplash.com/photo-1590779033100-9f60a05a013d?ixlib=rb-4.0.3" alt="{{ product.get_translated_name }}" class="img-fluid">
                 {% endif %}
             </div>
             
@@ -271,7 +274,7 @@
                     {% if product.farmer.profile_image %}
                     <img src="{{ product.farmer.profile_image.url }}" alt="{{ product.farmer.username }}" class="farmer-avatar-kyrgyz">
                     {% else %}
-                    <img src="/media/farmers/default-kyrgyz-farmer.jpg" alt="Kyrgyz Farmer" class="farmer-avatar-kyrgyz">
+                    <img src="https://images.unsplash.com/photo-1606755351614-7b17a3a1f38d?ixlib=rb-4.0.3" alt="Kyrgyz Farmer" class="farmer-avatar-kyrgyz">
                     {% endif %}
                 </div>
                 
@@ -355,14 +358,17 @@
             </div>
             
             <div class="col-md-6">
-                <!-- Simplified Naryn region map -->
-                <div class="bg-light rounded-3 p-4" style="height: 200px; position: relative;">
-                    <img src="/media/maps/naryn-region-simple.png" alt="Naryn Region Map" class="img-fluid" style="opacity: 0.8;">
-                    <div class="position-absolute top-50 start-50 translate-middle">
-                        <div class="bg-success rounded-pill text-white py-1 px-3 small pulse-animation">
-                            <i class="bi bi-geo-alt-fill me-1"></i>{{ product.farmer.farm_location|default:"Naryn" }}
-                        </div>
-                    </div>
+                <!-- Embedded Google Map showing Naryn location -->
+                <div class="map-responsive">
+                    <iframe 
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d189420.4304835574!2d75.72847577936833!3d41.43478920658371!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x38864e59e0c5280d%3A0xc4dd89b4dd581c8d!2sNaryn%2C%20Kyrgyzstan!5e0!3m2!1sen!2sus!4v1704810928374!5m2!1sen!2sus&markers=color:green%7C{{ product.farmer.farm_location|default:'Naryn' }}" 
+                        width="100%" 
+                        height="300" 
+                        style="border:0;" 
+                        allowfullscreen="" 
+                        loading="lazy" 
+                        referrerpolicy="no-referrer-when-downgrade">
+                    </iframe>
                 </div>
             </div>
         </div>
@@ -381,7 +387,7 @@
                             {% if related.image %}
                             <img src="{{ related.image.url }}" class="card-img-top" alt="{{ related.get_translated_name }}" style="height: 200px; object-fit: cover;">
                             {% else %}
-                            <img src="/media/products/default-naryn-product.jpg" class="card-img-top" alt="{{ related.get_translated_name }}" style="height: 200px; object-fit: cover;">
+                            <img src="https://images.unsplash.com/photo-1464226184884-fa280b87c399?ixlib=rb-4.0.3" class="card-img-top" alt="{{ related.get_translated_name }}" style="height: 200px; object-fit: cover;">
                             {% endif %}
                             
                             {% if user.is_authenticated and user.is_buyer %}

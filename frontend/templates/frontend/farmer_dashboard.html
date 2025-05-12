@@ -1,373 +1,329 @@
-<!-- frontend/templates/frontend/farmer_dashboard.html -->
+<!-- Updated farmer_dashboard.html with Kyrgyz-themed design -->
 {% extends 'frontend/base.html' %}
 {% load i18n %}
+{% load static %}
 
 {% block title %}{% trans "Farmer Dashboard" %} - AgroConnect{% endblock %}
 
+{% block extra_css %}
+<style>
+    /* Kyrgyz-themed dashboard styles */
+    .dashboard-hero {
+        background-image: linear-gradient(rgba(40, 167, 69, 0.7), rgba(0, 0, 0, 0.5)), 
+                          url('/media/kyrgyz-nature/tian-shan-mountains.jpg');
+        background-size: cover;
+        background-position: center;
+        color: white;
+        padding: 80px 0;
+        border-radius: 12px;
+        margin-bottom: 30px;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .dashboard-hero::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('/media/kyrgyz-patterns/yurt-pattern.png') no-repeat bottom right;
+        opacity: 0.1;
+        background-size: 300px;
+    }
+    
+    .farmer-profile-section {
+        background: linear-gradient(to bottom, var(--bg-primary), var(--bg-secondary));
+        border-radius: 15px;
+        padding: 30px;
+        margin-bottom: 30px;
+        position: relative;
+    }
+    
+    .kyrgyz-farmer-image {
+        width: 150px;
+        height: 150px;
+        border-radius: 15px;
+        object-fit: cover;
+        border: 4px solid var(--bg-success);
+        box-shadow: 0 8px 25px var(--shadow-lg);
+    }
+    
+    .stat-card {
+        background: var(--bg-primary);
+        border: none;
+        border-radius: 15px;
+        overflow: hidden;
+        transition: transform 0.3s, box-shadow 0.3s;
+        position: relative;
+        background-image: url('/media/kyrgyz-nature/naryn-fields.jpg');
+        background-size: cover;
+        background-position: center;
+    }
+    
+    .stat-card-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(45deg, var(--bg-success), rgba(40, 167, 69, 0.9));
+        z-index: 1;
+    }
+    
+    .stat-card-content {
+        position: relative;
+        z-index: 2;
+        color: white;
+        padding: 25px;
+    }
+    
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 30px var(--shadow-lg);
+    }
+    
+    .kyrgyz-pattern-border {
+        border-image: repeating-linear-gradient(45deg, 
+            var(--bg-success) 0px, 
+            var(--bg-success) 10px, 
+            transparent 10px, 
+            transparent 20px) 1;
+        border-bottom: 4px solid;
+        padding-bottom: 20px;
+        margin-bottom: 30px;
+    }
+    
+    .products-table {
+        background: var(--bg-primary);
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 4px 15px var(--shadow);
+    }
+    
+    .table thead {
+        background: linear-gradient(45deg, var(--bg-success), #229954);
+        color: white;
+    }
+    
+    .farmer-welcome {
+        font-family: 'Roboto', sans-serif;
+        font-size: 2.2rem;
+        font-weight: 700;
+        margin-bottom: 15px;
+    }
+    
+    .kyrgyz-quote {
+        font-style: italic;
+        opacity: 0.9;
+        font-size: 1.1rem;
+        margin-bottom: 20px;
+    }
+    
+    .naryn-weather {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 10px;
+        padding: 15px;
+        display: inline-block;
+        color: #333;
+    }
+    
+    [data-theme="dark"] .naryn-weather {
+        background: rgba(0, 0, 0, 0.8);
+        color: #fff;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-<div class="dashboard-header">
-  <div class="container">
-    <div class="row align-items-center">
-      <div class="col-lg-8">
-        <h1 class="dashboard-title">{% trans "Farmer Dashboard" %}</h1>
-        <p class="dashboard-subtitle">{% trans "Manage your products and view orders from Naryn buyers" %}</p>
-      </div>
-      <div class="col-lg-4 text-end">
-        <a href="{% url 'frontend:add_product' %}" class="btn btn-success btn-lg dashboard-action-btn">
-          <i class="bi bi-plus-lg"></i> {% trans "Add New Product" %}
-        </a>
-      </div>
+<!-- Dashboard Hero Section with Kyrgyz Mountains -->
+<div class="dashboard-hero">
+    <div class="container text-center">
+        <h1 class="farmer-welcome">
+            {% trans "Welcome back" %}, {{ user.first_name|default:user.username }}!
+        </h1>
+        <p class="kyrgyz-quote">
+            {% if LANGUAGE_CODE == 'ky' %}
+                "Жер - алтын, эмгек - күмүш" - Кыргыз макал
+            {% elif LANGUAGE_CODE == 'ru' %}
+                "Земля - золото, труд - серебро" - Киргизская пословица
+            {% else %}
+                "Land is gold, labor is silver" - Kyrgyz proverb
+            {% endif %}
+        </p>
+        
+        <!-- Current Naryn Weather -->
+        <div class="naryn-weather">
+            <i class="bi bi-sun me-2"></i>
+            <span>{% trans "Naryn Today:" %} 18°C</span>
+            <i class="bi bi-cloud ms-3 me-2"></i>
+            <span>{% trans "Partly Cloudy" %}</span>
+        </div>
     </div>
-  </div>
 </div>
 
 <div class="container py-4">
-  <div class="row">
-    <div class="col-lg-3 mb-4">
-      <div class="dashboard-nav sticky-top">
-        <div class="dashboard-user-info">
-          {% if user.profile_image %}
-          <img src="{{ user.profile_image.url }}" alt="{{ user.username }}" class="dashboard-user-image">
-          {% else %}
-          <div class="dashboard-user-placeholder">
-            {{ user.username|first|upper }}
-          </div>
-          {% endif %}
-          <div class="dashboard-user-details">
-            <h5 class="mb-0">{{ user.get_full_name|default:user.username }}</h5>
-            <p class="text-muted mb-0">{{ user.farm_name }}</p>
-          </div>
+    <!-- Farmer Profile Section -->
+    <div class="farmer-profile-section">
+        <div class="row align-items-center">
+            <div class="col-md-3 text-center">
+                {% if user.profile_image %}
+                <img src="{{ user.profile_image.url }}" alt="{{ user.username }}" class="kyrgyz-farmer-image">
+                {% else %}
+                <!-- Use a default Kyrgyz farmer photo -->
+                <img src="/media/farmers/default-kyrgyz-farmer.jpg" alt="Kyrgyz Farmer" class="kyrgyz-farmer-image">
+                {% endif %}
+            </div>
+            <div class="col-md-9">
+                <h3 class="mb-2">{{ user.get_full_name|default:user.username }}</h3>
+                <p class="text-muted mb-1">
+                    <i class="bi bi-geo-alt me-2"></i>{{ user.farm_location|default:"Naryn Oblast" }}
+                </p>
+                <p class="text-muted mb-3">
+                    <i class="bi bi-house me-2"></i>{{ user.farm_name|default:"Family Farm" }}
+                </p>
+                <div class="d-flex gap-2">
+                    <span class="badge bg-success"><i class="bi bi-check-circle me-1"></i>{% trans "Verified Farmer" %}</span>
+                    <span class="badge bg-info"><i class="bi bi-award me-1"></i>{% trans "Naryn Region" %}</span>
+                </div>
+            </div>
         </div>
-        
-        <ul class="dashboard-nav-links">
-          <li class="active"><a href="#products" data-bs-toggle="tab"><i class="bi bi-basket"></i> {% trans "Products" %}</a></li>
-          <li><a href="#orders" data-bs-toggle="tab"><i class="bi bi-bag"></i> {% trans "Orders" %}</a></li>
-          <li><a href="#analytics" data-bs-toggle="tab"><i class="bi bi-graph-up"></i> {% trans "Analytics" %}</a></li>
-          <li><a href="{% url 'frontend:profile' %}"><i class="bi bi-person"></i> {% trans "Profile" %}</a></li>
-        </ul>
-      </div>
     </div>
     
-    <div class="col-lg-9">
-      <div class="tab-content">
-        <div class="tab-pane fade show active" id="products">
-          <div class="dashboard-section">
-            <div class="dashboard-section-header">
-              <h3>{% trans "My Products" %}</h3>
-              <span class="badge bg-success">{{ products|length }}</span>
+    <!-- Statistics Cards with Kyrgyz Nature Backgrounds -->
+    <div class="row mb-5">
+        <div class="col-md-3 mb-4">
+            <div class="stat-card">
+                <div class="stat-card-overlay"></div>
+                <div class="stat-card-content text-center">
+                    <i class="bi bi-basket fs-2 mb-2"></i>
+                    <h4>{{ products|length }}</h4>
+                    <p class="mb-0">{% trans "Products Listed" %}</p>
+                </div>
             </div>
-            
-            {% if products %}
-            <div class="table-responsive">
-              <table class="table table-hover dashboard-table">
-                <thead class="table-success">
-                  <tr>
-                    <th>{% trans "Name" %}</th>
-                    <th>{% trans "Category" %}</th>
-                    <th>{% trans "Price" %}</th>
-                    <th>{% trans "Quantity" %}</th>
-                    <th>{% trans "Status" %}</th>
-                    <th>{% trans "Actions" %}</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {% for product in products %}
-                  <tr class="stagger-item">
-                    <td>
-                      <div class="product-cell">
-                        {% if product.image %}
-                        <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-table-image">
-                        {% else %}
-                        <div class="product-placeholder">
-                          <i class="bi bi-image"></i>
-                        </div>
-                        {% endif %}
-                        <span>{{ product.name }}</span>
-                      </div>
-                    </td>
-                    <td>{{ product.category.name|default:_("None") }}</td>
-                    <td>{{ product.price|floatformat:2 }} сом / {{ product.unit }}</td>
-                    <td>
-                      <div class="quantity-cell {% if product.quantity_available < 10 %}low-stock{% endif %}">
-                        {{ product.quantity_available }} {{ product.unit }}
-                        {% if product.quantity_available < 10 %}
-                        <span class="low-stock-badge" data-bs-toggle="tooltip" title="{% trans 'Low stock' %}">
-                          <i class="bi bi-exclamation-triangle-fill"></i>
-                        </span>
-                        {% endif %}
-                      </div>
-                    </td>
-                    <td>
-                      {% if product.is_available %}
-                      <span class="status-badge available">
-                        <i class="bi bi-check-circle-fill"></i> {% trans "Available" %}
-                      </span>
-                      {% else %}
-                      <span class="status-badge unavailable">
-                        <i class="bi bi-x-circle-fill"></i> {% trans "Unavailable" %}
-                      </span>
-                      {% endif %}
-                    </td>
-                    <td>
-                      <div class="action-buttons">
-                        <a href="{% url 'frontend:product_detail' product.id %}" class="btn btn-sm btn-outline-success" data-bs-toggle="tooltip" title="{% trans 'View' %}">
-                          <i class="bi bi-eye"></i>
-                        </a>
-                        <a href="{% url 'frontend:edit_product' product.id %}" class="btn btn-sm btn-outline-primary" data-bs-toggle="tooltip" title="{% trans 'Edit' %}">
-                          <i class="bi bi-pencil"></i>
-                        </a>
-                        <a href="{% url 'frontend:delete_product' product.id %}" class="btn btn-sm btn-outline-danger" data-bs-toggle="tooltip" title="{% trans 'Delete' %}">
-                          <i class="bi bi-trash"></i>
-                        </a>
-                      </div>
-                    </td>
-                  </tr>
-                  {% endfor %}
-                </tbody>
-              </table>
-            </div>
-            {% else %}
-            <div class="empty-state">
-              <div class="empty-state-icon">
-                <i class="bi bi-basket"></i>
-              </div>
-              <h4>{% trans "No products yet" %}</h4>
-              <p>{% trans "You haven't added any products yet. Start by adding your first product." %}</p>
-              <a href="{% url 'frontend:add_product' %}" class="btn btn-success">
-                <i class="bi bi-plus-lg"></i> {% trans "Add Your First Product" %}
-              </a>
-            </div>
-            {% endif %}
-          </div>
         </div>
         
-        <div class="tab-pane fade" id="orders">
-          <div class="dashboard-section">
-            <div class="dashboard-section-header">
-              <h3>{% trans "Recent Orders" %}</h3>
+        <div class="col-md-3 mb-4">
+            <div class="stat-card">
+                <div class="stat-card-overlay"></div>
+                <div class="stat-card-content text-center">
+                    <i class="bi bi-bag-check fs-2 mb-2"></i>
+                    <h4>{{ orders|length }}</h4>
+                    <p class="mb-0">{% trans "Total Orders" %}</p>
+                </div>
             </div>
-            
-            {% if orders %}
-            <div class="responsive-table-container">
-              <table class="table table-hover dashboard-table">
-                <thead class="table-success">
-                  <tr>
-                    <th>{% trans "Order ID" %}</th>
-                    <th>{% trans "Customer" %}</th>
-                    <th>{% trans "Date" %}</th>
-                    <th>{% trans "Status" %}</th>
-                    <th>{% trans "Total" %}</th>
-                    <th>{% trans "Actions" %}</th>
-                  </tr>
+        </div>
+        
+        <div class="col-md-3 mb-4">
+            <div class="stat-card">
+                <div class="stat-card-overlay"></div>
+                <div class="stat-card-content text-center">
+                    <i class="bi bi-currency-dollar fs-2 mb-2"></i>
+                    <h4>{{ total_revenue|default:0|floatformat:2 }} сом</h4>
+                    <p class="mb-0">{% trans "Total Revenue" %}</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3 mb-4">
+            <div class="stat-card">
+                <div class="stat-card-overlay"></div>
+                <div class="stat-card-content text-center">
+                    <i class="bi bi-people fs-2 mb-2"></i>
+                    <h4>{{ customer_count|default:0 }}</h4>
+                    <p class="mb-0">{% trans "Customers" %}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Products Section with Kyrgyz Pattern Border -->
+    <div class="kyrgyz-pattern-border">
+        <h3 class="mb-4">
+            <i class="bi bi-basket me-2"></i>{% trans "My Products" %}
+            <a href="{% url 'frontend:add_product' %}" class="btn btn-success float-end">
+                <i class="bi bi-plus-lg me-1"></i>{% trans "Add New Product" %}
+            </a>
+        </h3>
+    </div>
+    
+    {% if products %}
+    <div class="products-table">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th>{% trans "Product" %}</th>
+                        <th>{% trans "Category" %}</th>
+                        <th>{% trans "Price" %}</th>
+                        <th>{% trans "Stock" %}</th>
+                        <th>{% trans "Status" %}</th>
+                        <th>{% trans "Actions" %}</th>
+                    </tr>
                 </thead>
                 <tbody>
-                  {% for order in orders %}
-                  <tr class="stagger-item">
-                    <td>#{{ order.id }}</td>
-                    <td>
-                      <div class="d-flex align-items-center">
-                        <div class="user-icon-sm me-2">
-                          {{ order.buyer.username|first|upper }}
-                        </div>
-                        {{ order.buyer.get_full_name|default:order.buyer.username }}
-                      </div>
-                    </td>
-                    <td>{{ order.created_at|date:"M j, Y" }}</td>
-                    <td>
-                      <span class="order-status-badge status-{{ order.status|lower }}">
-                        {{ order.get_status_display }}
-                      </span>
-                      {% if order.is_paid %}
-                      <span class="badge bg-success ms-1">{% trans "Paid" %}</span>
-                      {% endif %}
-                    </td>
-                    <td>{{ order.total_amount|floatformat:2 }} сом</td>
-                    <td>
-                      <a href="{% url 'frontend:order_detail' order.id %}" class="btn btn-sm btn-outline-success">
-                        <i class="bi bi-eye"></i> {% trans "View" %}
-                      </a>
-                    </td>
-                  </tr>
-                  {% endfor %}
+                    {% for product in products %}
+                    <tr>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                {% if product.image %}
+                                <img src="{{ product.image.url }}" alt="{{ product.name }}" 
+                                     class="me-3" style="width: 60px; height: 60px; object-fit: cover; border-radius: 8px;">
+                                {% endif %}
+                                <div>
+                                    <strong>{{ product.name }}</strong>
+                                    <small class="d-block text-muted">Added {{ product.created_at|date:"M j, Y" }}</small>
+                                </div>
+                            </div>
+                        </td>
+                        <td>{{ product.category.name|default:_("None") }}</td>
+                        <td><strong>{{ product.price|floatformat:2 }} сом</strong></td>
+                        <td>
+                            {% if product.quantity_available < 10 %}
+                            <span class="badge bg-warning">{{ product.quantity_available }} {{ product.unit }}</span>
+                            {% else %}
+                            <span class="badge bg-success">{{ product.quantity_available }} {{ product.unit }}</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if product.is_available %}
+                            <span class="badge bg-success">{% trans "Available" %}</span>
+                            {% else %}
+                            <span class="badge bg-danger">{% trans "Unavailable" %}</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="btn-group" role="group">
+                                <a href="{% url 'frontend:product_detail' product.id %}" 
+                                   class="btn btn-sm btn-outline-primary" title="{% trans 'View' %}">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                                <a href="{% url 'frontend:edit_product' product.id %}" 
+                                   class="btn btn-sm btn-outline-success" title="{% trans 'Edit' %}">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <a href="{% url 'frontend:delete_product' product.id %}" 
+                                   class="btn btn-sm btn-outline-danger" title="{% trans 'Delete' %}">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
                 </tbody>
-              </table>
-            </div>
-            {% else %}
-            <div class="empty-state">
-              <div class="empty-state-icon">
-                <i class="bi bi-bag"></i>
-              </div>
-              <h4>{% trans "No orders yet" %}</h4>
-              <p>{% trans "When customers purchase your products, their orders will appear here." %}</p>
-            </div>
-            {% endif %}
-          </div>
+            </table>
         </div>
-
-        <div class="tab-pane fade" id="analytics">
-          <div class="dashboard-section">
-            <div class="dashboard-section-header">
-              <h3>{% trans "Naryn Market Analytics" %}</h3>
-            </div>
-            
-            <div class="row g-4">
-              <div class="col-md-6 col-lg-4">
-                <div class="stat-card">
-                  <div class="stat-card-icon bg-success-light">
-                    <i class="bi bi-basket"></i>
-                  </div>
-                  <div class="stat-card-content">
-                    <h6>{% trans "Products" %}</h6>
-                    <h3>{{ products|length }}</h3>
-                  </div>
-                </div>
-              </div>
-              
-              <div class="col-md-6 col-lg-4">
-                <div class="stat-card">
-                  <div class="stat-card-icon bg-primary-light">
-                    <i class="bi bi-bag"></i>
-                  </div>
-                  <div class="stat-card-content">
-                    <h6>{% trans "Orders" %}</h6>
-                    <h3>{{ orders|length }}</h3>
-                  </div>
-                </div>
-              </div>
-              
-              <div class="col-md-6 col-lg-4">
-                <div class="stat-card">
-                  <div class="stat-card-icon bg-warning-light">
-                    <i class="bi bi-currency-dollar"></i>
-                  </div>
-                  <div class="stat-card-content">
-                    <h6>{% trans "Revenue" %}</h6>
-                    <h3>{{ total_revenue|default:0|floatformat:2 }} сом</h3>
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-            <div class="mt-4">
-              <h5>{% trans "Popular in Naryn Region" %}</h5>
-              <p class="text-muted">{% trans "Current trending agricultural products in Naryn" %}</p>
-              
-              <div class="trends-container">
-                <div class="trend-item">
-                  <div class="trend-rank">1</div>
-                  <div class="trend-name">{% trans "Honey" %}</div>
-                  <div class="trend-graph">
-                    <div class="trend-bar" style="width: 90%"></div>
-                  </div>
-                </div>
-                
-                <div class="trend-item">
-                  <div class="trend-rank">2</div>
-                  <div class="trend-name">{% trans "Kurut" %}</div>
-                  <div class="trend-graph">
-                    <div class="trend-bar" style="width: 75%"></div>
-                  </div>
-                </div>
-                
-                <div class="trend-item">
-                  <div class="trend-rank">3</div>
-                  <div class="trend-name">{% trans "Fresh Milk" %}</div>
-                  <div class="trend-graph">
-                    <div class="trend-bar" style="width: 65%"></div>
-                  </div>
-                </div>
-                
-                <div class="trend-item">
-                  <div class="trend-rank">4</div>
-                  <div class="trend-name">{% trans "Potatoes" %}</div>
-                  <div class="trend-graph">
-                    <div class="trend-bar" style="width: 55%"></div>
-                  </div>
-                </div>
-                
-                <div class="trend-item">
-                  <div class="trend-rank">5</div>
-                  <div class="trend-name">{% trans "Mountain Herbs" %}</div>
-                  <div class="trend-graph">
-                    <div class="trend-bar" style="width: 45%"></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-            <div class="naryn-map-container mt-5">
-              <h5>{% trans "Sales by Region" %}</h5>
-              <p class="text-muted">{% trans "Distribution of your sales across Naryn" %}</p>
-              
-              <div class="naryn-map-wrapper">
-                <svg viewBox="0 0 300 250" class="naryn-map">
-                  <!-- Naryn districts -->
-                  <path d="M10,120 L50,100 L90,110 L120,130 L110,170 L70,180 L20,160 Z" class="district-path" data-district="at_bashy" data-sales="12"></path>
-                  <text x="65" y="140" class="district-label">At-Bashy</text>
-                  
-                  <path d="M120,130 L150,120 L190,130 L200,170 L160,190 L110,170 Z" class="district-path" data-district="naryn" data-sales="35"></path>
-                  <text x="155" y="155" class="district-label">Naryn</text>
-                  
-                  <path d="M150,120 L180,90 L220,100 L240,140 L200,170 L190,130 Z" class="district-path" data-district="ak_talaa" data-sales="8"></path>
-                  <text x="195" y="125" class="district-label">Ak-Talaa</text>
-                  
-                  <path d="M200,170 L240,140 L280,150 L290,190 L250,210 L210,190 Z" class="district-path" data-district="jumgal" data-sales="15"></path>
-                  <text x="245" y="175" class="district-label">Jumgal</text>
-                  
-                  <path d="M180,90 L220,70 L270,80 L280,110 L240,140 L220,100 Z" class="district-path" data-district="kochkor" data-sales="5"></path>
-                  <text x="230" y="100" class="district-label">Kochkor</text>
-                </svg>
-                
-                <div class="region-sales-legend">
-                  <div class="legend-title">{% trans "Sales" %}</div>
-                  <div class="legend-scale">
-                    <div class="legend-item">
-                      <div class="legend-color" style="opacity: 0.2"></div>
-                      <span>{% trans "Low" %}</span>
-                    </div>
-                    <div class="legend-item">
-                      <div class="legend-color" style="opacity: 0.5"></div>
-                      <span>{% trans "Medium" %}</span>
-                    </div>
-                    <div class="legend-item">
-                      <div class="legend-color" style="opacity: 0.8"></div>
-                      <span>{% trans "High" %}</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
-  </div>
+    {% else %}
+    <div class="text-center py-5">
+        <img src="/media/kyrgyz-nature/empty-field.jpg" alt="Empty Field" class="mb-4" style="max-width: 300px; opacity: 0.5;">
+        <h4>{% trans "No products yet" %}</h4>
+        <p class="text-muted">{% trans "Start by adding your first product to showcase to buyers in Naryn." %}</p>
+        <a href="{% url 'frontend:add_product' %}" class="btn btn-success">
+            <i class="bi bi-plus-lg me-1"></i>{% trans "Add Your First Product" %}
+        </a>
+    </div>
+    {% endif %}
 </div>
-
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    // Initialize district map coloring
-    const districtPaths = document.querySelectorAll('.district-path');
-    
-    districtPaths.forEach(path => {
-      const sales = parseInt(path.dataset.sales);
-      
-      // Calculate opacity based on sales
-      let opacity = 0.2;
-      if (sales > 30) opacity = 0.8;
-      else if (sales > 10) opacity = 0.5;
-      
-      path.style.fillOpacity = opacity;
-      
-      // Add hover effect
-      path.addEventListener('mouseenter', function() {
-        this.style.fillOpacity = Math.min(1, parseFloat(this.style.fillOpacity) + 0.2);
-      });
-      
-      path.addEventListener('mouseleave', function() {
-        this.style.fillOpacity = opacity;
-      });
-    });
-  });
-</script>
 {% endblock %}

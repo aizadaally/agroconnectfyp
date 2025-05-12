@@ -24,6 +24,8 @@ from users.models import User
 from users.verification import EmailVerificationToken
 from django.db.models import Q
 from products.models import Category, Product
+from django.utils import timezone  # Add this line
+from datetime import timedelta  # Add this line
 
 # Update the products_view function in frontend/views.py
 
@@ -158,15 +160,30 @@ def products_view(request):
 
 
 
-
 def home_view(request):
+    # Get dashboard statistics
+    from users.models import User  # Make sure this import is correct
+    
+    # Count active farmers
+    total_farmers = User.objects.filter(user_type='FARMER', is_active=True).count()
+    
+    # Count available products
+    total_products = Product.objects.filter(is_available=True).count()
+    
+    # Count districts (you might want to add a district model later)
+    total_districts = 5  # At-Bashy, Naryn, Ak-Talaa, Jumgal, Kochkor
+    
+    # Get categories and products for display
     categories = Category.objects.all()[:4]  # Limit to 4 categories
     products = Product.objects.filter(is_available=True).order_by('-created_at')[:6]  # Latest 6 products
     
     context = {
         'categories': categories,
-        'products': products
-        # 'page_title': _('Home') 
+        'products': products,
+        'total_farmers': total_farmers,
+        'total_products': total_products,
+        'total_districts': total_districts,
+        'customer_satisfaction': 98,  # This can be calculated from ratings later
     }
     return render(request, 'frontend/home.html', context)
 
@@ -714,3 +731,5 @@ def debug_image_urls(request):
         } for p in products
     }
     return JsonResponse(urls)   
+
+

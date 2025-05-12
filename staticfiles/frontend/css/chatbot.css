@@ -1,0 +1,126 @@
+.chat-container {
+    height: 70vh;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+}
+
+.message {
+    margin-bottom: 15px;
+    display: flex;
+}
+
+.message-content {
+    padding: 10px 15px;
+    border-radius: 18px;
+    max-width: 80%;
+}
+
+.user-message {
+    justify-content: flex-end;
+}
+
+.user-message .message-content {
+    background-color: #28a745;
+    color: white;
+    border-bottom-right-radius: 5px;
+}
+
+.assistant-message {
+    justify-content: flex-start;
+}
+
+.assistant-message .message-content {
+    background-color: #e9ecef;
+    border-bottom-left-radius: 5px;
+}
+
+.chat-input-container {
+    padding: 15px;
+    background-color: white;
+    border-top: 1px solid #dee2e6;
+    display: flex;
+}
+
+.chat-input {
+    flex: 1;
+    border-radius: 20px;
+    padding: 10px 15px;
+    border: 1px solid #ced4da;
+}
+
+.send-button {
+    margin-left: 10px;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #28a745;
+    color: white;
+    border: none;
+}
+
+.typing-indicator {
+    padding: 10px 15px;
+    background-color: #e9ecef;
+    border-radius: 18px;
+    max-width: 80px;
+    margin-bottom: 15px;
+}
+
+.typing-indicator span {
+    height: 8px;
+    width: 8px;
+    background-color: #6c757d;
+    display: inline-block;
+    border-radius: 50%;
+    animation: typing 1.4s infinite both;
+    margin-right: 5px;
+}
+
+.typing-indicator span:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.typing-indicator span:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+@keyframes typing {
+    0% {
+        opacity: 0.4;
+        transform: translateY(0);
+    }
+    50% {
+        opacity: 1;
+        transform: translateY(-5px);
+    }
+    100% {
+        opacity: 0.4;
+        transform: translateY(0);
+    }
+}
+
+.suggestion-btn {
+    margin-bottom: 8px;
+    text-align: left;
+}
+
+.session-item {
+    transition: transform 0.2s;
+}
+
+.session-item:hover {
+    transform: translateX(5px);
+}

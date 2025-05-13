@@ -18,6 +18,7 @@ class Order(models.Model):
     delivery_address = models.TextField(blank=True)
     contact_phone = models.CharField(max_length=15, blank=True)
     total_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    delivery_fee = models.DecimalField(max_digits=10, decimal_places=2, default=0)  # ADD THIS LINE
     is_paid = models.BooleanField(default=False)
     
     def __str__(self):
@@ -27,8 +28,15 @@ class Order(models.Model):
         total = sum(item.subtotal() for item in self.items.all())
         self.total_amount = total
         self.save()
+    
+    def get_final_total(self):
+        """Calculate total including delivery fee"""
+        return self.total_amount + self.delivery_fee
+
+# Make sure this method exists in your Order model in orders/models.py
 
     def mark_as_paid(self):
+        """Mark the order as paid and update product quantities"""
         self.is_paid = True
         self.save()
         
@@ -39,6 +47,7 @@ class Order(models.Model):
                 product.quantity_available -= item.quantity
                 if product.quantity_available <= 0:
                     product.is_available = False
+                    product.quantity_available = 0  # Ensure it doesn't go negative
                 product.save()
 
 class OrderItem(models.Model):

@@ -363,6 +363,8 @@ def cart_view(request):
     }
     return render(request, 'frontend/cart.html', context)
 
+# Update the checkout_view function in frontend/views.py
+
 @login_required
 def checkout_view(request):
     # Get the user's cart
@@ -378,24 +380,25 @@ def checkout_view(request):
     if request.method == 'POST':
         delivery_address = request.POST.get('delivery_address')
         contact_phone = request.POST.get('contact_phone')
-
-        
+        delivery_area = request.POST.get('delivery_area', 'city')  # Get delivery area
         
         if not delivery_address or not contact_phone:
             messages.error(request, 'Delivery address and contact phone are required.')
             return render(request, 'frontend/checkout.html', {'cart': cart})
         
+        # Calculate delivery fee based on area
+        delivery_fee = 0
+        if delivery_area == 'suburbs':
+            delivery_fee = 50
+        elif delivery_area == 'villages':
+            delivery_fee = 100
         
-        
-      # Update cart and change status to ORDERED
+        # Update cart and change status to ORDERED
         cart.delivery_address = delivery_address
         cart.contact_phone = contact_phone
+        cart.delivery_fee = delivery_fee  # Set the delivery fee
         cart.status = Order.OrderStatus.ORDERED
         cart.save()
-        
-        # For simplicity, mark the order as paid immediately
-        # cart.is_paid = True
-        # cart.save()
         
         messages.success(request, 'Your order has been placed! Please complete the payment.')
         return redirect('frontend:payment', order_id=cart.id)
@@ -682,25 +685,65 @@ def payment_page(request, order_id):
     
     return render(request, 'frontend/payment.html', context)
 
+# Update the verify_payment function in frontend/views.py
+
 @login_required
 def verify_payment(request, order_id):
     order = get_object_or_404(Order, id=order_id, buyer=request.user)
     
+    if order.is_paid:
+        messages.info(request, "This order has already been paid.")
+        return redirect('frontend:order_confirmation', order_id=order.id)
+    
     if request.method == 'POST':
-        confirmation_code = request.POST.get('confirmation_code')
+        payment_method = request.POST.get('payment_method')
         
-        # For simplicity, we're accepting any confirmation code
-        # In a real application, you'd verify this against a stored code or API
-        if confirmation_code:
-            # Mark the order as paid
+        # Handle different payment methods
+        if payment_method == 'cash':
+            # Cash on Delivery - immediately confirm
             order.mark_as_paid()
-            
-            messages.success(request, "Payment verified successfully!")
+            messages.success(request, "Order placed successfully! Payment will be collected on delivery.")
             return redirect('frontend:order_confirmation', order_id=order.id)
+            
+        elif payment_method == 'direct':
+            # Direct payment to farmers - check if confirmation checkbox is checked
+            direct_confirmation = request.POST.get('direct_confirmation')
+            if direct_confirmation:
+                order.mark_as_paid()
+                messages.success(request, "Payment confirmed successfully!")
+                return redirect('frontend:order_confirmation', order_id=order.id)
+            else:
+                messages.error(request, "Please confirm that you have paid the farmers.")
+                
+        elif payment_method == 'mobile':
+            # Mobile payment - verify transaction ID
+            transaction_id = request.POST.get('transaction_id')
+            if transaction_id:
+                # In a real app, you would verify this with the payment provider
+                # For now, we'll just accept any transaction ID
+                order.mark_as_paid()
+                messages.success(request, "Mobile payment verified successfully!")
+                return redirect('frontend:order_confirmation', order_id=order.id)
+            else:
+                messages.error(request, "Please enter a valid transaction ID.")
+        
+        elif payment_method == 'bank':
+            # Bank transfer - this method would need a confirmation code
+            confirmation_code = request.POST.get('confirmation_code')
+            if confirmation_code:
+                # For demo purposes, accept any code
+                order.mark_as_paid()
+                messages.success(request, "Bank transfer confirmed successfully!")
+                return redirect('frontend:order_confirmation', order_id=order.id)
+            else:
+                messages.error(request, "Please enter the confirmation code from your bank receipt.")
+        
         else:
-            messages.error(request, "Invalid confirmation code. Please try again.")
+            messages.error(request, "Invalid payment method selected.")
     
     return redirect('frontend:payment', order_id=order.id)
+
+
 
 @login_required
 def manual_payment_confirmation(request, order_id):

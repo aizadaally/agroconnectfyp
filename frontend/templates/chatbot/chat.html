@@ -323,7 +323,15 @@
                     <h5 class="mb-0">{% trans "Previous Conversations" %}</h5>
                 </div>
                 <div class="card-body" id="sessions-list">
+                    {% if user.is_authenticated %}
                     <p class="text-center text-muted">{% trans "Loading..." %}</p>
+                    {% else %}
+                    <p class="text-center text-muted">
+                        <i class="bi bi-info-circle"></i> {% trans "Login to save chat history" %}
+                        <br>
+                        <a href="{% url 'frontend:login' %}" class="btn btn-sm btn-outline-success mt-2">{% trans "Login" %}</a>
+                    </p>
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -582,7 +590,13 @@
         if ('{{ user.is_authenticated }}' === 'True') {
             loadPreviousSessions();
         } else {
-            sessionsList.innerHTML = '<p class="text-center text-muted">Login to see history</p>';
+            sessionsList.innerHTML = `
+                <p class="text-center text-muted">
+                    <i class="bi bi-info-circle"></i> Login to save chat history
+                    <br>
+                    <a href="{% url 'frontend:login' %}" class="btn btn-sm btn-outline-success mt-2">Login</a>
+                </p>
+            `;
         }
     });
 </script>

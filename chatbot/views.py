@@ -13,10 +13,17 @@ from django.conf import settings
 
 from .models import ChatSession, ChatMessage
 
-@login_required
+# @login_required
+# def chat_page(request):
+#     """Render the chatbot interface page"""
+#     return render(request, 'chatbot/chat.html')
+
+
+
 def chat_page(request):
-    """Render the chatbot interface page"""
+    """Render the chatbot interface page - accessible to all users"""
     return render(request, 'chatbot/chat.html')
+
 
 @csrf_exempt
 def chat_api(request):

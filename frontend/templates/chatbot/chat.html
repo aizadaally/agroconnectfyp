@@ -4,15 +4,270 @@
 
 {% block title %}{% trans "AgroConnect Chatbot" %} - AgroConnect{% endblock %}
 
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'frontend/css/theme.css' %}">
+<style>
+/* Larger and more user-friendly chat container */
+.chat-container-large {
+    height: 80vh;
+    min-height: 600px;
+    background-color: var(--bg-primary);
+    border-radius: 12px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 8px 32px var(--shadow);
+    transition: all 0.3s ease;
+}
+
+/* Chat Header */
+.chat-header {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    color: white;
+    padding: 20px 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.chat-header h4 {
+    margin: 0;
+    font-weight: 600;
+    font-size: 1.3rem;
+}
+
+.chat-status {
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+/* Messages area improvements */
+.chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 30px;
+    background: var(--bg-secondary);
+}
+
+.message {
+    margin-bottom: 25px;
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+}
+
+.message-avatar {
+    width: 40px;
+    height: 40px;
+    background: #28a745;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 20px;
+    flex-shrink: 0;
+}
+
+.user-message {
+    flex-direction: row-reverse;
+}
+
+.user-message .message-avatar {
+    background: #007bff;
+}
+
+.message-content {
+    padding: 15px 20px;
+    border-radius: 20px;
+    max-width: 70%;
+    font-size: 1rem;
+    line-height: 1.5;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.user-message .message-content {
+    background-color: #28a745;
+    color: white;
+    border-bottom-right-radius: 4px;
+}
+
+.assistant-message .message-content {
+    background-color: var(--bg-card);
+    border-bottom-left-radius: 4px;
+    color: var(--text-primary);
+}
+
+/* Enhanced input area */
+.chat-input-container {
+    padding: 20px;
+    background-color: var(--bg-primary);
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+.chat-input {
+    flex: 1;
+    border-radius: 25px;
+    padding: 12px 20px;
+    border: 2px solid var(--border-color);
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background-color: var(--input-bg);
+    color: var(--text-primary);
+}
+
+.chat-input:focus {
+    border-color: #28a745;
+    box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.1);
+}
+
+.send-button {
+    border-radius: 25px;
+    padding: 12px 25px;
+    font-size: 1rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    transition: all 0.3s ease;
+}
+
+.send-button:hover {
+    background-color: #218838;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+}
+
+/* Enhanced typing indicator */
+.typing-indicator {
+    padding: 15px 20px;
+    background-color: var(--bg-card);
+    border-radius: 20px;
+    display: inline-block;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    margin-left: 55px;
+}
+
+.typing-indicator span {
+    height: 10px;
+    width: 10px;
+    background-color: #6c757d;
+    display: inline-block;
+    border-radius: 50%;
+    animation: typing 1.4s infinite both;
+    margin-right: 4px;
+}
+
+/* Dark theme support */
+[data-theme="dark"] .chat-header {
+    background: linear-gradient(135deg, #1a5f3f 0%, #157347 100%);
+}
+
+/* Responsive improvements */
+@media (max-width: 768px) {
+    .chat-container-large {
+        height: 70vh;
+        min-height: 500px;
+    }
+    
+    .chat-messages {
+        padding: 20px;
+    }
+    
+    .message-content {
+        max-width: 85%;
+        font-size: 0.95rem;
+    }
+    
+    .chat-input {
+        font-size: 0.95rem;
+        padding: 10px 15px;
+    }
+    
+    .send-button {
+        padding: 10px 20px;
+        font-size: 0.95rem;
+    }
+}
+
+/* Suggestion buttons enhancement */
+.suggestion-btn {
+    margin-bottom: 10px;
+    text-align: left;
+    border-radius: 20px;
+    transition: all 0.3s ease;
+}
+
+.suggestion-btn:hover {
+    transform: translateX(5px);
+    box-shadow: 0 4px 12px rgba(40, 167, 69, 0.2);
+}
+
+/* Session items enhancement */
+.session-item {
+    transition: all 0.3s ease;
+    padding: 12px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.session-item:hover {
+    background-color: var(--bg-hover);
+    transform: translateX(5px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+/* Animation for typing indicator */
+@keyframes typing {
+    0% {
+        opacity: 0.4;
+        transform: translateY(0);
+    }
+    50% {
+        opacity: 1;
+        transform: translateY(-5px);
+    }
+    100% {
+        opacity: 0.4;
+        transform: translateY(0);
+    }
+}
+
+.typing-indicator span:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.typing-indicator span:nth-child(3) {
+    animation-delay: 0.4s;
+}
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="container py-4">
     <h1 class="mb-4">{% trans "AgroConnect Farming Assistant" %}</h1>
     
     <div class="row">
-        <div class="col-md-8">
-            <div class="chat-container">
+        <div class="col-md-9">
+            <div class="chat-container chat-container-large">
+                <div class="chat-header">
+                    <h4 class="mb-0">{% trans "Farming Assistant Chat" %}</h4>
+                    <span class="chat-status">● {% trans "Online" %}</span>
+                </div>
                 <div class="chat-messages" id="chat-messages">
                     <div class="message assistant-message">
+                        <div class="message-avatar">
+                            <i class="bi bi-robot"></i>
+                        </div>
                         <div class="message-content">
                             {% trans "Hello! I'm your AgroConnect farming assistant. How can I help you today? Ask me about crops, farming techniques, or product recommendations." %}
                         </div>
@@ -26,15 +281,15 @@
                 </div>
                 
                 <div class="chat-input-container">
-                    <input type="text" class="chat-input" id="user-input" placeholder="{% trans 'Type your message here...' %}">
-                    <button class="send-button" id="send-button">
-                        <i class="bi bi-send"></i>
+                    <input type="text" class="form-control chat-input" id="user-input" placeholder="{% trans 'Type your message here...' %}">
+                    <button class="btn btn-success send-button" id="send-button">
+                        <i class="bi bi-send"></i> {% trans "Send" %}
                     </button>
                 </div>
             </div>
         </div>
         
-        <div class="col-md-4">
+        <div class="col-md-3">
             <div class="card">
                 <div class="card-header bg-success text-white">
                     <h5 class="mb-0">{% trans "Popular Topics" %}</h5>
@@ -113,7 +368,10 @@
                 const message = document.createElement('div');
                 message.className = 'message assistant-message';
                 message.innerHTML = `
-                    <div class="message-content" style="background-color: #e9ecef80; font-style: italic;">
+                    <div class="message-avatar">
+                        <i class="bi bi-translate"></i>
+                    </div>
+                    <div class="message-content" style="background-color: var(--bg-secondary); font-style: italic;">
                         ${currentLanguage === 'en' ? 'Switched to English' : 
                           currentLanguage === 'ru' ? 'Переключено на русский язык' : 
                           'Кыргыз тилине которулду'}
@@ -219,10 +477,15 @@
             const messageDiv = document.createElement('div');
             messageDiv.className = `message ${role}-message`;
             
+            const avatarDiv = document.createElement('div');
+            avatarDiv.className = 'message-avatar';
+            avatarDiv.innerHTML = role === 'user' ? '<i class="bi bi-person"></i>' : '<i class="bi bi-robot"></i>';
+            
             const contentDiv = document.createElement('div');
             contentDiv.className = 'message-content';
             contentDiv.textContent = content;
             
+            messageDiv.appendChild(avatarDiv);
             messageDiv.appendChild(contentDiv);
             chatMessages.insertBefore(messageDiv, typingIndicator);
         }

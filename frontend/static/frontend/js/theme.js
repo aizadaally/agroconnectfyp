@@ -1,99 +1,88 @@
 // frontend/static/frontend/js/theme.js
 
-// Wait for DOM to be ready
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('Theme script loaded');
-    
+// Initialize theme handling
+(function() {
     // Get saved theme or use light as default
-    let currentTheme = localStorage.getItem('agroconnect-theme') || 'light';
+    const getSavedTheme = () => localStorage.getItem('agroconnect-theme') || 'light';
     
-    // Function to apply theme
-    function applyTheme(theme) {
-        console.log('Applying theme:', theme);
-        
-        // Remove old theme attribute
-        document.documentElement.removeAttribute('data-theme');
-        
-        // Set new theme
+    // Apply theme to document
+    const applyTheme = (theme) => {
         document.documentElement.setAttribute('data-theme', theme);
-        
-        // Save to localStorage
         localStorage.setItem('agroconnect-theme', theme);
-        
-        // Update icon
-        updateIcon(theme);
-        
-        // Force a style recalculation
-        document.body.style.display = 'none';
-        document.body.offsetHeight; // Trigger reflow
-        document.body.style.display = '';
-        
-        console.log('Theme applied, current data-theme:', document.documentElement.getAttribute('data-theme'));
-    }
+        updateThemeIcon(theme);
+        console.log('Theme applied:', theme);
+    };
     
-    // Function to update the icon
-    function updateIcon(theme) {
+    // Update theme icon
+    const updateThemeIcon = (theme) => {
         const icon = document.getElementById('theme-icon');
         if (icon) {
             icon.className = theme === 'light' ? 'bi bi-moon-fill' : 'bi bi-sun-fill';
         }
-    }
+    };
     
-    // Create theme toggle button
-    function createThemeToggle() {
+    // Create theme toggle button in navbar
+    const createThemeToggle = () => {
+        const navbar = document.querySelector('.navbar-nav:last-child');
+        if (!navbar) return;
+        
+        // Create the toggle button
         const themeToggle = document.createElement('li');
         themeToggle.className = 'nav-item';
         themeToggle.innerHTML = `
             <button class="nav-link theme-toggle" id="theme-toggle" aria-label="Toggle theme">
-                <i class="bi bi-sun-fill" id="theme-icon"></i>
+                <i class="bi bi-moon-fill" id="theme-icon"></i>
             </button>
         `;
         
-        // Find the right navbar
-        const navbar = document.querySelector('.navbar-nav:last-child');
-        const languageDropdown = navbar ? navbar.querySelector('#languageDropdown') : null;
-        
-        if (navbar && languageDropdown) {
-            languageDropdown.closest('li').insertAdjacentElement('beforebegin', themeToggle);
-        } else if (navbar) {
-            navbar.insertBefore(themeToggle, navbar.firstChild);
+        // Insert before language dropdown
+        const languageDropdown = navbar.querySelector('[data-bs-toggle="dropdown"]')?.parentElement;
+        if (languageDropdown) {
+            navbar.insertBefore(themeToggle, languageDropdown);
+        } else {
+            navbar.appendChild(themeToggle);
         }
         
         // Add click event
         const toggleButton = document.getElementById('theme-toggle');
         if (toggleButton) {
-            toggleButton.addEventListener('click', function(e) {
-                e.preventDefault();
-                
-                // Toggle theme
-                currentTheme = currentTheme === 'light' ? 'dark' : 'light';
-                
-                console.log('Toggling to:', currentTheme);
-                
-                // Apply new theme
-                applyTheme(currentTheme);
-            });
+            toggleButton.addEventListener('click', toggleTheme);
         }
+    };
+    
+    // Toggle theme function
+    const toggleTheme = () => {
+        const currentTheme = getSavedTheme();
+        const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+        applyTheme(newTheme);
+    };
+    
+    // Initialize on DOM ready
+    const init = () => {
+        const savedTheme = getSavedTheme();
+        applyTheme(savedTheme);
+        createThemeToggle();
+    };
+    
+    // Apply theme immediately to prevent flash
+    const immediateTheme = getSavedTheme();
+    document.documentElement.setAttribute('data-theme', immediateTheme);
+    
+    // Initialize when DOM is ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
     }
     
-    // Initialize
-    
-    createThemeToggle();
-    applyTheme(currentTheme);
-    
-    // Add debug info
-    console.log('Theme initialization complete');
-    console.log('Current theme:', currentTheme);
-    console.log('Data theme attribute:', document.documentElement.getAttribute('data-theme'));
-});
+    // Remove preload class after initialization
+    window.addEventListener('load', () => {
+        document.documentElement.classList.remove('preload');
+        document.body.classList.remove('preload');
+    });
+})();
 
-// Remove preload class when page is loaded
-window.addEventListener('load', function() {
-    document.documentElement.classList.remove('preload');
-    document.body.classList.remove('preload');
-});
-
-// Debug function
+// Global debug function
 window.debugTheme = function() {
     console.log('=== Theme Debug ===');
     console.log('localStorage theme:', localStorage.getItem('agroconnect-theme'));

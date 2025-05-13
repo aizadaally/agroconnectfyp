@@ -1,0 +1,256 @@
+/* frontend/static/frontend/css/theme.css */
+
+/* CSS Variables for Light Theme */
+:root {
+    --bg-primary: #ffffff;
+    --bg-secondary: #f8f9fa;
+    --text-primary: #212529;
+    --text-secondary: #6c757d;
+    --border-color: #dee2e6;
+    --shadow: rgba(0, 0, 0, 0.1);
+    --shadow-lg: rgba(0, 0, 0, 0.15);
+    --bg-success: #28a745;
+    --bg-success-dark: #218838;
+    --bg-card: #ffffff;
+    --bg-hover: #f1f3f4;
+    --input-bg: #ffffff;
+    --input-border: #ced4da;
+}
+
+/* CSS Variables for Dark Theme */
+[data-theme="dark"] {
+    --bg-primary: #121212;
+    --bg-secondary: #1e1e1e;
+    --text-primary: #e9ecef;
+    --text-secondary: #adb5bd;
+    --border-color: #333;
+    --shadow: rgba(0, 0, 0, 0.3);
+    --shadow-lg: rgba(0, 0, 0, 0.5);
+    --bg-success: #28a745;
+    --bg-success-dark: #1a5f3f;
+    --bg-card: #1e1e1e;
+    --bg-hover: #2d2d2d;
+    --input-bg: #2d2d2d;
+    --input-border: #495057;
+}
+
+/* Base Styles using CSS Variables */
+body {
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.card {
+    background-color: var(--bg-card);
+    color: var(--text-primary);
+    border-color: var(--border-color);
+    box-shadow: 0 2px 10px var(--shadow);
+}
+
+.form-control {
+    background-color: var(--input-bg);
+    color: var(--text-primary);
+    border-color: var(--input-border);
+}
+
+.form-control:focus {
+    background-color: var(--input-bg);
+    color: var(--text-primary);
+    border-color: var(--bg-success);
+    box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+}
+
+.table {
+    color: var(--text-primary);
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: var(--bg-secondary);
+}
+
+.list-group-item {
+    background-color: var(--bg-card);
+    color: var(--text-primary);
+    border-color: var(--border-color);
+}
+
+/* Navbar theme adjustments */
+.navbar.bg-success {
+    background-color: var(--bg-success) !important;
+}
+
+[data-theme="dark"] .navbar.bg-success {
+    background-color: var(--bg-success-dark) !important;
+}
+
+/* Alert theme adjustments */
+.alert {
+    background-color: var(--bg-card);
+    color: var(--text-primary);
+}
+
+/* Badge theme adjustments */
+.badge.bg-light {
+    background-color: var(--bg-secondary) !important;
+    color: var(--text-primary) !important;
+}
+
+/* Dropdown theme adjustments */
+.dropdown-menu {
+    background-color: var(--bg-card);
+    border-color: var(--border-color);
+}
+
+.dropdown-item {
+    color: var(--text-primary);
+}
+
+.dropdown-item:hover {
+    background-color: var(--bg-hover);
+    color: var(--text-primary);
+}
+
+/* Modal theme adjustments */
+.modal-content {
+    background-color: var(--bg-card);
+    color: var(--text-primary);
+}
+
+.modal-header {
+    border-bottom-color: var(--border-color);
+}
+
+.modal-footer {
+    border-top-color: var(--border-color);
+}
+
+/* Theme toggle button */
+.theme-toggle {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.theme-toggle:hover {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+/* Text color classes */
+.text-muted {
+    color: var(--text-secondary) !important;
+}
+
+/* Background color overrides */
+.bg-light {
+    background-color: var(--bg-secondary) !important;
+}
+
+/* Button theme variations */
+.btn-outline-secondary {
+    color: var(--text-primary);
+    border-color: var(--border-color);
+}
+
+.btn-outline-secondary:hover {
+    background-color: var(--bg-hover);
+    color: var(--text-primary);
+    border-color: var(--border-color);
+}
+
+/* Link colors */
+a {
+    color: var(--bg-success);
+}
+
+a:hover {
+    color: var(--bg-success-dark);
+}
+
+/* Breadcrumb */
+.breadcrumb {
+    background-color: var(--bg-secondary);
+}
+
+.breadcrumb-item a {
+    color: var(--bg-success);
+}
+
+/* Pagination */
+.page-link {
+    background-color: var(--bg-card);
+    color: var(--text-primary);
+    border-color: var(--border-color);
+}
+
+.page-link:hover {
+    background-color: var(--bg-hover);
+    color: var(--text-primary);
+    border-color: var(--border-color);
+}
+
+/* Loading overlay */
+.loading-overlay {
+    background-color: rgba(0, 0, 0, 0.8);
+}
+
+[data-theme="dark"] .loading-overlay {
+    background-color: rgba(0, 0, 0, 0.9);
+}
+
+/* Search box */
+.form-control:not(.chat-input) {
+    background-color: var(--input-bg);
+    color: var(--text-primary);
+}
+
+/* Custom scrollbar for dark theme */
+[data-theme="dark"] ::-webkit-scrollbar {
+    background-color: var(--bg-secondary);
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-thumb {
+    background-color: var(--border-color);
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
+    background-color: var(--text-secondary);
+}
+
+/* Fix for specific elements that need explicit styling */
+[data-theme="dark"] .farmer-card-kyrgyz,
+[data-theme="dark"] .stat-card,
+[data-theme="dark"] .product-card,
+[data-theme="dark"] .category-card,
+[data-theme="dark"] .testimonial-card {
+    background-color: var(--bg-card);
+    color: var(--text-primary);
+}
+
+/* Prevent flash of unstyled content */
+.preload * {
+    transition: none !important;
+}
+
+/* Section backgrounds */
+[data-theme="dark"] section {
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+}
+
+/* Forms */
+[data-theme="dark"] .form-select {
+    background-color: var(--input-bg);
+    color: var(--text-primary);
+    border-color: var(--input-border);
+}
+
+/* Hero section dark mode */
+[data-theme="dark"] .hero-section {
+    background-image: 
+        linear-gradient(45deg, rgba(0, 0, 0, 0.7), rgba(40, 167, 69, 0.5)),
+        url('/media/kyrgyzstan.jpg');
+}

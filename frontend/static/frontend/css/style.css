@@ -31,23 +31,15 @@ body {
 .hero-section {
     position: relative;
     min-height: 100vh;
-    /* Update the background-image path to use the correct file */
     background-image: 
         linear-gradient(45deg, rgba(0, 0, 0, 0.3), rgba(40, 167, 69, 0.3)),
-        url('/media/kyrgyzstan.jpeg');  /* Correct path to your uploaded image */
+        url('/media/kyrgyzstan.jpg');  /* Using your uploaded image */
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
     display: flex;
     align-items: center;
     overflow: hidden;
-}
-
-/* Alternative fallback if the first path doesn't work */
-.hero-section.alternative {
-    background-image: 
-        linear-gradient(45deg, rgba(0, 0, 0, 0.3), rgba(40, 167, 69, 0.3)),
-        url('../../../media/kyrgyzstan.jpeg');  /* Relative path alternative */
 }
 
 /* Add a subtle overlay for better text readability */
@@ -61,8 +53,6 @@ body {
     background: linear-gradient(180deg, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0.3) 50%, rgba(0, 0, 0, 0.5) 100%);
     z-index: 1;
 }
-
-/* Rest of your CSS remains the same... */
 
 /* Keep all other hero styles the same */
 .hero-content {
